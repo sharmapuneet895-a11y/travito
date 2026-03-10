@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { DollarSign, RefreshCw, TrendingUp } from 'lucide-react';
+import { DollarSign, RefreshCw, TrendingUp, ArrowRightLeft } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -9,6 +9,7 @@ const Forex = () => {
   const [forexData, setForexData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState('');
+  const [swappedCurrencies, setSwappedCurrencies] = useState({});
 
   const fetchForexRates = async () => {
     setLoading(true);
@@ -26,6 +27,13 @@ const Forex = () => {
   useEffect(() => {
     fetchForexRates();
   }, []);
+
+  const toggleSwap = (currency) => {
+    setSwappedCurrencies(prev => ({
+      ...prev,
+      [currency]: !prev[currency]
+    }));
+  };
 
   const currencyNames = {
     USD: 'US Dollar',
@@ -57,6 +65,21 @@ const Forex = () => {
     NZD: '🇳🇿'
   };
 
+  const currencySymbols = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    JPY: '¥',
+    AUD: 'A$',
+    CAD: 'C$',
+    CHF: 'CHF',
+    CNY: '¥',
+    SGD: 'S$',
+    AED: 'د.إ',
+    THB: '฿',
+    NZD: 'NZ$'
+  };
+
   return (
     <div className="min-h-screen py-12 px-6">
       <div className="max-w-7xl mx-auto">
@@ -73,7 +96,7 @@ const Forex = () => {
               </h1>
             </div>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Real-time currency exchange rates for Indian Rupee (INR). Plan your travel budget with the latest conversion rates.
+              Real-time currency exchange rates for Indian Rupee (INR). Click the swap button to interchange currencies.
             </p>
           </div>
 
@@ -84,7 +107,7 @@ const Forex = () => {
                 <TrendingUp className="w-6 h-6 text-accent" />
                 <div>
                   <h3 className="font-semibold text-foreground">Base Currency: Indian Rupee (INR)</h3>
-                  <p className="text-sm text-muted-foreground">1 INR = Exchange rates below</p>
+                  <p className="text-sm text-muted-foreground">Click <ArrowRightLeft className="w-4 h-4 inline" /> to swap conversion direction</p>
                 </div>
               </div>
               <button
@@ -114,33 +137,67 @@ const Forex = () => {
             </div>
           ) : forexData ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {Object.entries(forexData.rates).map(([currency, rate]) => (
-                <motion.div
-                  key={currency}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3 }}
-                  className="forex-card"
-                  data-testid={`forex-card-${currency}`}
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-4xl">{currencyFlags[currency] || '🌍'}</span>
-                    <div className="text-right">
-                      <div className="text-sm font-medium text-muted-foreground">{currency}</div>
-                      <div className="text-xs text-muted-foreground">{currencyNames[currency]}</div>
+              {Object.entries(forexData.rates).map(([currency, rate]) => {
+                const isSwapped = swappedCurrencies[currency];
+                const inverseRate = 1 / rate;
+                
+                return (
+                  <motion.div
+                    key={currency}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
+                    className="forex-card relative"
+                    data-testid={`forex-card-${currency}`}
+                  >
+                    {/* Swap Button */}
+                    <button
+                      onClick={() => toggleSwap(currency)}
+                      className="absolute top-3 right-3 p-2 rounded-full bg-accent/10 hover:bg-accent/20 transition-all group"
+                      title="Swap currencies"
+                      data-testid={`swap-btn-${currency}`}
+                    >
+                      <ArrowRightLeft className={`w-4 h-4 text-primary group-hover:rotate-180 transition-transform duration-300 ${isSwapped ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    <div className="flex items-center justify-between mb-4 pr-10">
+                      <span className="text-4xl">{currencyFlags[currency] || '🌍'}</span>
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-muted-foreground">{currency}</div>
+                        <div className="text-xs text-muted-foreground">{currencyNames[currency]}</div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-3xl font-bold text-primary mb-2">
-                    {rate.toFixed(4)}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    1 INR = {rate.toFixed(4)} {currency}
-                  </div>
-                  <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
-                    ₹1,000 = {(rate * 1000).toFixed(2)} {currency}
-                  </div>
-                </motion.div>
-              ))}
+
+                    {!isSwapped ? (
+                      <>
+                        {/* INR to Foreign Currency */}
+                        <div className="text-3xl font-bold text-primary mb-2">
+                          {rate.toFixed(4)}
+                        </div>
+                        <div className="text-sm text-muted-foreground font-medium">
+                          1 INR = {rate.toFixed(4)} {currency}
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
+                          ₹1,000 = {currencySymbols[currency]}{(rate * 1000).toFixed(2)}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        {/* Foreign Currency to INR */}
+                        <div className="text-3xl font-bold text-accent mb-2">
+                          ₹{inverseRate.toFixed(2)}
+                        </div>
+                        <div className="text-sm text-muted-foreground font-medium">
+                          1 {currency} = ₹{inverseRate.toFixed(2)} INR
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
+                          {currencySymbols[currency]}100 = ₹{(inverseRate * 100).toFixed(2)}
+                        </div>
+                      </>
+                    )}
+                  </motion.div>
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-12 text-muted-foreground">

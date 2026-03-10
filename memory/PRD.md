@@ -58,10 +58,10 @@ Build a comprehensive travel information website called "Pass-e-port" with color
 - All pages accessible from menu
 
 #### Data Coverage
-- Seasons: 20+ countries
-- Visa: 20+ countries
-- Weather: 110 countries
-- Power Plugs: 109 countries
+- Seasons: 182 countries
+- Visa: 182 countries
+- Weather: 145 countries
+- Power Plugs: 144 countries
 - Festivals: 57 festivals across 30+ countries
 - Apps: 20+ app recommendations
 
