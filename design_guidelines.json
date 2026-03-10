@@ -1,0 +1,159 @@
+{
+  "project_name": "TravelPulse India",
+  "design_philosophy": {
+    "theme": "The Modern Atlas",
+    "tone": "Adventurous, Clear, Trustworthy, Global",
+    "core_concept": "A digital compass for the Indian traveler. Visuals should feel like a premium travel magazine come to life—tactile, spacious, and inviting.",
+    "anti_patterns": [
+      "No generic 'Bootstrap' grids",
+      "No default RGB red/blue/green colors",
+      "No cluttered sidebars",
+      "No low-contrast text on maps"
+    ]
+  },
+  "typography": {
+    "font_family": {
+      "headings": "Playfair Display, serif",
+      "body": "DM Sans, sans-serif",
+      "mono": "JetBrains Mono, monospace"
+    },
+    "scale": {
+      "h1": "text-5xl md:text-7xl font-bold tracking-tight leading-none",
+      "h2": "text-4xl md:text-5xl font-semibold tracking-tight",
+      "h3": "text-2xl md:text-3xl font-medium",
+      "body_lg": "text-lg md:text-xl leading-relaxed",
+      "body": "text-base leading-relaxed",
+      "caption": "text-sm text-muted-foreground uppercase tracking-wider"
+    },
+    "imports": [
+      "@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');"
+    ]
+  },
+  "colors": {
+    "palette": {
+      "background": "#F9F9F7",
+      "foreground": "#1A1A1A",
+      "primary": "#2C3E50",
+      "secondary": "#E0E0E0",
+      "accent": "#D4AF37",
+      "surface": "#FFFFFF",
+      "border": "#E5E5E5"
+    },
+    "map_colors": {
+      "red": {
+        "hex": "#E25A53",
+        "name": "Terra Cotta",
+        "usage": "Peak Season / Visa Required"
+      },
+      "blue": {
+        "hex": "#4B89AC",
+        "name": "Aegean Blue",
+        "usage": "Shoulder Season / E-Visa"
+      },
+      "orange": {
+        "hex": "#F2A900",
+        "name": "Marigold",
+        "usage": "Off Season / Visa on Arrival"
+      },
+      "default": {
+        "hex": "#D6D6D6",
+        "name": "Mist Grey",
+        "usage": "No Data / Default"
+      }
+    },
+    "chart_colors": [
+      "#2A9D8F",
+      "#E9C46A",
+      "#F4A261",
+      "#E76F51",
+      "#264653"
+    ]
+  },
+  "layout": {
+    "spacing": {
+      "container_padding": "p-6 md:p-12 lg:p-24",
+      "section_gap": "gap-12 md:gap-24",
+      "component_gap": "gap-6 md:gap-8"
+    },
+    "grid_system": {
+      "bento_grid": "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[300px]",
+      "hero_split": "grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
+    },
+    "border_radius": {
+      "lg": "rounded-2xl",
+      "md": "rounded-xl",
+      "sm": "rounded-lg"
+    }
+  },
+  "components": {
+    "Button": {
+      "styles": "rounded-full font-medium transition-all duration-300 active:scale-95",
+      "variants": {
+        "default": "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl",
+        "outline": "border-2 border-primary text-primary hover:bg-primary/10",
+        "ghost": "hover:bg-accent/20 text-foreground"
+      }
+    },
+    "Card": {
+      "styles": "bg-white/80 backdrop-blur-md border border-white/20 shadow-sm hover:shadow-md transition-all duration-300 rounded-xl overflow-hidden"
+    },
+    "MapTooltip": {
+      "styles": "bg-gray-900 text-white text-xs px-2 py-1 rounded shadow-xl z-50"
+    }
+  },
+  "interactive_map": {
+    "library": "react-simple-maps",
+    "projection": "geoMercator",
+    "instructions": "Use 'react-simple-maps' for rendering the world map. Create a 'MapChart' component that accepts a 'data' prop (mapping country codes to colors). Use 'd3-scale' for color scales if needed, but direct color mapping is preferred based on the problem statement constraints.",
+    "interactions": "Hovering over a country should slightly darken the fill and show a tooltip with the country name and relevant info (Season/Visa). Clicking a country should navigate to a detailed view or open a modal."
+  },
+  "image_urls": {
+    "hero_background": {
+      "url": "https://images.unsplash.com/photo-1504542982118-59308b40fe0c?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "description": "Travel the world - Hero Banner",
+      "category": "Hero"
+    },
+    "visa_section": {
+      "url": "https://images.unsplash.com/photo-1692895591954-451050db22fd?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "description": "Map, camera, watch - Visa Section Background",
+      "category": "Section Background"
+    },
+    "forex_section": {
+      "url": "https://images.unsplash.com/photo-1700394474173-6428c2ea061c?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "description": "Currencies on table - Forex Section",
+      "category": "Section Background"
+    },
+    "apps_transport": {
+      "url": "https://images.unsplash.com/photo-1523759724146-4ce060fff7be?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "description": "Smartphone - Transport Apps",
+      "category": "Card Image"
+    },
+    "apps_food": {
+      "url": "https://images.unsplash.com/photo-1552474764-aa694c105be2?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "description": "Currency Exchange/Food - Food Apps",
+      "category": "Card Image"
+    }
+  },
+  "instructions_to_main_agent": [
+    "1. Setup: Install 'react-simple-maps', 'd3-scale', 'framer-motion', 'lucide-react', 'clsx', 'tailwind-merge'.",
+    "2. Theme: Implement the 'Modern Atlas' theme in 'tailwind.config.js' (extend colors with map_colors).",
+    "3. Map Implementation: Create a reusable WorldMap component. It MUST take a 'mode' prop ('seasons' | 'visa') to switch coloring logic.",
+    "4. Data: Mock the season and visa data for at least 20 major countries (USA, UK, France, Dubai, Thailand, Singapore, Australia, etc.) to show the color variations.",
+    "5. Forex: Mock the FOREX API call first, then try to connect to a free API (like 'exchangerate-api.com' or similar free tier). If API fails, fallback to mock data gracefully.",
+    "6. Apps: Create a filterable grid for the Apps section. Use the 'Bento' grid layout.",
+    "7. Navigation: Use a sticky glassmorphic header.",
+    "8. Testing: Add 'data-testid' to all interactive elements (maps, buttons, filters)."
+  ],
+  "UNIVERSAL_GUIDELINES": {
+    "do_not_use": [
+      "Gradients for text",
+      "Default browser scrollbars (use 'lenis' or custom CSS)",
+      "Standard Bootstrap/Material UI look"
+    ],
+    "must_use": [
+      "Micro-interactions on hover",
+      "Smooth page transitions",
+      "Accessible contrast ratios"
+    ]
+  }
+}
