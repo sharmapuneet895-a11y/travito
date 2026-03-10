@@ -35,92 +35,20 @@ const Forex = () => {
     }));
   };
 
-  // Currency data with country info and map image URLs
+  // Currency data with country info
   const currencyData = {
-    USD: { 
-      name: 'US Dollar', 
-      country: 'United States', 
-      flag: '🇺🇸', 
-      symbol: '$',
-      mapUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Map_of_USA_with_state_names.svg/200px-Map_of_USA_with_state_names.svg.png'
-    },
-    EUR: { 
-      name: 'Euro', 
-      country: 'European Union', 
-      flag: '🇪🇺', 
-      symbol: '€',
-      mapUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Eurozone.svg/200px-Eurozone.svg.png'
-    },
-    GBP: { 
-      name: 'British Pound', 
-      country: 'United Kingdom', 
-      flag: '🇬🇧', 
-      symbol: '£',
-      mapUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/UK_location_in_the_EU_2016.svg/200px-UK_location_in_the_EU_2016.svg.png'
-    },
-    JPY: { 
-      name: 'Japanese Yen', 
-      country: 'Japan', 
-      flag: '🇯🇵', 
-      symbol: '¥',
-      mapUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Flag-map_of_Japan.svg/200px-Flag-map_of_Japan.svg.png'
-    },
-    AUD: { 
-      name: 'Australian Dollar', 
-      country: 'Australia', 
-      flag: '🇦🇺', 
-      symbol: 'A$',
-      mapUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/Australia_with_AAT_%28orthographic_projection%29.svg/200px-Australia_with_AAT_%28orthographic_projection%29.svg.png'
-    },
-    CAD: { 
-      name: 'Canadian Dollar', 
-      country: 'Canada', 
-      flag: '🇨🇦', 
-      symbol: 'C$',
-      mapUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Canada_%28orthographic_projection%29.svg/200px-Canada_%28orthographic_projection%29.svg.png'
-    },
-    CHF: { 
-      name: 'Swiss Franc', 
-      country: 'Switzerland', 
-      flag: '🇨🇭', 
-      symbol: 'CHF',
-      mapUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Europe-Switzerland.svg/200px-Europe-Switzerland.svg.png'
-    },
-    CNY: { 
-      name: 'Chinese Yuan', 
-      country: 'China', 
-      flag: '🇨🇳', 
-      symbol: '¥',
-      mapUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/China_in_its_region_%28claimed_hatched%29.svg/200px-China_in_its_region_%28claimed_hatched%29.svg.png'
-    },
-    SGD: { 
-      name: 'Singapore Dollar', 
-      country: 'Singapore', 
-      flag: '🇸🇬', 
-      symbol: 'S$',
-      mapUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Singapore_in_its_region.svg/200px-Singapore_in_its_region.svg.png'
-    },
-    AED: { 
-      name: 'UAE Dirham', 
-      country: 'United Arab Emirates', 
-      flag: '🇦🇪', 
-      symbol: 'د.إ',
-      mapUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/United_Arab_Emirates_in_its_region.svg/200px-United_Arab_Emirates_in_its_region.svg.png'
-    },
-    THB: { 
-      name: 'Thai Baht', 
-      country: 'Thailand', 
-      flag: '🇹🇭', 
-      symbol: '฿',
-      mapUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Thailand_in_its_region.svg/200px-Thailand_in_its_region.svg.png'
-    },
-    NZD: { 
-      name: 'New Zealand Dollar', 
-      country: 'New Zealand', 
-      flag: '🇳🇿', 
-      symbol: 'NZ$',
-      mapUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/New_Zealand_in_its_region.svg/200px-New_Zealand_in_its_region.svg.png'
-    }
+    USD: { name: 'US Dollar', country: 'United States', flag: '🇺🇸', symbol: '$' },
+    EUR: { name: 'Euro', country: 'European Union', flag: '🇪🇺', symbol: '€' },
+    GBP: { name: 'British Pound', country: 'United Kingdom', flag: '🇬🇧', symbol: '£' },
+    JPY: { name: 'Japanese Yen', country: 'Japan', flag: '🇯🇵', symbol: '¥' },
+    AUD: { name: 'Australian Dollar', country: 'Australia', flag: '🇦🇺', symbol: 'A$' },
+    CAD: { name: 'Canadian Dollar', country: 'Canada', flag: '🇨🇦', symbol: 'C$' },
+    CHF: { name: 'Swiss Franc', country: 'Switzerland', flag: '🇨🇭', symbol: 'CHF' },
+    CNY: { name: 'Chinese Yuan', country: 'China', flag: '🇨🇳', symbol: '¥' },
+    SGD: { name: 'Singapore Dollar', country: 'Singapore', flag: '🇸🇬', symbol: 'S$' },
+    AED: { name: 'UAE Dirham', country: 'United Arab Emirates', flag: '🇦🇪', symbol: 'د.إ' },
+    THB: { name: 'Thai Baht', country: 'Thailand', flag: '🇹🇭', symbol: '฿' },
+    NZD: { name: 'New Zealand Dollar', country: 'New Zealand', flag: '🇳🇿', symbol: 'NZ$' }
   };
 
   return (
@@ -179,7 +107,7 @@ const Forex = () => {
               </div>
             </div>
           ) : forexData ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {Object.entries(forexData.rates).map(([currency, rate]) => {
                 const isSwapped = swappedCurrencies[currency];
                 const inverseRate = 1 / rate;
@@ -191,29 +119,26 @@ const Forex = () => {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3 }}
-                    className={`bg-white rounded-xl border border-border overflow-hidden hover:shadow-lg transition-all ${isSwapped ? 'ring-2 ring-accent' : ''}`}
+                    className={`bg-white rounded-xl border border-border p-5 hover:shadow-lg transition-all ${isSwapped ? 'ring-2 ring-accent' : ''}`}
                     data-testid={`forex-card-${currency}`}
                   >
-                    {/* Country Map Header */}
-                    <div className="h-24 bg-gradient-to-br from-primary/5 to-primary/10 relative overflow-hidden">
-                      <div 
-                        className="absolute inset-0 bg-center bg-contain bg-no-repeat opacity-30"
-                        style={{ 
-                          backgroundImage: `url(${info.mapUrl})`,
-                          filter: 'grayscale(100%)'
-                        }}
-                      />
-                      <div className="absolute top-3 left-3 flex items-center gap-2">
-                        <span className="text-3xl">{info.flag}</span>
+                    {/* Header with Flag and Currency */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <span className="text-4xl">{info.flag}</span>
                         <div>
-                          <div className="text-lg font-bold text-primary">{currency}</div>
-                          <div className="text-xs text-muted-foreground">{info.country}</div>
+                          <div className="text-xl font-bold text-primary">{currency}</div>
+                          <div className="text-sm text-muted-foreground">{info.name}</div>
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground/70">
+                            <span className="text-base">{info.flag}</span>
+                            <span>{info.country}</span>
+                          </div>
                         </div>
                       </div>
                       {/* Swap Button */}
                       <button
                         onClick={() => toggleSwap(currency)}
-                        className="absolute top-3 right-3 p-2 rounded-full bg-white/80 hover:bg-white transition-all group shadow-sm"
+                        className="p-2 rounded-full bg-accent/10 hover:bg-accent/20 transition-all group"
                         title="Swap currencies"
                         data-testid={`swap-btn-${currency}`}
                       >
@@ -221,36 +146,32 @@ const Forex = () => {
                       </button>
                     </div>
 
-                    {/* Rate Info */}
-                    <div className="p-4">
-                      <div className="text-sm text-muted-foreground mb-1">{info.name}</div>
-                      
-                      {!isSwapped ? (
-                        <>
-                          <div className="text-3xl font-bold text-primary mb-1">
-                            {rate.toFixed(4)}
-                          </div>
-                          <div className="text-sm text-muted-foreground font-medium">
-                            1 INR = {rate.toFixed(4)} {currency}
-                          </div>
-                          <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
-                            ₹1,000 = {info.symbol}{(rate * 1000).toFixed(2)}
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="text-3xl font-bold text-accent mb-1">
-                            ₹{inverseRate.toFixed(2)}
-                          </div>
-                          <div className="text-sm text-muted-foreground font-medium">
-                            1 {currency} = ₹{inverseRate.toFixed(2)} INR
-                          </div>
-                          <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
-                            {info.symbol}100 = ₹{(inverseRate * 100).toFixed(2)}
-                          </div>
-                        </>
-                      )}
-                    </div>
+                    {/* Rate Display */}
+                    {!isSwapped ? (
+                      <>
+                        <div className="text-3xl font-bold text-primary mb-1">
+                          {rate.toFixed(4)}
+                        </div>
+                        <div className="text-sm text-muted-foreground font-medium">
+                          1 INR = {rate.toFixed(4)} {currency}
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-3 pt-3 border-t border-border">
+                          ₹1,000 = {info.symbol}{(rate * 1000).toFixed(2)}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="text-3xl font-bold text-accent mb-1">
+                          ₹{inverseRate.toFixed(2)}
+                        </div>
+                        <div className="text-sm text-muted-foreground font-medium">
+                          1 {currency} = ₹{inverseRate.toFixed(2)} INR
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-3 pt-3 border-t border-border">
+                          {info.symbol}100 = ₹{(inverseRate * 100).toFixed(2)}
+                        </div>
+                      </>
+                    )}
                   </motion.div>
                 );
               })}
