@@ -1,56 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import WorldMap from '../components/WorldMap';
-import { Calendar, Sun, CloudSun, Cloud } from 'lucide-react';
+import { Calendar, Sun, CloudSun, Cloud, Search, MapPin } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Month abbreviations
 const MONTH_ABBREV = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 const Seasons = () => {
   const [seasonsData, setSeasonsData] = useState([]);
   const [processedData, setProcessedData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
   
-  const currentMonth = new Date().getMonth(); // 0-11
-  const currentMonthName = MONTH_ABBREV[currentMonth];
+  // Date state - default to current month
+  const today = new Date();
+  const [selectedMonth, setSelectedMonth] = useState(today.getMonth()); // 0-11
+  const [selectedYear, setSelectedYear] = useState(today.getFullYear());
+  
+  const selectedMonthAbbrev = MONTH_ABBREV[selectedMonth];
+  const selectedMonthName = MONTH_NAMES[selectedMonth];
 
   useEffect(() => {
     const fetchSeasons = async () => {
       try {
         const response = await axios.get(`${BACKEND_URL}/api/seasons`);
-        const rawData = response.data.data;
-        setSeasonsData(rawData);
-        
-        // Process data to determine current month's season status
-        const processed = rawData.map(country => {
-          const bestMonths = country.best_months || [];
-          const isCurrentMonthBest = bestMonths.includes(currentMonthName);
-          
-          // Determine season status for current month
-          let currentSeasonType;
-          if (isCurrentMonthBest) {
-            currentSeasonType = 'peak'; // Current month is one of the best months
-          } else {
-            // Check if we're within 1-2 months of best season (shoulder)
-            const bestMonthIndices = bestMonths.map(m => MONTH_ABBREV.indexOf(m));
-            const isNearBest = bestMonthIndices.some(idx => {
-              const diff = Math.abs(currentMonth - idx);
-              return diff <= 2 || diff >= 10; // Within 2 months (accounting for year wrap)
-            });
-            currentSeasonType = isNearBest ? 'shoulder' : 'off';
-          }
-          
-          return {
-            ...country,
-            current_season: currentSeasonType,
-            is_best_now: isCurrentMonthBest
-          };
-        });
-        
-        setProcessedData(processed);
+        setSeasonsData(response.data.data);
       } catch (error) {
         console.error('Error fetching seasons data:', error);
       } finally {
@@ -59,12 +38,64 @@ const Seasons = () => {
     };
 
     fetchSeasons();
-  }, [currentMonth, currentMonthName]);
+  }, []);
+
+  // Process data when seasons data or selected month changes
+  useEffect(() => {
+    if (seasonsData.length === 0) return;
+    
+    const processed = seasonsData.map(country => {
+      const bestMonths = country.best_months || [];
+      const isSelectedMonthBest = bestMonths.includes(selectedMonthAbbrev);
+      
+      // Determine season status for selected month
+      let currentSeasonType;
+      if (isSelectedMonthBest) {
+        currentSeasonType = 'peak';
+      } else {
+        const bestMonthIndices = bestMonths.map(m => MONTH_ABBREV.indexOf(m));
+        const isNearBest = bestMonthIndices.some(idx => {
+          const diff = Math.abs(selectedMonth - idx);
+          return diff <= 2 || diff >= 10;
+        });
+        currentSeasonType = isNearBest ? 'shoulder' : 'off';
+      }
+      
+      return {
+        ...country,
+        current_season: currentSeasonType,
+        is_best_now: isSelectedMonthBest
+      };
+    });
+    
+    setProcessedData(processed);
+  }, [seasonsData, selectedMonth, selectedMonthAbbrev]);
+
+  // Filter countries based on search
+  const filteredCountries = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const query = searchQuery.toLowerCase();
+    return processedData.filter(c => 
+      c.country_name?.toLowerCase().includes(query)
+    ).slice(0, 8);
+  }, [searchQuery, processedData]);
+
+  const handleCountrySelect = (country) => {
+    setSearchQuery(country.country_name);
+    setShowDropdown(false);
+    // Scroll to the country card section
+    const element = document.querySelector(`[data-testid="country-card-${country.country_code}"]`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      element.classList.add('ring-2', 'ring-accent');
+      setTimeout(() => element.classList.remove('ring-2', 'ring-accent'), 2000);
+    }
+  };
 
   const legends = [
-    { color: '#E25A53', label: 'Best Time Now', description: 'Ideal to visit this month', icon: Sun },
+    { color: '#E25A53', label: 'Best Time', description: `Ideal to visit in ${selectedMonthName}`, icon: Sun },
     { color: '#4B89AC', label: 'Good Time', description: 'Near peak season', icon: CloudSun },
-    { color: '#F2A900', label: 'Off Season', description: 'Not ideal this month', icon: Cloud },
+    { color: '#F2A900', label: 'Off Season', description: `Not ideal in ${selectedMonthName}`, icon: Cloud },
     { color: '#D6D6D6', label: 'No Data', description: 'Information not available', icon: null }
   ];
 
@@ -81,7 +112,7 @@ const Seasons = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-3 mb-4">
               <Calendar className="w-12 h-12 text-accent" />
               <h1 className="text-4xl md:text-5xl font-semibold text-primary section-title" data-testid="seasons-page-title">
@@ -89,20 +120,105 @@ const Seasons = () => {
               </h1>
             </div>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              See which destinations are ideal to visit <span className="font-semibold text-primary">right now in {currentMonthName}</span>. Colors show travel conditions for the current month.
+              Find the perfect time to visit your dream destination
             </p>
           </div>
 
-          {/* Current Month Indicator */}
+          {/* Search and Date Filter Section */}
+          <div className="bg-white rounded-xl p-6 mb-6 shadow-sm border border-border">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Travelling To Search */}
+              <div className="relative">
+                <label className="block text-sm font-semibold text-primary mb-2">
+                  <MapPin className="w-4 h-4 inline mr-1" />
+                  Travelling To
+                </label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setShowDropdown(true);
+                    }}
+                    onFocus={() => setShowDropdown(true)}
+                    placeholder="Search country..."
+                    className="w-full pl-10 pr-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+                    data-testid="country-search"
+                  />
+                </div>
+                
+                {/* Search Dropdown */}
+                {showDropdown && filteredCountries.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="absolute z-20 w-full mt-1 bg-white border border-border rounded-lg shadow-lg max-h-64 overflow-y-auto"
+                  >
+                    {filteredCountries.map((country) => (
+                      <button
+                        key={country.country_code}
+                        onClick={() => handleCountrySelect(country)}
+                        className="w-full px-4 py-3 text-left hover:bg-accent/20 flex items-center justify-between transition-all"
+                      >
+                        <span className="font-medium text-foreground">{country.country_name}</span>
+                        <span className={`text-xs px-2 py-1 rounded-full ${
+                          country.current_season === 'peak' ? 'bg-red-100 text-red-700' :
+                          country.current_season === 'shoulder' ? 'bg-blue-100 text-blue-700' :
+                          'bg-amber-100 text-amber-700'
+                        }`}>
+                          {country.current_season === 'peak' ? 'Best Time' :
+                           country.current_season === 'shoulder' ? 'Good' : 'Off Season'}
+                        </span>
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Date Selector */}
+              <div>
+                <label className="block text-sm font-semibold text-primary mb-2">
+                  <Calendar className="w-4 h-4 inline mr-1" />
+                  Travel Date
+                </label>
+                <div className="flex gap-2">
+                  <select
+                    value={selectedMonth}
+                    onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+                    className="flex-1 px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    data-testid="month-selector"
+                  >
+                    {MONTH_NAMES.map((month, idx) => (
+                      <option key={idx} value={idx}>{month}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={selectedYear}
+                    onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+                    className="w-28 px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    data-testid="year-selector"
+                  >
+                    {[2024, 2025, 2026, 2027].map(year => (
+                      <option key={year} value={year}>{year}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Current Selection Indicator */}
           <div className="bg-accent/10 rounded-xl p-4 mb-6 text-center">
             <span className="text-lg font-semibold text-primary">
-              📅 Showing travel conditions for: <span className="text-accent">{new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
+              📅 Showing travel conditions for: <span className="text-accent">{selectedMonthName} {selectedYear}</span>
             </span>
           </div>
 
           {/* Legend */}
           <div className="bg-white rounded-xl p-6 mb-8 shadow-sm">
-            <h3 className="text-lg font-semibold text-primary mb-4">What the colors mean for {currentMonthName}</h3>
+            <h3 className="text-lg font-semibold text-primary mb-4">What the colors mean for {selectedMonthName}</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {legends.map((legend) => (
                 <div key={legend.label} className="legend-item" data-testid={`legend-${legend.label.toLowerCase().replace(/ /g, '-')}`}>
@@ -122,7 +238,7 @@ const Seasons = () => {
             </div>
           </div>
 
-          {/* Map - Pass processed data with current_season */}
+          {/* Map */}
           <div className="map-container" data-testid="seasons-map-container">
             {loading ? (
               <div className="flex items-center justify-center h-96" data-testid="loading-seasons">
@@ -135,7 +251,7 @@ const Seasons = () => {
               <WorldMap 
                 data={processedData.map(c => ({
                   ...c,
-                  season_type: c.current_season // Override with current month's status
+                  season_type: c.current_season
                 }))} 
                 mode="seasons" 
               />
@@ -149,7 +265,7 @@ const Seasons = () => {
               <div>
                 <h3 className="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
                   <Sun className="w-6 h-6 text-red-500" />
-                  Best Time to Visit Now ({peakCountries.length} destinations)
+                  Best Time to Visit in {selectedMonthName} ({peakCountries.length} destinations)
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {peakCountries.map((country) => (
@@ -162,7 +278,7 @@ const Seasons = () => {
                         <div className="w-3 h-3 rounded-full mt-1.5 flex-shrink-0 bg-red-500" />
                         <div>
                           <h4 className="font-semibold text-foreground">{country.country_name}</h4>
-                          <p className="text-sm text-green-700 font-medium">✓ Ideal in {currentMonthName}</p>
+                          <p className="text-sm text-green-700 font-medium">✓ Ideal in {selectedMonthAbbrev}</p>
                           <p className="text-xs text-muted-foreground mt-1">
                             Best months: {country.best_months?.join(', ')}
                           </p>
@@ -222,7 +338,7 @@ const Seasons = () => {
                         <div className="w-3 h-3 rounded-full mt-1.5 flex-shrink-0 bg-amber-500" />
                         <div>
                           <h4 className="font-semibold text-foreground">{country.country_name}</h4>
-                          <p className="text-sm text-amber-700 font-medium">△ Not ideal now</p>
+                          <p className="text-sm text-amber-700 font-medium">△ Not ideal in {selectedMonthAbbrev}</p>
                           <p className="text-xs text-muted-foreground mt-1">
                             Best months: {country.best_months?.join(', ')}
                           </p>

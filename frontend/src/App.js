@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation';
-import Home from './pages/Home';
 import Seasons from './pages/Seasons';
 import Visa from './pages/Visa';
 import Forex from './pages/Forex';
@@ -19,8 +18,7 @@ function App() {
       <BrowserRouter>
         <Navigation />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/seasons" element={<Seasons />} />
+          <Route path="/" element={<Seasons />} />
           <Route path="/visa" element={<Visa />} />
           <Route path="/forex" element={<Forex />} />
           <Route path="/apps" element={<Apps />} />

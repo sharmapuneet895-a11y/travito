@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Compass, Calendar, FileText, DollarSign, Smartphone, Menu, X, BookOpen, Cloud, Zap, PartyPopper } from 'lucide-react';
+import { Compass, Calendar, FileText, DollarSign, Smartphone, Menu, X, BookOpen, Cloud, Zap, PartyPopper, Utensils } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Navigation = () => {
@@ -8,11 +8,11 @@ const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { path: '/seasons', label: 'Best Seasons', icon: Calendar },
+    { path: '/', label: 'Best Seasons', icon: Calendar },
     { path: '/visa', label: 'Visa Info', icon: FileText },
     { path: '/weather', label: 'Weather', icon: Cloud },
     { path: '/plugs', label: 'Power Plugs', icon: Zap },
-    { path: '/festivals', label: 'Festivals', icon: PartyPopper },
+    { path: '/festivals', label: 'Festivals & Local Dishes', icon: Utensils },
     { path: '/forex', label: 'Forex Rates', icon: DollarSign },
     { path: '/apps', label: 'Top Apps', icon: Smartphone },
     { path: '/blog', label: 'Travel Tips', icon: BookOpen }
@@ -93,20 +93,6 @@ const Navigation = () => {
 
                 {/* Menu Items */}
                 <div className="space-y-2">
-                  <Link
-                    to="/"
-                    onClick={() => setIsMenuOpen(false)}
-                    className={`flex items-center gap-4 px-4 py-4 rounded-xl transition-all ${
-                      location.pathname === '/'
-                        ? 'bg-primary text-white'
-                        : 'text-foreground hover:bg-accent/20'
-                    }`}
-                    data-testid="menu-home"
-                  >
-                    <Compass className="w-5 h-5" />
-                    <span className="font-medium">Home</span>
-                  </Link>
-
                   {navItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = location.pathname === item.path;
@@ -120,7 +106,7 @@ const Navigation = () => {
                             ? 'bg-primary text-white'
                             : 'text-foreground hover:bg-accent/20'
                         }`}
-                        data-testid={`menu-${item.label.toLowerCase().replace(' ', '-')}`}
+                        data-testid={`menu-${item.label.toLowerCase().replace(/ /g, '-')}`}
                       >
                         <Icon className="w-5 h-5" />
                         <span className="font-medium">{item.label}</span>
