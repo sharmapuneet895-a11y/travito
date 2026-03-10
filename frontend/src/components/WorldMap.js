@@ -212,7 +212,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         {/* Ocean Labels - Positioned in clear ocean areas */}
         {/* North Atlantic - between North America and Europe */}
         <text 
-          x="340" 
+          x="380" 
           y="145" 
           fill="#1565A0" 
           fontSize="12" 
@@ -226,7 +226,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
           NORTH
         </text>
         <text 
-          x="340" 
+          x="380" 
           y="160" 
           fill="#1565A0" 
           fontSize="12" 
