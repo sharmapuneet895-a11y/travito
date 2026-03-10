@@ -126,3 +126,21 @@
 .animate-fade-in {
   animation: fadeIn 0.6s ease-out forwards;
 }
+
+/* Custom scrollbar for dropdown */
+.country-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.country-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.country-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.country-dropdown::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}

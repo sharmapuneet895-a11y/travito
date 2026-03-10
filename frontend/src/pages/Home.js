@@ -1,9 +1,61 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Calendar, FileText, DollarSign, Smartphone, ArrowRight } from 'lucide-react';
+import { Calendar, FileText, DollarSign, Smartphone, ArrowRight, Search } from 'lucide-react';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Home = () => {
+  const [countries, setCountries] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [filteredCountries, setFilteredCountries] = useState([]);
+  const searchRef = useRef(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/api/countries`);
+        setCountries(response.data.data);
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      }
+    };
+    fetchCountries();
+  }, []);
+
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const filtered = countries.filter(country =>
+        country.country_name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredCountries(filtered);
+      setShowDropdown(true);
+    } else {
+      setFilteredCountries([]);
+      setShowDropdown(false);
+    }
+  }, [searchQuery, countries]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleCountrySelect = (country) => {
+    setSearchQuery('');
+    setShowDropdown(false);
+    // Navigate to seasons page (you can customize this behavior)
+    navigate('/seasons');
+  };
   const features = [
     {
       title: 'Best Seasons to Travel',
@@ -55,6 +107,66 @@ const Home = () => {
               Everything Indian travelers need to know - from the best seasons to visit, visa requirements,
               live exchange rates, to the most useful apps in every destination.
             </p>
+            
+            {/* Search Bar */}
+            <div className="max-w-2xl mx-auto mb-12 relative" ref={searchRef}>
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Search for a country..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => searchQuery && setShowDropdown(true)}
+                  className="w-full pl-12 pr-4 py-4 text-lg border-2 border-border rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all bg-white shadow-md"
+                  data-testid="country-search-input"
+                />
+              </div>
+              
+              {/* Dropdown */}
+              {showDropdown && filteredCountries.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute top-full mt-2 w-full bg-white border border-border rounded-2xl shadow-xl max-h-80 overflow-y-auto z-50"
+                  data-testid="country-dropdown"
+                  style={{
+                    scrollbarWidth: 'thin',
+                    scrollbarColor: 'rgba(0,0,0,0.3) transparent'
+                  }}
+                >
+                  <div className="p-2">
+                    <p className="text-xs text-muted-foreground px-4 py-2 uppercase tracking-wider">
+                      {filteredCountries.length} {filteredCountries.length === 1 ? 'Country' : 'Countries'} Found
+                    </p>
+                  </div>
+                  {filteredCountries.map((country, index) => (
+                    <button
+                      key={country.country_code}
+                      onClick={() => handleCountrySelect(country)}
+                      className="w-full px-6 py-3 text-left hover:bg-accent/20 transition-all duration-200 flex items-center gap-3 border-b border-border last:border-b-0 group"
+                      data-testid={`country-option-${index}`}
+                    >
+                      <span className="text-2xl group-hover:scale-110 transition-transform">🌍</span>
+                      <div>
+                        <span className="font-medium text-foreground block">{country.country_name}</span>
+                        <span className="text-xs text-muted-foreground">View travel information</span>
+                      </div>
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+              
+              {showDropdown && searchQuery && filteredCountries.length === 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute top-full mt-2 w-full bg-white border border-border rounded-2xl shadow-xl p-6 z-50"
+                >
+                  <p className="text-muted-foreground text-center">No countries found matching "{searchQuery}"</p>
+                </motion.div>
+              )}
+            </div>
             <div className="flex items-center justify-center gap-4 flex-wrap">
               <Link
                 to="/seasons"
