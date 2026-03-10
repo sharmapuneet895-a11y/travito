@@ -226,7 +226,46 @@ async def get_apps(country_code: Optional[str] = None, category: Optional[str] =
 async def get_all_countries():
     """Get list of all available countries"""
     seasons = await db.seasons.find({}, {"_id": 0, "country_code": 1, "country_name": 1}).to_list(1000)
-    return {"data": seasons}
+    # Remove duplicates
+    unique_countries = {}
+    for country in seasons:
+        code = country["country_code"]
+        if code not in unique_countries:
+            unique_countries[code] = country
+    return {"data": list(unique_countries.values())}
+
+@api_router.get("/country/{country_code}")
+async def get_country_detail(country_code: str):
+    """Get complete information for a specific country"""
+    country_code = country_code.upper()
+    
+    # Get season data
+    season = await db.seasons.find_one({"country_code": country_code}, {"_id": 0})
+    
+    # Get visa data
+    visa = await db.visa.find_one({"country_code": country_code}, {"_id": 0})
+    
+    # Get apps for this country
+    apps = await db.apps.find({"country_code": country_code}, {"_id": 0}).to_list(100)
+    
+    if not season and not visa:
+        raise HTTPException(status_code=404, detail="Country not found")
+    
+    return {
+        "season": season,
+        "visa": visa,
+        "apps": apps
+    }
+
+@api_router.get("/blogs")
+async def get_blogs(category: Optional[str] = None):
+    """Get all blog articles"""
+    query = {}
+    if category:
+        query["category"] = category
+    
+    blogs = await db.blogs.find(query, {"_id": 0}).to_list(100)
+    return {"data": blogs}
 
 # Include router
 app.include_router(api_router)

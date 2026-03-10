@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Compass, Calendar, FileText, DollarSign, Smartphone, Menu, X } from 'lucide-react';
+import { Compass, Calendar, FileText, DollarSign, Smartphone, Menu, X, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Navigation = () => {
@@ -11,7 +11,8 @@ const Navigation = () => {
     { path: '/seasons', label: 'Best Seasons', icon: Calendar },
     { path: '/visa', label: 'Visa Info', icon: FileText },
     { path: '/forex', label: 'Forex Rates', icon: DollarSign },
-    { path: '/apps', label: 'Top Apps', icon: Smartphone }
+    { path: '/apps', label: 'Top Apps', icon: Smartphone },
+    { path: '/blog', label: 'Travel Tips', icon: BookOpen }
   ];
 
   return (

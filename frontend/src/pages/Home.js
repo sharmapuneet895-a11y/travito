@@ -53,8 +53,8 @@ const Home = () => {
   const handleCountrySelect = (country) => {
     setSearchQuery('');
     setShowDropdown(false);
-    // Navigate to seasons page (you can customize this behavior)
-    navigate('/seasons');
+    // Navigate to country detail page
+    navigate(`/country/${country.country_code}`);
   };
   const features = [
     {
