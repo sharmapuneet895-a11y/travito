@@ -418,6 +418,16 @@ async def get_festivals(month: Optional[int] = None, country_code: Optional[str]
     festivals = await db.festivals.find(query, {"_id": 0}).to_list(1000)
     return {"data": festivals}
 
+@api_router.get("/dishes")
+async def get_dishes(country_code: Optional[str] = None):
+    """Get must-try local dishes by country"""
+    query = {}
+    if country_code:
+        query["country_code"] = country_code.upper()
+    
+    dishes = await db.dishes.find(query, {"_id": 0}).to_list(1000)
+    return {"data": dishes}
+
 # Include router
 app.include_router(api_router)
 

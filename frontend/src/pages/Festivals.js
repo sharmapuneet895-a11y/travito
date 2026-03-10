@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import WorldMap from '../components/WorldMap';
-import { PartyPopper, Calendar, MapPin, Filter } from 'lucide-react';
+import { PartyPopper, Calendar, MapPin, Filter, Utensils, Leaf, Drumstick } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -23,37 +23,49 @@ const MONTHS = [
 ];
 
 const MONTH_COLORS = {
-  1: '#3B82F6',   // January - Blue (Winter)
-  2: '#EC4899',   // February - Pink (Valentine)
-  3: '#10B981',   // March - Green (Spring)
-  4: '#F59E0B',   // April - Yellow (Spring)
-  5: '#8B5CF6',   // May - Purple (Flowers)
-  6: '#EF4444',   // June - Red (Summer)
-  7: '#F97316',   // July - Orange (Summer)
-  8: '#06B6D4',   // August - Cyan (Late Summer)
-  9: '#84CC16',   // September - Lime (Fall)
-  10: '#F59E0B',  // October - Amber (Halloween)
-  11: '#A855F7',  // November - Purple (Harvest)
-  12: '#EF4444'   // December - Red (Christmas)
+  1: '#3B82F6',
+  2: '#EC4899',
+  3: '#10B981',
+  4: '#F59E0B',
+  5: '#8B5CF6',
+  6: '#EF4444',
+  7: '#F97316',
+  8: '#06B6D4',
+  9: '#84CC16',
+  10: '#F59E0B',
+  11: '#A855F7',
+  12: '#EF4444'
 };
 
 const Festivals = () => {
   const [festivals, setFestivals] = useState([]);
   const [filteredFestivals, setFilteredFestivals] = useState([]);
+  const [dishes, setDishes] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(0);
   const [mapData, setMapData] = useState([]);
 
   useEffect(() => {
-    const fetchFestivals = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}/api/festivals`);
-        setFestivals(response.data.data);
-        setFilteredFestivals(response.data.data);
+        const [festivalsRes, dishesRes] = await Promise.all([
+          axios.get(`${BACKEND_URL}/api/festivals`),
+          axios.get(`${BACKEND_URL}/api/dishes`)
+        ]);
         
-        // Create map data - aggregate by country with festival count
+        setFestivals(festivalsRes.data.data);
+        setFilteredFestivals(festivalsRes.data.data);
+        
+        // Create dishes lookup by country code
+        const dishesLookup = {};
+        dishesRes.data.data.forEach(d => {
+          dishesLookup[d.country_code] = d.dishes;
+        });
+        setDishes(dishesLookup);
+        
+        // Create map data
         const countryFestivals = {};
-        response.data.data.forEach(f => {
+        festivalsRes.data.data.forEach(f => {
           if (!countryFestivals[f.country_code]) {
             countryFestivals[f.country_code] = {
               country_code: f.country_code,
@@ -67,13 +79,13 @@ const Festivals = () => {
         });
         setMapData(Object.values(countryFestivals));
       } catch (error) {
-        console.error('Error fetching festivals:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchFestivals();
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -84,7 +96,7 @@ const Festivals = () => {
     }
   }, [selectedMonth, festivals]);
 
-  // Group festivals by month for display
+  // Group festivals by month
   const festivalsByMonth = filteredFestivals.reduce((acc, festival) => {
     const monthName = MONTHS.find(m => m.value === festival.month)?.label || 'Unknown';
     if (!acc[monthName]) {
@@ -110,7 +122,7 @@ const Festivals = () => {
               </h1>
             </div>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Discover the world's most spectacular festivals and cultural celebrations. Plan your trip around these unforgettable experiences.
+              Discover the world's most spectacular festivals and must-try local dishes.
             </p>
           </div>
 
@@ -159,36 +171,41 @@ const Festivals = () => {
             )}
           </div>
 
-          {/* Legend for map */}
+          {/* Legend */}
           <div className="bg-white rounded-xl p-6 mb-8 shadow-sm">
-            <h3 className="text-lg font-semibold text-primary mb-4">Festival Destinations</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="legend-item">
-                <div className="legend-color" style={{ backgroundColor: '#E25A53' }} />
-                <div>
-                  <div className="font-medium text-sm">Many Festivals</div>
-                  <div className="text-xs text-muted-foreground">3+ festivals</div>
+            <div className="flex flex-wrap gap-8 items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-primary mb-4">Festival Destinations</h3>
+                <div className="flex flex-wrap gap-4">
+                  <div className="legend-item">
+                    <div className="legend-color" style={{ backgroundColor: '#E25A53' }} />
+                    <span className="text-sm">Many (3+)</span>
+                  </div>
+                  <div className="legend-item">
+                    <div className="legend-color" style={{ backgroundColor: '#F2A900' }} />
+                    <span className="text-sm">Some (2)</span>
+                  </div>
+                  <div className="legend-item">
+                    <div className="legend-color" style={{ backgroundColor: '#4B89AC' }} />
+                    <span className="text-sm">Few (1)</span>
+                  </div>
                 </div>
               </div>
-              <div className="legend-item">
-                <div className="legend-color" style={{ backgroundColor: '#F2A900' }} />
-                <div>
-                  <div className="font-medium text-sm">Some Festivals</div>
-                  <div className="text-xs text-muted-foreground">2 festivals</div>
-                </div>
-              </div>
-              <div className="legend-item">
-                <div className="legend-color" style={{ backgroundColor: '#4B89AC' }} />
-                <div>
-                  <div className="font-medium text-sm">Few Festivals</div>
-                  <div className="text-xs text-muted-foreground">1 festival</div>
-                </div>
-              </div>
-              <div className="legend-item">
-                <div className="legend-color" style={{ backgroundColor: '#E8E8E6' }} />
-                <div>
-                  <div className="font-medium text-sm">No Data</div>
-                  <div className="text-xs text-muted-foreground">Not yet covered</div>
+              <div>
+                <h3 className="text-lg font-semibold text-primary mb-4">Dish Indicators</h3>
+                <div className="flex gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-600">
+                      <Leaf className="w-4 h-4" />
+                    </span>
+                    <span className="text-sm">Vegetarian</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-100 text-red-600">
+                      <Drumstick className="w-4 h-4" />
+                    </span>
+                    <span className="text-sm">Non-Veg</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -215,41 +232,75 @@ const Festivals = () => {
                     </span>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {monthFestivals.map((festival, idx) => (
-                      <motion.div
-                        key={`${festival.country_code}-${festival.festival_name}`}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: idx * 0.05 }}
-                        className="bg-white rounded-xl p-5 border border-border hover:shadow-lg transition-all group"
-                        data-testid={`festival-card-${festival.country_code}`}
-                      >
-                        <div className="flex items-start gap-4">
-                          <div 
-                            className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform"
-                            style={{ backgroundColor: `${MONTH_COLORS[festival.month]}20` }}
-                          >
-                            <PartyPopper 
-                              className="w-6 h-6" 
-                              style={{ color: MONTH_COLORS[festival.month] }}
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold text-foreground text-lg mb-1 truncate">
-                              {festival.festival_name}
-                            </h4>
-                            <div className="flex items-center gap-1 text-sm text-muted-foreground mb-2">
-                              <MapPin className="w-4 h-4" />
-                              <span className="truncate">{festival.country_name} • {festival.highlight}</span>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {monthFestivals.map((festival, idx) => {
+                      const countryDishes = dishes[festival.country_code] || [];
+                      
+                      return (
+                        <motion.div
+                          key={`${festival.country_code}-${festival.festival_name}`}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: idx * 0.05 }}
+                          className="bg-white rounded-xl p-5 border border-border hover:shadow-lg transition-all"
+                          data-testid={`festival-card-${festival.country_code}`}
+                        >
+                          <div className="flex items-start gap-4">
+                            <div 
+                              className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+                              style={{ backgroundColor: `${MONTH_COLORS[festival.month]}20` }}
+                            >
+                              <PartyPopper 
+                                className="w-6 h-6" 
+                                style={{ color: MONTH_COLORS[festival.month] }}
+                              />
                             </div>
-                            <p className="text-sm text-muted-foreground line-clamp-2">
-                              {festival.description}
-                            </p>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-semibold text-foreground text-lg mb-1">
+                                {festival.festival_name}
+                              </h4>
+                              <div className="flex items-center gap-1 text-sm text-muted-foreground mb-2">
+                                <MapPin className="w-4 h-4" />
+                                <span>{festival.country_name} • {festival.highlight}</span>
+                              </div>
+                              <p className="text-sm text-muted-foreground mb-3">
+                                {festival.description}
+                              </p>
+                              
+                              {/* Must-Try Local Dishes */}
+                              {countryDishes.length > 0 && (
+                                <div className="mt-3 pt-3 border-t border-border">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <Utensils className="w-4 h-4 text-accent" />
+                                    <span className="text-sm font-semibold text-primary">Must-Try Dishes</span>
+                                  </div>
+                                  <div className="flex flex-wrap gap-2">
+                                    {countryDishes.slice(0, 4).map((dish, i) => (
+                                      <span 
+                                        key={i}
+                                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                                          dish.veg 
+                                            ? 'bg-green-50 text-green-700 border border-green-200' 
+                                            : 'bg-red-50 text-red-700 border border-red-200'
+                                        }`}
+                                        title={dish.description}
+                                      >
+                                        {dish.veg ? (
+                                          <Leaf className="w-3 h-3" />
+                                        ) : (
+                                          <Drumstick className="w-3 h-3" />
+                                        )}
+                                        {dish.name}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      </motion.div>
-                    ))}
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 </div>
               ))}

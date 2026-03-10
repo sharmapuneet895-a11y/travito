@@ -35,49 +35,36 @@ const Forex = () => {
     }));
   };
 
-  const currencyNames = {
-    USD: 'US Dollar',
-    EUR: 'Euro',
-    GBP: 'British Pound',
-    JPY: 'Japanese Yen',
-    AUD: 'Australian Dollar',
-    CAD: 'Canadian Dollar',
-    CHF: 'Swiss Franc',
-    CNY: 'Chinese Yuan',
-    SGD: 'Singapore Dollar',
-    AED: 'UAE Dirham',
-    THB: 'Thai Baht',
-    NZD: 'New Zealand Dollar'
+  // Currency data with country info
+  const currencyData = {
+    USD: { name: 'US Dollar', country: 'United States', flag: '🇺🇸', symbol: '$' },
+    EUR: { name: 'Euro', country: 'European Union', flag: '🇪🇺', symbol: '€' },
+    GBP: { name: 'British Pound', country: 'United Kingdom', flag: '🇬🇧', symbol: '£' },
+    JPY: { name: 'Japanese Yen', country: 'Japan', flag: '🇯🇵', symbol: '¥' },
+    AUD: { name: 'Australian Dollar', country: 'Australia', flag: '🇦🇺', symbol: 'A$' },
+    CAD: { name: 'Canadian Dollar', country: 'Canada', flag: '🇨🇦', symbol: 'C$' },
+    CHF: { name: 'Swiss Franc', country: 'Switzerland', flag: '🇨🇭', symbol: 'CHF' },
+    CNY: { name: 'Chinese Yuan', country: 'China', flag: '🇨🇳', symbol: '¥' },
+    SGD: { name: 'Singapore Dollar', country: 'Singapore', flag: '🇸🇬', symbol: 'S$' },
+    AED: { name: 'UAE Dirham', country: 'United Arab Emirates', flag: '🇦🇪', symbol: 'د.إ' },
+    THB: { name: 'Thai Baht', country: 'Thailand', flag: '🇹🇭', symbol: '฿' },
+    NZD: { name: 'New Zealand Dollar', country: 'New Zealand', flag: '🇳🇿', symbol: 'NZ$' }
   };
 
-  const currencyFlags = {
-    USD: '🇺🇸',
-    EUR: '🇪🇺',
-    GBP: '🇬🇧',
-    JPY: '🇯🇵',
-    AUD: '🇦🇺',
-    CAD: '🇨🇦',
-    CHF: '🇨🇭',
-    CNY: '🇨🇳',
-    SGD: '🇸🇬',
-    AED: '🇦🇪',
-    THB: '🇹🇭',
-    NZD: '🇳🇿'
-  };
-
-  const currencySymbols = {
-    USD: '$',
-    EUR: '€',
-    GBP: '£',
-    JPY: '¥',
-    AUD: 'A$',
-    CAD: 'C$',
-    CHF: 'CHF',
-    CNY: '¥',
-    SGD: 'S$',
-    AED: 'د.إ',
-    THB: '฿',
-    NZD: 'NZ$'
+  // Mini country shape SVGs (simplified outlines)
+  const countryShapes = {
+    USD: <path d="M10 5 L25 3 L30 8 L28 15 L22 18 L15 20 L8 18 L5 12 L8 7 Z" fill="currentColor" opacity="0.15"/>,
+    EUR: <path d="M12 4 L22 4 L26 8 L24 14 L20 18 L14 18 L10 14 L8 8 Z" fill="currentColor" opacity="0.15"/>,
+    GBP: <path d="M14 2 L18 2 L20 6 L19 10 L21 14 L18 18 L14 18 L12 14 L11 10 L13 6 Z" fill="currentColor" opacity="0.15"/>,
+    JPY: <path d="M8 5 L12 3 L16 4 L18 8 L20 6 L24 8 L22 14 L18 18 L12 16 L8 12 Z" fill="currentColor" opacity="0.15"/>,
+    AUS: <path d="M5 8 L28 8 L30 14 L25 20 L10 20 L5 15 Z" fill="currentColor" opacity="0.15"/>,
+    CAD: <path d="M5 5 L30 5 L30 8 L28 12 L25 10 L20 12 L15 10 L10 12 L5 10 Z" fill="currentColor" opacity="0.15"/>,
+    CHF: <path d="M12 4 L20 4 L22 8 L20 14 L16 16 L12 14 L10 8 Z" fill="currentColor" opacity="0.15"/>,
+    CNY: <path d="M5 5 L30 5 L28 10 L30 15 L25 18 L15 18 L8 15 L5 10 Z" fill="currentColor" opacity="0.15"/>,
+    SGD: <path d="M10 8 L22 8 L22 16 L10 16 Z" fill="currentColor" opacity="0.15"/>,
+    AED: <path d="M8 8 L25 8 L28 12 L25 16 L8 16 L5 12 Z" fill="currentColor" opacity="0.15"/>,
+    THB: <path d="M12 3 L18 3 L20 8 L22 5 L25 8 L23 15 L18 20 L12 18 L10 12 Z" fill="currentColor" opacity="0.15"/>,
+    NZD: <path d="M8 6 L15 4 L20 6 L18 12 L22 14 L18 18 L12 16 L8 12 Z" fill="currentColor" opacity="0.15"/>
   };
 
   return (
@@ -96,7 +83,7 @@ const Forex = () => {
               </h1>
             </div>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Real-time currency exchange rates for Indian Rupee (INR). Click the swap button to interchange currencies.
+              Currency exchange rates for Indian Rupee (INR). Click the swap button to interchange currencies.
             </p>
           </div>
 
@@ -106,7 +93,7 @@ const Forex = () => {
               <div className="flex items-center gap-3">
                 <TrendingUp className="w-6 h-6 text-accent" />
                 <div>
-                  <h3 className="font-semibold text-foreground">Base Currency: Indian Rupee (INR)</h3>
+                  <h3 className="font-semibold text-foreground">Base Currency: Indian Rupee (INR) 🇮🇳</h3>
                   <p className="text-sm text-muted-foreground">Click <ArrowRightLeft className="w-4 h-4 inline" /> to swap conversion direction</p>
                 </div>
               </div>
@@ -140,6 +127,7 @@ const Forex = () => {
               {Object.entries(forexData.rates).map(([currency, rate]) => {
                 const isSwapped = swappedCurrencies[currency];
                 const inverseRate = 1 / rate;
+                const info = currencyData[currency] || { name: currency, country: 'Unknown', flag: '🌍', symbol: currency };
                 
                 return (
                   <motion.div
@@ -147,54 +135,66 @@ const Forex = () => {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3 }}
-                    className="forex-card relative"
+                    className={`forex-card relative overflow-hidden ${isSwapped ? 'ring-2 ring-accent' : ''}`}
                     data-testid={`forex-card-${currency}`}
                   >
+                    {/* Mini country shape background */}
+                    <svg 
+                      className="absolute right-0 top-0 w-24 h-24 text-primary"
+                      viewBox="0 0 35 25"
+                    >
+                      {countryShapes[currency] || countryShapes.USD}
+                    </svg>
+                    
                     {/* Swap Button */}
                     <button
                       onClick={() => toggleSwap(currency)}
-                      className="absolute top-3 right-3 p-2 rounded-full bg-accent/10 hover:bg-accent/20 transition-all group"
+                      className="absolute top-3 right-3 p-2 rounded-full bg-accent/10 hover:bg-accent/20 transition-all group z-10"
                       title="Swap currencies"
                       data-testid={`swap-btn-${currency}`}
                     >
                       <ArrowRightLeft className={`w-4 h-4 text-primary group-hover:rotate-180 transition-transform duration-300 ${isSwapped ? 'rotate-180' : ''}`} />
                     </button>
 
-                    <div className="flex items-center justify-between mb-4 pr-10">
-                      <span className="text-4xl">{currencyFlags[currency] || '🌍'}</span>
-                      <div className="text-right">
-                        <div className="text-sm font-medium text-muted-foreground">{currency}</div>
-                        <div className="text-xs text-muted-foreground">{currencyNames[currency]}</div>
+                    <div className="relative z-10">
+                      {/* Flag and Currency Info */}
+                      <div className="flex items-start gap-3 mb-4 pr-10">
+                        <span className="text-4xl">{info.flag}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-lg font-bold text-primary">{currency}</div>
+                          <div className="text-sm text-muted-foreground truncate">{info.name}</div>
+                          <div className="text-xs text-muted-foreground/70 truncate">{info.country}</div>
+                        </div>
                       </div>
-                    </div>
 
-                    {!isSwapped ? (
-                      <>
-                        {/* INR to Foreign Currency */}
-                        <div className="text-3xl font-bold text-primary mb-2">
-                          {rate.toFixed(4)}
-                        </div>
-                        <div className="text-sm text-muted-foreground font-medium">
-                          1 INR = {rate.toFixed(4)} {currency}
-                        </div>
-                        <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
-                          ₹1,000 = {currencySymbols[currency]}{(rate * 1000).toFixed(2)}
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        {/* Foreign Currency to INR */}
-                        <div className="text-3xl font-bold text-accent mb-2">
-                          ₹{inverseRate.toFixed(2)}
-                        </div>
-                        <div className="text-sm text-muted-foreground font-medium">
-                          1 {currency} = ₹{inverseRate.toFixed(2)} INR
-                        </div>
-                        <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
-                          {currencySymbols[currency]}100 = ₹{(inverseRate * 100).toFixed(2)}
-                        </div>
-                      </>
-                    )}
+                      {!isSwapped ? (
+                        <>
+                          {/* INR to Foreign Currency */}
+                          <div className="text-3xl font-bold text-primary mb-2">
+                            {rate.toFixed(4)}
+                          </div>
+                          <div className="text-sm text-muted-foreground font-medium">
+                            1 INR = {rate.toFixed(4)} {currency}
+                          </div>
+                          <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
+                            ₹1,000 = {info.symbol}{(rate * 1000).toFixed(2)}
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          {/* Foreign Currency to INR */}
+                          <div className="text-3xl font-bold text-accent mb-2">
+                            ₹{inverseRate.toFixed(2)}
+                          </div>
+                          <div className="text-sm text-muted-foreground font-medium">
+                            1 {currency} = ₹{inverseRate.toFixed(2)} INR
+                          </div>
+                          <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border">
+                            {info.symbol}100 = ₹{(inverseRate * 100).toFixed(2)}
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </motion.div>
                 );
               })}
@@ -208,7 +208,7 @@ const Forex = () => {
           {/* Disclaimer */}
           <div className="mt-12 bg-muted/30 rounded-xl p-6 border border-border">
             <p className="text-sm text-muted-foreground text-center">
-              <strong>Note:</strong> Exchange rates are indicative and may vary. Please check with your bank or exchange service for exact rates. Rates are updated daily.
+              <strong>Note:</strong> Exchange rates are indicative and may vary. Please check with your bank or exchange service for exact rates.
             </p>
           </div>
         </motion.div>
