@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { motion } from 'framer-motion';
-import { BookOpen, Clock, Tag, Calendar as CalendarIcon } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { BookOpen, Clock, Tag, Calendar as CalendarIcon, ChevronDown, ChevronUp, X } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -9,6 +9,7 @@ const Blog = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [expandedBlog, setExpandedBlog] = useState(null);
 
   const categories = ['all', 'Budget Travel', 'Visa Tips', 'Seasonal Travel', 'Tech & Apps', 'Money Tips', 'Destination Guide'];
 
@@ -43,6 +44,14 @@ const Blog = () => {
     return colors[category] || '#2C3E50';
   };
 
+  const handleExpand = (blog) => {
+    setExpandedBlog(expandedBlog?.slug === blog.slug ? null : blog);
+  };
+
+  const closeExpanded = () => {
+    setExpandedBlog(null);
+  };
+
   return (
     <div className="min-h-screen py-12 px-6">
       <div className="max-w-7xl mx-auto">
@@ -60,7 +69,7 @@ const Blog = () => {
               </h1>
             </div>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Expert advice, insider tips, and comprehensive guides to help you plan your perfect trip.
+              Expert advice, insider tips, and comprehensive guides to help you plan your perfect trip. Click on any article to read more.
             </p>
           </div>
 
@@ -77,7 +86,7 @@ const Blog = () => {
                     backgroundColor: selectedCategory === category ? '#2C3E50' : '#F5F5F5',
                     color: selectedCategory === category ? 'white' : '#2C3E50'
                   }}
-                  data-testid={`category-${category.toLowerCase().replace(' ', '-')}`}
+                  data-testid={`category-${category.toLowerCase().replace(/ /g, '-')}`}
                 >
                   {category === 'all' ? 'All Articles' : category}
                 </button>
@@ -101,7 +110,8 @@ const Blog = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
-                  className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-2"
+                  className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer"
+                  onClick={() => handleExpand(blog)}
                   data-testid={`blog-card-${index}`}
                 >
                   {/* Image */}
@@ -140,6 +150,7 @@ const Blog = () => {
                           <span>{blog.read_time} min read</span>
                         </div>
                       </div>
+                      <ChevronDown className="w-4 h-4 text-primary" />
                     </div>
 
                     {/* Tags */}
@@ -166,6 +177,133 @@ const Blog = () => {
           )}
         </motion.div>
       </div>
+
+      {/* Expanded Article Modal */}
+      <AnimatePresence>
+        {expandedBlog && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4"
+            onClick={closeExpanded}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 50 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 50 }}
+              className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+              data-testid="expanded-article"
+            >
+              {/* Close button */}
+              <button
+                onClick={closeExpanded}
+                className="absolute top-4 right-4 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-all z-10"
+                data-testid="close-article"
+              >
+                <X className="w-5 h-5 text-primary" />
+              </button>
+
+              {/* Article Image */}
+              <div className="relative h-64 overflow-hidden">
+                <img
+                  src={expandedBlog.image_url}
+                  alt={expandedBlog.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-4 left-6 right-6">
+                  <span
+                    className="inline-block px-3 py-1 rounded-full text-xs font-medium text-white mb-3"
+                    style={{ backgroundColor: getCategoryColor(expandedBlog.category) }}
+                  >
+                    {expandedBlog.category}
+                  </span>
+                  <h2 className="text-2xl md:text-3xl font-bold text-white">
+                    {expandedBlog.title}
+                  </h2>
+                </div>
+              </div>
+
+              {/* Article Content */}
+              <div className="p-6 md:p-8">
+                {/* Meta */}
+                <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6 pb-4 border-b border-border">
+                  <div className="flex items-center gap-1">
+                    <CalendarIcon className="w-4 h-4" />
+                    <span>{new Date(expandedBlog.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    <span>{expandedBlog.read_time} min read</span>
+                  </div>
+                </div>
+
+                {/* Excerpt */}
+                <p className="text-lg text-muted-foreground mb-6 font-medium italic">
+                  {expandedBlog.excerpt}
+                </p>
+
+                {/* Full Content */}
+                <div className="prose prose-lg max-w-none">
+                  {expandedBlog.content ? (
+                    <div className="text-foreground leading-relaxed whitespace-pre-line">
+                      {expandedBlog.content}
+                    </div>
+                  ) : (
+                    <div className="text-foreground leading-relaxed space-y-4">
+                      <p>
+                        {expandedBlog.excerpt}
+                      </p>
+                      <p>
+                        This article covers essential tips and insights about {expandedBlog.category.toLowerCase()}. 
+                        Whether you're a first-time traveler or a seasoned explorer, these tips will help you 
+                        make the most of your journey.
+                      </p>
+                      <h3 className="text-xl font-semibold text-primary mt-6 mb-3">Key Takeaways</h3>
+                      <ul className="list-disc pl-6 space-y-2">
+                        <li>Plan ahead and research your destination thoroughly</li>
+                        <li>Always have backup copies of important documents</li>
+                        <li>Learn a few basic phrases in the local language</li>
+                        <li>Stay connected with local apps and services</li>
+                        <li>Respect local customs and traditions</li>
+                      </ul>
+                      <h3 className="text-xl font-semibold text-primary mt-6 mb-3">Final Thoughts</h3>
+                      <p>
+                        Remember, the best travel experiences come from being prepared while staying open to 
+                        unexpected adventures. Use these tips as a starting point, but don't be afraid to 
+                        explore and discover your own travel style.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2 mt-8 pt-6 border-t border-border">
+                  {expandedBlog.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium"
+                    >
+                      <Tag className="w-3 h-3" />
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Close Button */}
+                <button
+                  onClick={closeExpanded}
+                  className="w-full mt-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-all"
+                >
+                  Close Article
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
