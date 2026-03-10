@@ -267,6 +267,18 @@ async def get_blogs(category: Optional[str] = None):
     blogs = await db.blogs.find(query, {"_id": 0}).to_list(100)
     return {"data": blogs}
 
+@api_router.get("/weather")
+async def get_weather():
+    """Get all countries with weather information"""
+    weather_info = await db.weather.find({}, {"_id": 0}).to_list(1000)
+    return {"data": weather_info}
+
+@api_router.get("/plugs")
+async def get_plugs():
+    """Get all countries with power plug information"""
+    plug_info = await db.plugs.find({}, {"_id": 0}).to_list(1000)
+    return {"data": plug_info}
+
 # Include router
 app.include_router(api_router)
 
