@@ -23,9 +23,67 @@ db = client[os.environ['DB_NAME']]
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
+# OpenWeatherMap API configuration for real-time weather
+OPENWEATHER_API_KEY = os.environ.get('OPENWEATHER_API_KEY', '')
+OPENWEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
+
 # FOREX API configuration
 FOREX_API_KEY = "4c80c30afeadb2fb5bd13e82"
 FOREX_BASE_URL = "https://v6.exchangerate-api.com/v6"
+
+# Country capital coordinates for weather lookup
+COUNTRY_CAPITALS = {
+    "USA": {"lat": 38.89, "lon": -77.03, "name": "United States"},
+    "CAN": {"lat": 45.42, "lon": -75.69, "name": "Canada"},
+    "GBR": {"lat": 51.51, "lon": -0.13, "name": "United Kingdom"},
+    "FRA": {"lat": 48.86, "lon": 2.35, "name": "France"},
+    "DEU": {"lat": 52.52, "lon": 13.40, "name": "Germany"},
+    "ITA": {"lat": 41.90, "lon": 12.50, "name": "Italy"},
+    "ESP": {"lat": 40.42, "lon": -3.70, "name": "Spain"},
+    "AUS": {"lat": -35.28, "lon": 149.13, "name": "Australia"},
+    "JPN": {"lat": 35.68, "lon": 139.69, "name": "Japan"},
+    "CHN": {"lat": 39.90, "lon": 116.40, "name": "China"},
+    "IND": {"lat": 28.61, "lon": 77.21, "name": "India"},
+    "BRA": {"lat": -15.79, "lon": -47.88, "name": "Brazil"},
+    "RUS": {"lat": 55.76, "lon": 37.62, "name": "Russia"},
+    "MEX": {"lat": 19.43, "lon": -99.13, "name": "Mexico"},
+    "THA": {"lat": 13.76, "lon": 100.50, "name": "Thailand"},
+    "SGP": {"lat": 1.29, "lon": 103.85, "name": "Singapore"},
+    "ARE": {"lat": 24.47, "lon": 54.37, "name": "United Arab Emirates"},
+    "EGY": {"lat": 30.04, "lon": 31.24, "name": "Egypt"},
+    "ZAF": {"lat": -25.75, "lon": 28.19, "name": "South Africa"},
+    "ARG": {"lat": -34.60, "lon": -58.38, "name": "Argentina"},
+    "NZL": {"lat": -41.29, "lon": 174.78, "name": "New Zealand"},
+    "KOR": {"lat": 37.57, "lon": 126.98, "name": "South Korea"},
+    "NLD": {"lat": 52.37, "lon": 4.89, "name": "Netherlands"},
+    "SWE": {"lat": 59.33, "lon": 18.07, "name": "Sweden"},
+    "NOR": {"lat": 59.91, "lon": 10.75, "name": "Norway"},
+    "CHE": {"lat": 46.95, "lon": 7.45, "name": "Switzerland"},
+    "TUR": {"lat": 39.93, "lon": 32.85, "name": "Turkey"},
+    "GRC": {"lat": 37.98, "lon": 23.73, "name": "Greece"},
+    "PRT": {"lat": 38.72, "lon": -9.14, "name": "Portugal"},
+    "IDN": {"lat": -6.21, "lon": 106.85, "name": "Indonesia"},
+    "MYS": {"lat": 3.14, "lon": 101.69, "name": "Malaysia"},
+    "PHL": {"lat": 14.60, "lon": 120.98, "name": "Philippines"},
+    "VNM": {"lat": 21.03, "lon": 105.85, "name": "Vietnam"},
+    "POL": {"lat": 52.23, "lon": 21.01, "name": "Poland"},
+    "AUT": {"lat": 48.21, "lon": 16.37, "name": "Austria"},
+    "FIN": {"lat": 60.17, "lon": 24.94, "name": "Finland"},
+    "DNK": {"lat": 55.68, "lon": 12.57, "name": "Denmark"},
+    "IRL": {"lat": 53.35, "lon": -6.26, "name": "Ireland"},
+    "CZE": {"lat": 50.08, "lon": 14.44, "name": "Czech Republic"},
+    "ISR": {"lat": 31.77, "lon": 35.22, "name": "Israel"},
+    "SAU": {"lat": 24.69, "lon": 46.72, "name": "Saudi Arabia"},
+    "HUN": {"lat": 47.50, "lon": 19.04, "name": "Hungary"},
+    "CHL": {"lat": -33.45, "lon": -70.67, "name": "Chile"},
+    "COL": {"lat": 4.71, "lon": -74.07, "name": "Colombia"},
+    "PER": {"lat": -12.05, "lon": -77.04, "name": "Peru"},
+    "PAK": {"lat": 33.69, "lon": 73.06, "name": "Pakistan"},
+    "BGD": {"lat": 23.81, "lon": 90.41, "name": "Bangladesh"},
+    "KEN": {"lat": -1.29, "lon": 36.82, "name": "Kenya"},
+    "NGA": {"lat": 9.08, "lon": 7.40, "name": "Nigeria"},
+    "MAR": {"lat": 34.02, "lon": -6.83, "name": "Morocco"},
+}
 
 # Models
 class CountrySeasonData(BaseModel):
@@ -269,15 +327,95 @@ async def get_blogs(category: Optional[str] = None):
 
 @api_router.get("/weather")
 async def get_weather():
-    """Get all countries with weather information"""
+    """Get all countries with weather information from database"""
     weather_info = await db.weather.find({}, {"_id": 0}).to_list(1000)
     return {"data": weather_info}
+
+@api_router.get("/weather/realtime")
+async def get_realtime_weather(country_code: Optional[str] = None):
+    """Get real-time weather for countries using OpenWeatherMap API"""
+    if not OPENWEATHER_API_KEY:
+        # Fall back to database weather if no API key
+        weather_info = await db.weather.find({}, {"_id": 0}).to_list(1000)
+        return {"data": weather_info, "source": "database", "note": "Real-time API key not configured"}
+    
+    results = []
+    current_month = datetime.now(timezone.utc).month
+    
+    # Define which countries to fetch
+    countries_to_fetch = COUNTRY_CAPITALS
+    if country_code:
+        country_code = country_code.upper()
+        if country_code in COUNTRY_CAPITALS:
+            countries_to_fetch = {country_code: COUNTRY_CAPITALS[country_code]}
+        else:
+            raise HTTPException(status_code=404, detail=f"Country {country_code} not found")
+    
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        for code, info in countries_to_fetch.items():
+            try:
+                url = f"{OPENWEATHER_BASE_URL}?lat={info['lat']}&lon={info['lon']}&appid={OPENWEATHER_API_KEY}&units=metric"
+                response = await client.get(url)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    temp = data["main"]["temp"]
+                    weather_main = data["weather"][0]["main"].lower()
+                    humidity = data["main"].get("humidity", 50)
+                    
+                    # Classify weather type based on conditions and temperature
+                    if weather_main in ["snow", "blizzard"] or temp < 0:
+                        weather_type = "snow"
+                    elif weather_main in ["rain", "drizzle", "thunderstorm", "mist"] or humidity > 80:
+                        weather_type = "rainy"
+                    elif temp > 35 or (weather_main in ["clear", "sunny"] and temp > 30):
+                        weather_type = "hot"
+                    elif weather_main in ["dust", "sand", "haze"] or (temp > 25 and humidity < 30):
+                        weather_type = "sandy"
+                    elif temp > 20:
+                        weather_type = "hot"
+                    elif temp < 5:
+                        weather_type = "snow"
+                    else:
+                        weather_type = "rainy"
+                    
+                    results.append({
+                        "country_code": code,
+                        "country_name": info["name"],
+                        "weather_type": weather_type,
+                        "avg_temp": f"{temp:.0f}°C",
+                        "description": f"{data['weather'][0]['description'].capitalize()}",
+                        "humidity": f"{humidity}%",
+                        "realtime": True
+                    })
+            except Exception as e:
+                logging.warning(f"Failed to fetch weather for {code}: {e}")
+                continue
+    
+    if not results:
+        # Fall back to database if API fails
+        weather_info = await db.weather.find({}, {"_id": 0}).to_list(1000)
+        return {"data": weather_info, "source": "database", "note": "Real-time API unavailable"}
+    
+    return {"data": results, "source": "realtime", "fetched_at": datetime.now(timezone.utc).isoformat()}
 
 @api_router.get("/plugs")
 async def get_plugs():
     """Get all countries with power plug information"""
     plug_info = await db.plugs.find({}, {"_id": 0}).to_list(1000)
     return {"data": plug_info}
+
+@api_router.get("/festivals")
+async def get_festivals(month: Optional[int] = None, country_code: Optional[str] = None):
+    """Get festival information with optional filters"""
+    query = {}
+    if month:
+        query["month"] = month
+    if country_code:
+        query["country_code"] = country_code.upper()
+    
+    festivals = await db.festivals.find(query, {"_id": 0}).to_list(1000)
+    return {"data": festivals}
 
 # Include router
 app.include_router(api_router)

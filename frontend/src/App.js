@@ -8,6 +8,7 @@ import Forex from './pages/Forex';
 import Apps from './pages/Apps';
 import Weather from './pages/Weather';
 import PowerPlug from './pages/PowerPlug';
+import Festivals from './pages/Festivals';
 import CountryDetail from './pages/CountryDetail';
 import Blog from './pages/Blog';
 import '@/App.css';
@@ -25,6 +26,7 @@ function App() {
           <Route path="/apps" element={<Apps />} />
           <Route path="/weather" element={<Weather />} />
           <Route path="/plugs" element={<PowerPlug />} />
+          <Route path="/festivals" element={<Festivals />} />
           <Route path="/country/:countryCode" element={<CountryDetail />} />
           <Route path="/blog" element={<Blog />} />
         </Routes>

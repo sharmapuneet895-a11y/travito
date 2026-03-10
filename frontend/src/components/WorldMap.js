@@ -74,6 +74,18 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         'mixed': '#95A5A6'
       };
       return plugColors[countryData.plug_type] || '#E8E8E6';
+    } else if (mode === 'festivals') {
+      // Color based on number of festivals
+      switch (countryData.festival_type) {
+        case 'many':
+          return '#E25A53'; // Red - 3+ festivals
+        case 'some':
+          return '#F2A900'; // Orange - 2 festivals
+        case 'few':
+          return '#4B89AC'; // Blue - 1 festival
+        default:
+          return '#E8E8E6';
+      }
     }
 
     return '#E8E8E6';
@@ -102,6 +114,8 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         info = `${countryData.country_name} - ${countryData.weather_type.toUpperCase()} (${countryData.avg_temp})`;
       } else if (mode === 'plug') {
         info = `${countryData.country_name} - Type ${countryData.plug_type.toUpperCase()} (${countryData.voltage})`;
+      } else if (mode === 'festivals') {
+        info = `${countryData.country_name} - ${countryData.festival_count} festival${countryData.festival_count !== 1 ? 's' : ''}`;
       }
       setTooltipContent(info);
     } else {
@@ -118,12 +132,14 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
   return (
     <div className="relative" data-testid="world-map-container">
       <ComposableMap
-        projection="geoMercator"
+        projection="geoNaturalEarth1"
         projectionConfig={{
-          scale: 147,
-          center: [0, 20]
+          scale: 160,
+          center: [0, 0]
         }}
         style={{ width: '100%', height: 'auto' }}
+        width={980}
+        height={520}
       >
         <defs>
           {/* Enhanced wavy water pattern with animation */}
@@ -174,83 +190,178 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
           
           {/* Text shadow filter for ocean labels */}
           <filter id="textShadow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="1" dy="1" stdDeviation="2" floodColor="#FFFFFF" floodOpacity="0.8"/>
+            <feDropShadow dx="1" dy="1" stdDeviation="2" floodColor="#FFFFFF" floodOpacity="0.9"/>
+          </filter>
+          
+          {/* Background glow for better text visibility */}
+          <filter id="textGlow" x="-100%" y="-100%" width="300%" height="300%">
+            <feFlood floodColor="#A8D8F0" result="flood"/>
+            <feComposite in="flood" in2="SourceGraphic" operator="in" result="mask"/>
+            <feGaussianBlur in="mask" stdDeviation="4" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
           </filter>
         </defs>
         
         {/* Ocean background with enhanced blue color */}
-        <rect x="-1000" y="-500" width="3000" height="1500" fill="#A8D8F0" />
-        <rect x="-1000" y="-500" width="3000" height="1500" fill="url(#waves)" opacity="0.9" />
+        <rect x="-50" y="-50" width="1100" height="650" fill="#A8D8F0" />
+        <rect x="-50" y="-50" width="1100" height="650" fill="url(#waves)" opacity="0.9" />
         
-        {/* Enhanced Ocean Labels - Much Larger and More Prominent */}
+        {/* Ocean Labels - Positioned in clear ocean areas */}
+        {/* North Atlantic - between North America and Europe */}
         <text 
-          x="350" 
-          y="40" 
-          fill="#1A5276" 
-          fontSize="22" 
+          x="340" 
+          y="145" 
+          fill="#1565A0" 
+          fontSize="12" 
           fontWeight="bold" 
-          opacity="0.85" 
+          opacity="0.95" 
           fontStyle="italic"
-          filter="url(#textShadow)"
-          letterSpacing="1"
+          filter="url(#textGlow)"
+          letterSpacing="2"
+          textAnchor="middle"
         >
-          ARCTIC OCEAN
+          NORTH
+        </text>
+        <text 
+          x="340" 
+          y="160" 
+          fill="#1565A0" 
+          fontSize="12" 
+          fontWeight="bold" 
+          opacity="0.95" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="2"
+          textAnchor="middle"
+        >
+          ATLANTIC
         </text>
         
+        {/* South Atlantic - between South America and Africa */}
         <text 
-          x="-100" 
-          y="200" 
-          fill="#1A5276" 
-          fontSize="26" 
+          x="400" 
+          y="345" 
+          fill="#1565A0" 
+          fontSize="12" 
           fontWeight="bold" 
-          opacity="0.85" 
+          opacity="0.95" 
           fontStyle="italic"
-          filter="url(#textShadow)"
-          letterSpacing="1.5"
+          filter="url(#textGlow)"
+          letterSpacing="2"
+          textAnchor="middle"
         >
-          ATLANTIC OCEAN
+          SOUTH
+        </text>
+        <text 
+          x="400" 
+          y="360" 
+          fill="#1565A0" 
+          fontSize="12" 
+          fontWeight="bold" 
+          opacity="0.95" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="2"
+          textAnchor="middle"
+        >
+          ATLANTIC
         </text>
         
+        {/* North Pacific - left of North America */}
         <text 
-          x="500" 
-          y="200" 
-          fill="#1A5276" 
-          fontSize="26" 
+          x="100" 
+          y="175" 
+          fill="#1565A0" 
+          fontSize="12" 
           fontWeight="bold" 
-          opacity="0.85" 
+          opacity="0.95" 
           fontStyle="italic"
-          filter="url(#textShadow)"
-          letterSpacing="1.5"
+          filter="url(#textGlow)"
+          letterSpacing="2"
+          textAnchor="middle"
         >
-          PACIFIC OCEAN
+          NORTH
+        </text>
+        <text 
+          x="100" 
+          y="190" 
+          fill="#1565A0" 
+          fontSize="12" 
+          fontWeight="bold" 
+          opacity="0.95" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="2"
+          textAnchor="middle"
+        >
+          PACIFIC
         </text>
         
+        {/* South Pacific - bottom left */}
         <text 
-          x="700" 
-          y="220" 
-          fill="#1A5276" 
-          fontSize="24" 
+          x="100" 
+          y="380" 
+          fill="#1565A0" 
+          fontSize="14" 
           fontWeight="bold" 
-          opacity="0.85" 
+          opacity="0.95" 
           fontStyle="italic"
-          filter="url(#textShadow)"
-          letterSpacing="1.2"
+          filter="url(#textGlow)"
+          letterSpacing="3"
+          textAnchor="middle"
+        >
+          SOUTH PACIFIC
+        </text>
+        
+        {/* Indian Ocean - between Africa and Australia */}
+        <text 
+          x="680" 
+          y="310" 
+          fill="#1565A0" 
+          fontSize="14" 
+          fontWeight="bold" 
+          opacity="0.95" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="3"
+          textAnchor="middle"
         >
           INDIAN OCEAN
         </text>
         
+        {/* Southern Ocean - at the bottom */}
         <text 
-          x="400" 
-          y="410" 
-          fill="#1A5276" 
-          fontSize="20" 
+          x="490" 
+          y="485" 
+          fill="#1565A0" 
+          fontSize="12" 
           fontWeight="bold" 
-          opacity="0.85" 
+          opacity="0.9" 
           fontStyle="italic"
-          filter="url(#textShadow)"
-          letterSpacing="1"
+          filter="url(#textGlow)"
+          letterSpacing="3"
+          textAnchor="middle"
         >
           SOUTHERN OCEAN
+        </text>
+        
+        {/* West Pacific - between Asia and Australia */}
+        <text 
+          x="860" 
+          y="240" 
+          fill="#1565A0" 
+          fontSize="12" 
+          fontWeight="bold" 
+          opacity="0.95" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="2"
+          textAnchor="middle"
+        >
+          WEST PACIFIC
         </text>
         
         <Geographies geography={geoUrl}>
