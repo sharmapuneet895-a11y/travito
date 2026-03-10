@@ -35,20 +35,85 @@ const Forex = () => {
     }));
   };
 
-  // Currency data with country info
+  // Currency data with country info and flag image URLs
   const currencyData = {
-    USD: { name: 'US Dollar', country: 'United States', flag: '🇺🇸', symbol: '$' },
-    EUR: { name: 'Euro', country: 'European Union', flag: '🇪🇺', symbol: '€' },
-    GBP: { name: 'British Pound', country: 'United Kingdom', flag: '🇬🇧', symbol: '£' },
-    JPY: { name: 'Japanese Yen', country: 'Japan', flag: '🇯🇵', symbol: '¥' },
-    AUD: { name: 'Australian Dollar', country: 'Australia', flag: '🇦🇺', symbol: 'A$' },
-    CAD: { name: 'Canadian Dollar', country: 'Canada', flag: '🇨🇦', symbol: 'C$' },
-    CHF: { name: 'Swiss Franc', country: 'Switzerland', flag: '🇨🇭', symbol: 'CHF' },
-    CNY: { name: 'Chinese Yuan', country: 'China', flag: '🇨🇳', symbol: '¥' },
-    SGD: { name: 'Singapore Dollar', country: 'Singapore', flag: '🇸🇬', symbol: 'S$' },
-    AED: { name: 'UAE Dirham', country: 'United Arab Emirates', flag: '🇦🇪', symbol: 'د.إ' },
-    THB: { name: 'Thai Baht', country: 'Thailand', flag: '🇹🇭', symbol: '฿' },
-    NZD: { name: 'New Zealand Dollar', country: 'New Zealand', flag: '🇳🇿', symbol: 'NZ$' }
+    USD: { 
+      name: 'US Dollar', 
+      country: 'United States', 
+      countryCode: 'us',
+      symbol: '$' 
+    },
+    EUR: { 
+      name: 'Euro', 
+      country: 'European Union', 
+      countryCode: 'eu',
+      symbol: '€' 
+    },
+    GBP: { 
+      name: 'British Pound', 
+      country: 'United Kingdom', 
+      countryCode: 'gb',
+      symbol: '£' 
+    },
+    JPY: { 
+      name: 'Japanese Yen', 
+      country: 'Japan', 
+      countryCode: 'jp',
+      symbol: '¥' 
+    },
+    AUD: { 
+      name: 'Australian Dollar', 
+      country: 'Australia', 
+      countryCode: 'au',
+      symbol: 'A$' 
+    },
+    CAD: { 
+      name: 'Canadian Dollar', 
+      country: 'Canada', 
+      countryCode: 'ca',
+      symbol: 'C$' 
+    },
+    CHF: { 
+      name: 'Swiss Franc', 
+      country: 'Switzerland', 
+      countryCode: 'ch',
+      symbol: 'CHF' 
+    },
+    CNY: { 
+      name: 'Chinese Yuan', 
+      country: 'China', 
+      countryCode: 'cn',
+      symbol: '¥' 
+    },
+    SGD: { 
+      name: 'Singapore Dollar', 
+      country: 'Singapore', 
+      countryCode: 'sg',
+      symbol: 'S$' 
+    },
+    AED: { 
+      name: 'UAE Dirham', 
+      country: 'United Arab Emirates', 
+      countryCode: 'ae',
+      symbol: 'د.إ' 
+    },
+    THB: { 
+      name: 'Thai Baht', 
+      country: 'Thailand', 
+      countryCode: 'th',
+      symbol: '฿' 
+    },
+    NZD: { 
+      name: 'New Zealand Dollar', 
+      country: 'New Zealand', 
+      countryCode: 'nz',
+      symbol: 'NZ$' 
+    }
+  };
+
+  // Get flag image URL from flagcdn.com
+  const getFlagUrl = (countryCode) => {
+    return `https://flagcdn.com/w80/${countryCode}.png`;
   };
 
   return (
@@ -76,9 +141,13 @@ const Forex = () => {
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-center gap-3">
                 <TrendingUp className="w-6 h-6 text-accent" />
-                <div>
-                  <h3 className="font-semibold text-foreground">Base Currency: Indian Rupee (INR) 🇮🇳</h3>
-                  <p className="text-sm text-muted-foreground">Click <ArrowRightLeft className="w-4 h-4 inline" /> to swap conversion direction</p>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-foreground">Base Currency: Indian Rupee (INR)</h3>
+                  <img 
+                    src="https://flagcdn.com/w40/in.png" 
+                    alt="India" 
+                    className="w-6 h-4 object-cover rounded-sm"
+                  />
                 </div>
               </div>
               <button
@@ -91,8 +160,11 @@ const Forex = () => {
                 Refresh Rates
               </button>
             </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              Click <ArrowRightLeft className="w-4 h-4 inline" /> to swap conversion direction
+            </p>
             {lastUpdated && (
-              <p className="text-xs text-muted-foreground mt-4">
+              <p className="text-xs text-muted-foreground mt-2">
                 Last updated: {lastUpdated}
               </p>
             )}
@@ -111,7 +183,7 @@ const Forex = () => {
               {Object.entries(forexData.rates).map(([currency, rate]) => {
                 const isSwapped = swappedCurrencies[currency];
                 const inverseRate = 1 / rate;
-                const info = currencyData[currency] || { name: currency, country: 'Unknown', flag: '🌍', symbol: currency };
+                const info = currencyData[currency] || { name: currency, country: 'Unknown', countryCode: 'un', symbol: currency };
                 
                 return (
                   <motion.div
@@ -125,12 +197,23 @@ const Forex = () => {
                     {/* Header with Flag and Currency */}
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <span className="text-4xl">{info.flag}</span>
+                        <img 
+                          src={getFlagUrl(info.countryCode)} 
+                          alt={info.country}
+                          className="w-12 h-8 object-cover rounded shadow-sm border border-gray-200"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
+                        />
                         <div>
                           <div className="text-xl font-bold text-primary">{currency}</div>
                           <div className="text-sm text-muted-foreground">{info.name}</div>
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground/70">
-                            <span className="text-base">{info.flag}</span>
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground/70 mt-0.5">
+                            <img 
+                              src={getFlagUrl(info.countryCode)} 
+                              alt="" 
+                              className="w-4 h-3 object-cover rounded-sm"
+                            />
                             <span>{info.country}</span>
                           </div>
                         </div>
