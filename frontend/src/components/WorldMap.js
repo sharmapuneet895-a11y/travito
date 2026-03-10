@@ -126,44 +126,131 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         style={{ width: '100%', height: 'auto' }}
       >
         <defs>
-          {/* Wavy water pattern */}
-          <pattern id="waves" x="0" y="0" width="100" height="20" patternUnits="userSpaceOnUse">
+          {/* Enhanced wavy water pattern with animation */}
+          <pattern id="waves" x="0" y="0" width="120" height="30" patternUnits="userSpaceOnUse">
             <path
-              d="M0 10 Q 25 5, 50 10 T 100 10"
+              d="M0 15 Q 30 8, 60 15 T 120 15"
               fill="none"
-              stroke="#B8D4E8"
-              strokeWidth="0.5"
+              stroke="#5BA3D0"
+              strokeWidth="1.5"
+              opacity="0.4"
+            >
+              <animate
+                attributeName="d"
+                values="M0 15 Q 30 8, 60 15 T 120 15;M0 15 Q 30 22, 60 15 T 120 15;M0 15 Q 30 8, 60 15 T 120 15"
+                dur="8s"
+                repeatCount="indefinite"
+              />
+            </path>
+            <path
+              d="M0 20 Q 30 13, 60 20 T 120 20"
+              fill="none"
+              stroke="#7BB8DD"
+              strokeWidth="1.2"
               opacity="0.3"
-            />
+            >
+              <animate
+                attributeName="d"
+                values="M0 20 Q 30 13, 60 20 T 120 20;M0 20 Q 30 27, 60 20 T 120 20;M0 20 Q 30 13, 60 20 T 120 20"
+                dur="6s"
+                repeatCount="indefinite"
+              />
+            </path>
             <path
-              d="M0 15 Q 25 10, 50 15 T 100 15"
+              d="M0 10 Q 30 5, 60 10 T 120 10"
               fill="none"
-              stroke="#B8D4E8"
-              strokeWidth="0.5"
-              opacity="0.2"
-            />
+              stroke="#9DCCE8"
+              strokeWidth="1"
+              opacity="0.25"
+            >
+              <animate
+                attributeName="d"
+                values="M0 10 Q 30 5, 60 10 T 120 10;M0 10 Q 30 15, 60 10 T 120 10;M0 10 Q 30 5, 60 10 T 120 10"
+                dur="10s"
+                repeatCount="indefinite"
+              />
+            </path>
           </pattern>
+          
+          {/* Text shadow filter for ocean labels */}
+          <filter id="textShadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="1" dy="1" stdDeviation="2" floodColor="#FFFFFF" floodOpacity="0.8"/>
+          </filter>
         </defs>
         
-        {/* Ocean background with wavy pattern */}
-        <rect x="-1000" y="-500" width="3000" height="1500" fill="#C6DFF5" />
-        <rect x="-1000" y="-500" width="3000" height="1500" fill="url(#waves)" opacity="0.6" />
+        {/* Ocean background with enhanced blue color */}
+        <rect x="-1000" y="-500" width="3000" height="1500" fill="#A8D8F0" />
+        <rect x="-1000" y="-500" width="3000" height="1500" fill="url(#waves)" opacity="0.9" />
         
-        {/* Ocean Labels */}
-        <text x="350" y="50" fill="#2C5F8D" fontSize="14" fontWeight="600" opacity="0.7" fontStyle="italic">
-          Arctic Ocean
+        {/* Enhanced Ocean Labels - Much Larger and More Prominent */}
+        <text 
+          x="350" 
+          y="40" 
+          fill="#1A5276" 
+          fontSize="22" 
+          fontWeight="bold" 
+          opacity="0.85" 
+          fontStyle="italic"
+          filter="url(#textShadow)"
+          letterSpacing="1"
+        >
+          ARCTIC OCEAN
         </text>
-        <text x="-100" y="200" fill="#2C5F8D" fontSize="16" fontWeight="600" opacity="0.7" fontStyle="italic">
-          Atlantic Ocean
+        
+        <text 
+          x="-100" 
+          y="200" 
+          fill="#1A5276" 
+          fontSize="26" 
+          fontWeight="bold" 
+          opacity="0.85" 
+          fontStyle="italic"
+          filter="url(#textShadow)"
+          letterSpacing="1.5"
+        >
+          ATLANTIC OCEAN
         </text>
-        <text x="450" y="200" fill="#2C5F8D" fontSize="16" fontWeight="600" opacity="0.7" fontStyle="italic">
-          Pacific Ocean
+        
+        <text 
+          x="500" 
+          y="200" 
+          fill="#1A5276" 
+          fontSize="26" 
+          fontWeight="bold" 
+          opacity="0.85" 
+          fontStyle="italic"
+          filter="url(#textShadow)"
+          letterSpacing="1.5"
+        >
+          PACIFIC OCEAN
         </text>
-        <text x="650" y="220" fill="#2C5F8D" fontSize="16" fontWeight="600" opacity="0.7" fontStyle="italic">
-          Indian Ocean
+        
+        <text 
+          x="700" 
+          y="220" 
+          fill="#1A5276" 
+          fontSize="24" 
+          fontWeight="bold" 
+          opacity="0.85" 
+          fontStyle="italic"
+          filter="url(#textShadow)"
+          letterSpacing="1.2"
+        >
+          INDIAN OCEAN
         </text>
-        <text x="400" y="400" fill="#2C5F8D" fontSize="14" fontWeight="600" opacity="0.7" fontStyle="italic">
-          Southern Ocean
+        
+        <text 
+          x="400" 
+          y="410" 
+          fill="#1A5276" 
+          fontSize="20" 
+          fontWeight="bold" 
+          opacity="0.85" 
+          fontStyle="italic"
+          filter="url(#textShadow)"
+          letterSpacing="1"
+        >
+          SOUTHERN OCEAN
         </text>
         
         <Geographies geography={geoUrl}>
