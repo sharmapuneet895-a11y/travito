@@ -45,12 +45,13 @@ const Home = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-5xl md:text-7xl font-bold text-primary mb-6 leading-none" data-testid="hero-title">
-              Your Digital Compass for
-              <br />
-              <span className="text-accent">Global Travel</span>
+            <h1 className="text-5xl md:text-7xl font-bold text-primary mb-6 leading-none text-center" data-testid="hero-title">
+              Pass-e-port
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed" data-testid="hero-description">
+            <h2 className="text-3xl md:text-4xl text-foreground mb-6 text-center">
+              Your Digital Compass for Global Travel
+            </h2>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed text-center" data-testid="hero-description">
               Everything Indian travelers need to know - from the best seasons to visit, visa requirements,
               live exchange rates, to the most useful apps in every destination.
             </p>
