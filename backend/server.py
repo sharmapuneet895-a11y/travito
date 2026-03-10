@@ -246,20 +246,21 @@ async def get_forex_rates():
             }
     except Exception as e:
         logging.warning(f"FOREX API error: {e}, returning sample data")
-        # Fallback to sample data when API is unavailable
+        # Fallback sample data - Updated rates (March 2026)
+        # 1 USD = ₹91.85, 1 EUR = ₹99.50, 1 GBP = ₹116.20, etc.
         sample_rates = {
-            "USD": 0.012024,
-            "EUR": 0.011083,
-            "GBP": 0.009523,
-            "JPY": 1.803412,
-            "AUD": 0.018335,
-            "CAD": 0.016322,
-            "CHF": 0.010654,
-            "CNY": 0.086523,
-            "SGD": 0.016123,
-            "AED": 0.044152,
-            "THB": 0.415234,
-            "NZD": 0.019876
+            "USD": 0.01089,   # 1 INR = 0.01089 USD (1 USD = ₹91.85)
+            "EUR": 0.01005,   # 1 INR = 0.01005 EUR (1 EUR = ₹99.50)
+            "GBP": 0.00861,   # 1 INR = 0.00861 GBP (1 GBP = ₹116.20)
+            "JPY": 1.6234,    # 1 INR = 1.6234 JPY (1 JPY = ₹0.62)
+            "AUD": 0.01678,   # 1 INR = 0.01678 AUD (1 AUD = ₹59.60)
+            "CAD": 0.01520,   # 1 INR = 0.01520 CAD (1 CAD = ₹65.80)
+            "CHF": 0.00958,   # 1 INR = 0.00958 CHF (1 CHF = ₹104.40)
+            "CNY": 0.07910,   # 1 INR = 0.07910 CNY (1 CNY = ₹12.64)
+            "SGD": 0.01468,   # 1 INR = 0.01468 SGD (1 SGD = ₹68.13)
+            "AED": 0.04000,   # 1 INR = 0.04000 AED (1 AED = ₹25.00)
+            "THB": 0.37415,   # 1 INR = 0.37415 THB (1 THB = ₹2.67)
+            "NZD": 0.01852    # 1 INR = 0.01852 NZD (1 NZD = ₹54.00)
         }
         return {
             "base_currency": "INR",
