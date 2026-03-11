@@ -215,11 +215,11 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       <ComposableMap
         projection="geoMercator"
         projectionConfig={{ 
-          scale: 120,
+          scale: 100,
           center: [0, 30]
         }}
         width={900}
-        height={480}
+        height={450}
         style={{ width: '100%', height: 'auto', maxHeight: '55vh' }}
       >
         {/* Ocean background - light blue like reference */}
