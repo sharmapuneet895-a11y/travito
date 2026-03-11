@@ -161,10 +161,10 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       </div>
 
       <ComposableMap
-        projection="geoNaturalEarth1"
-        projectionConfig={{ scale: 180, center: [10, 10] }}
+        projection="geoEqualEarth"
+        projectionConfig={{ scale: 160, center: [0, 0] }}
         width={800}
-        height={400}
+        height={450}
         style={{ width: '100%', height: '100%', backgroundColor: '#B8D4E8' }}
       >
         <ZoomableGroup zoom={zoom} center={center} onMoveEnd={({ coordinates, zoom: z }) => { setCenter(coordinates); setZoom(z); }} minZoom={1} maxZoom={8}>
@@ -175,7 +175,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
               <stop offset="100%" stopColor="#7FB3D3" />
             </linearGradient>
           </defs>
-          <rect x="-100" y="-100" width="1000" height="600" fill="url(#oceanGradient)" />
+          <rect x="-100" y="-150" width="1000" height="750" fill="url(#oceanGradient)" />
           
           <Geographies geography={geoUrl}>
             {({ geographies }) =>
@@ -201,11 +201,26 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
             }
           </Geographies>
           
-          {/* Ocean Labels - positioned for geoNaturalEarth1 projection */}
-          <text x="120" y="180" fill="#1565C0" fontSize="12" fontWeight="bold" opacity="0.7" fontStyle="italic" textAnchor="middle">PACIFIC OCEAN</text>
-          <text x="330" y="170" fill="#1565C0" fontSize="11" fontWeight="bold" opacity="0.7" fontStyle="italic" textAnchor="middle">ATLANTIC</text>
-          <text x="560" y="260" fill="#1565C0" fontSize="11" fontWeight="bold" opacity="0.7" fontStyle="italic" textAnchor="middle">INDIAN OCEAN</text>
-          <text x="730" y="180" fill="#1565C0" fontSize="11" fontWeight="bold" opacity="0.7" fontStyle="italic" textAnchor="middle">PACIFIC</text>
+          {/* Ocean Labels - positioned in ocean areas only */}
+          <text x="130" y="200" fill="#1565C0" fontSize="10" fontWeight="bold" opacity="0.6" fontStyle="italic" textAnchor="middle">NORTH</text>
+          <text x="130" y="212" fill="#1565C0" fontSize="10" fontWeight="bold" opacity="0.6" fontStyle="italic" textAnchor="middle">PACIFIC</text>
+          <text x="130" y="340" fill="#1565C0" fontSize="10" fontWeight="bold" opacity="0.6" fontStyle="italic" textAnchor="middle">SOUTH</text>
+          <text x="130" y="352" fill="#1565C0" fontSize="10" fontWeight="bold" opacity="0.6" fontStyle="italic" textAnchor="middle">PACIFIC</text>
+          <text x="310" y="145" fill="#1565C0" fontSize="9" fontWeight="bold" opacity="0.6" fontStyle="italic" textAnchor="middle">NORTH ATLANTIC</text>
+          <text x="310" y="320" fill="#1565C0" fontSize="9" fontWeight="bold" opacity="0.6" fontStyle="italic" textAnchor="middle">SOUTH ATLANTIC</text>
+          <text x="560" y="330" fill="#1565C0" fontSize="10" fontWeight="bold" opacity="0.6" fontStyle="italic" textAnchor="middle">INDIAN OCEAN</text>
+          <text x="720" y="220" fill="#1565C0" fontSize="10" fontWeight="bold" opacity="0.6" fontStyle="italic" textAnchor="middle">PACIFIC</text>
+          <text x="400" y="420" fill="#1565C0" fontSize="9" fontWeight="bold" opacity="0.5" fontStyle="italic" textAnchor="middle">SOUTHERN OCEAN</text>
+          <text x="450" y="55" fill="#1565C0" fontSize="9" fontWeight="bold" opacity="0.5" fontStyle="italic" textAnchor="middle">ARCTIC OCEAN</text>
+          {/* Seas - positioned carefully in water only */}
+          <text x="428" y="172" fill="#1565C0" fontSize="6" opacity="0.5" fontStyle="italic" textAnchor="middle">Mediterranean</text>
+          <text x="260" y="212" fill="#1565C0" fontSize="6" opacity="0.5" fontStyle="italic" textAnchor="middle">Caribbean</text>
+          <text x="530" y="260" fill="#1565C0" fontSize="6" opacity="0.5" fontStyle="italic" textAnchor="middle">Arabian</text>
+          <text x="580" y="235" fill="#1565C0" fontSize="6" opacity="0.5" fontStyle="italic" textAnchor="middle">Bay of</text>
+          <text x="580" y="243" fill="#1565C0" fontSize="6" opacity="0.5" fontStyle="italic" textAnchor="middle">Bengal</text>
+          <text x="640" y="250" fill="#1565C0" fontSize="6" opacity="0.5" fontStyle="italic" textAnchor="middle">S. China Sea</text>
+          <text x="220" y="168" fill="#1565C0" fontSize="6" opacity="0.5" fontStyle="italic" textAnchor="middle">Gulf of Mexico</text>
+          <text x="590" y="100" fill="#1565C0" fontSize="6" opacity="0.5" fontStyle="italic" textAnchor="middle">Bering Sea</text>
         </ZoomableGroup>
       </ComposableMap>
 
