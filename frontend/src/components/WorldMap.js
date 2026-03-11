@@ -215,11 +215,8 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         }}
         width={900}
         height={450}
-        style={{ width: '100%', height: 'auto' }}
+        style={{ width: '100%', height: 'auto', backgroundColor: '#87CEEB' }}
       >
-        {/* Light blue ocean background like reference image */}
-        <rect x="-10" y="-10" width="920" height="520" fill="#87CEEB" />
-        
         <ZoomableGroup 
           zoom={zoom} 
           center={center}
@@ -227,6 +224,9 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
           minZoom={1} 
           maxZoom={6}
         >
+          {/* Ocean background inside ZoomableGroup so it moves with map */}
+          <rect x="-500" y="-500" width="2000" height="1500" fill="#87CEEB" />
+          
           <Geographies geography={geoUrl}>
             {({ geographies }) =>
               geographies.map((geo) => (
@@ -294,16 +294,16 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         </ZoomableGroup>
       </ComposableMap>
 
-      {/* Disclaimer - bottom right of map */}
+      {/* Disclaimer - bottom right on white space */}
       <div style={{ 
-        position: 'absolute', 
-        bottom: '15px', 
-        right: '20px', 
         textAlign: 'right',
+        padding: '10px 20px',
         fontSize: '11px', 
-        color: '#666', 
+        color: '#333', 
+        fontWeight: 'bold',
         fontStyle: 'italic',
-        lineHeight: '1.4'
+        lineHeight: '1.5',
+        backgroundColor: '#fff'
       }}>
         * Map boundaries are for illustrative purposes only<br/>
         and may not reflect official international borders.

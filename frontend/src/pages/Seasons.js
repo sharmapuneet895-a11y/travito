@@ -14,15 +14,15 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const MONTH_ABBREV = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-// Category definitions
+// Category definitions with specific colors
 const CATEGORIES = [
-  { id: 'all', label: 'All Peak Destinations', icon: Compass, color: 'gray' },
-  { id: 'beach', label: 'Beach', icon: Palmtree, color: 'cyan' },
-  { id: 'mountain', label: 'Mountain', icon: Mountain, color: 'emerald' },
-  { id: 'city', label: 'City', icon: Building2, color: 'violet' },
-  { id: 'culture', label: 'Culture', icon: Landmark, color: 'amber' },
-  { id: 'adventure', label: 'Adventure', icon: Compass, color: 'orange' },
-  { id: 'nature', label: 'Nature', icon: Trees, color: 'green' },
+  { id: 'all', label: 'All Peak Destinations', icon: Compass, color: 'gray', bgColor: 'bg-gray-100', textColor: 'text-gray-700', activeColor: 'bg-gray-700 text-white' },
+  { id: 'beach', label: 'Beach', icon: Palmtree, color: 'cyan', bgColor: 'bg-cyan-100', textColor: 'text-cyan-700', activeColor: 'bg-cyan-500 text-white' },
+  { id: 'mountain', label: 'Mountain', icon: Mountain, color: 'green', bgColor: 'bg-green-100', textColor: 'text-green-800', activeColor: 'bg-green-700 text-white' },
+  { id: 'city', label: 'City', icon: Building2, color: 'slate', bgColor: 'bg-slate-100', textColor: 'text-slate-700', activeColor: 'bg-slate-600 text-white' },
+  { id: 'culture', label: 'Culture', icon: Landmark, color: 'purple', bgColor: 'bg-purple-100', textColor: 'text-purple-700', activeColor: 'bg-purple-600 text-white' },
+  { id: 'adventure', label: 'Adventure', icon: Compass, color: 'orange', bgColor: 'bg-orange-100', textColor: 'text-orange-700', activeColor: 'bg-orange-500 text-white' },
+  { id: 'nature', label: 'Nature', icon: Trees, color: 'lime', bgColor: 'bg-lime-100', textColor: 'text-lime-700', activeColor: 'bg-lime-500 text-white' },
 ];
 
 // ISO3 to ISO2 country code mapping for flags
@@ -314,22 +314,18 @@ const Seasons = () => {
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id)}
                     disabled={count === 0 && cat.id !== 'all'}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all whitespace-nowrap ${
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all whitespace-nowrap border-2 ${
                       isActive 
-                        ? `bg-${cat.color}-100 text-${cat.color}-700 border-2 border-${cat.color}-300` 
+                        ? cat.activeColor + ' border-transparent shadow-md' 
                         : count === 0 && cat.id !== 'all'
-                        ? 'bg-gray-100 text-gray-400 border-2 border-transparent cursor-not-allowed'
-                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border-2 border-transparent'
+                        ? 'bg-gray-100 text-gray-400 border-transparent cursor-not-allowed'
+                        : cat.bgColor + ' ' + cat.textColor + ' border-transparent hover:shadow-sm'
                     }`}
-                    style={isActive ? {
-                      backgroundColor: cat.color === 'gray' ? '#f3f4f6' : undefined,
-                      borderColor: cat.color === 'gray' ? '#9ca3af' : undefined,
-                    } : {}}
                     data-testid={`category-tab-${cat.id}`}
                   >
                     <Icon className="w-4 h-4" />
                     <span>{cat.label}</span>
-                    <span className={`text-xs px-1.5 py-0.5 rounded-full ${isActive ? 'bg-white/50' : 'bg-gray-200'}`}>
+                    <span className={`text-xs px-1.5 py-0.5 rounded-full ${isActive ? 'bg-white/30' : 'bg-white/50'}`}>
                       {count}
                     </span>
                   </button>
