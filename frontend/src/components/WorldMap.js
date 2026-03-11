@@ -101,7 +101,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
   const [zoom, setZoom] = useState(1);
   
   // Fixed center - no dragging allowed
-  const fixedCenter = [0, 15];
+  const fixedCenter = [0, 35];
 
   const handleZoomIn = () => setZoom(prev => Math.min(prev * 1.4, 6));
   const handleZoomOut = () => setZoom(prev => Math.max(prev / 1.4, 1));
@@ -211,7 +211,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         projection="geoMercator"
         projectionConfig={{ 
           scale: 95,
-          center: [0, 15]
+          center: [0, 35]
         }}
         width={900}
         height={450}
@@ -296,7 +296,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       </ComposableMap>
 
       {/* Disclaimer */}
-      <div className="text-center mt-3 py-3 text-sm text-gray-600 italic bg-gray-50">
+      <div style={{ textAlign: 'center', padding: '15px', backgroundColor: '#f5f5f5', marginTop: '10px', fontSize: '14px', color: '#555', fontStyle: 'italic', borderTop: '1px solid #ddd' }}>
         * Map boundaries are for illustrative purposes only and may not reflect the official position on international borders.
       </div>
 
