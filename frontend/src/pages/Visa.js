@@ -31,8 +31,9 @@ const Visa = () => {
   }, []);
 
   const legends = [
+    { color: '#22C55E', label: 'Visa Free', description: 'No visa required' },
     { color: '#E25A53', label: 'Visa on Arrival', description: 'Get visa at airport' },
-    { color: '#4B89AC', label: 'E-Visa', description: 'Apply online' },
+    { color: '#4B89AC', label: 'E-Visa', description: 'Apply online before travel' },
     { color: '#F2A900', label: 'Visa Required', description: 'Embassy/Consulate application' },
     { color: '#D6D6D6', label: 'No Data', description: 'Information not available' }
   ];

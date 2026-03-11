@@ -96,6 +96,8 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       }
     } else if (mode === 'visa') {
       switch (countryData.visa_type) {
+        case 'visa_free':
+          return '#22C55E'; // Green - Visa Free
         case 'visa_on_arrival':
           return '#E25A53'; // Terra Cotta (Red)
         case 'e_visa':

@@ -1,0 +1,348 @@
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Calculator, Plane, Hotel, Utensils, Camera, ShoppingBag, Loader2, IndianRupee } from 'lucide-react';
+
+const CostEstimator = ({ isOpen, onClose }) => {
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [formData, setFormData] = useState({
+    country: '',
+    duration: 7,
+    travelers: 1,
+    budget_type: 'mid_range'
+  });
+
+  // Country cost data (per day in INR)
+  const countryData = {
+    'Thailand': { budget: { hotel: 1500, food: 800, transport: 400, activities: 500, misc: 300 }, mid: { hotel: 4000, food: 1500, transport: 800, activities: 1200, misc: 600 }, luxury: { hotel: 12000, food: 3500, transport: 2000, activities: 3000, misc: 1500 }, flight: { budget: 15000, mid: 25000, luxury: 55000 } },
+    'Indonesia': { budget: { hotel: 1200, food: 600, transport: 350, activities: 400, misc: 250 }, mid: { hotel: 3500, food: 1200, transport: 700, activities: 1000, misc: 500 }, luxury: { hotel: 10000, food: 3000, transport: 1800, activities: 2500, misc: 1200 }, flight: { budget: 18000, mid: 28000, luxury: 60000 } },
+    'Malaysia': { budget: { hotel: 1800, food: 700, transport: 400, activities: 500, misc: 300 }, mid: { hotel: 4500, food: 1400, transport: 800, activities: 1200, misc: 600 }, luxury: { hotel: 12000, food: 3200, transport: 2000, activities: 2800, misc: 1400 }, flight: { budget: 12000, mid: 20000, luxury: 45000 } },
+    'Singapore': { budget: { hotel: 4000, food: 1200, transport: 600, activities: 800, misc: 400 }, mid: { hotel: 8000, food: 2500, transport: 1000, activities: 1800, misc: 800 }, luxury: { hotel: 20000, food: 5000, transport: 2500, activities: 4000, misc: 2000 }, flight: { budget: 10000, mid: 18000, luxury: 40000 } },
+    'UAE': { budget: { hotel: 3500, food: 1000, transport: 500, activities: 600, misc: 400 }, mid: { hotel: 7000, food: 2000, transport: 1000, activities: 1500, misc: 800 }, luxury: { hotel: 18000, food: 4500, transport: 2500, activities: 4000, misc: 2000 }, flight: { budget: 12000, mid: 22000, luxury: 50000 } },
+    'Vietnam': { budget: { hotel: 1000, food: 500, transport: 300, activities: 400, misc: 200 }, mid: { hotel: 2800, food: 1000, transport: 600, activities: 900, misc: 400 }, luxury: { hotel: 8000, food: 2500, transport: 1500, activities: 2200, misc: 1000 }, flight: { budget: 16000, mid: 26000, luxury: 55000 } },
+    'Japan': { budget: { hotel: 4000, food: 1500, transport: 1000, activities: 1200, misc: 500 }, mid: { hotel: 8000, food: 3000, transport: 1800, activities: 2500, misc: 1000 }, luxury: { hotel: 20000, food: 6000, transport: 4000, activities: 5000, misc: 2500 }, flight: { budget: 35000, mid: 55000, luxury: 120000 } },
+    'South Korea': { budget: { hotel: 3000, food: 1200, transport: 800, activities: 1000, misc: 400 }, mid: { hotel: 6000, food: 2200, transport: 1500, activities: 2000, misc: 800 }, luxury: { hotel: 15000, food: 4500, transport: 3000, activities: 4000, misc: 2000 }, flight: { budget: 28000, mid: 45000, luxury: 100000 } },
+    'Maldives': { budget: { hotel: 6000, food: 2000, transport: 500, activities: 2000, misc: 500 }, mid: { hotel: 15000, food: 4000, transport: 1000, activities: 4000, misc: 1000 }, luxury: { hotel: 50000, food: 8000, transport: 3000, activities: 10000, misc: 3000 }, flight: { budget: 15000, mid: 25000, luxury: 55000 } },
+    'Sri Lanka': { budget: { hotel: 1500, food: 600, transport: 400, activities: 500, misc: 250 }, mid: { hotel: 3500, food: 1200, transport: 800, activities: 1000, misc: 500 }, luxury: { hotel: 10000, food: 2800, transport: 1800, activities: 2500, misc: 1200 }, flight: { budget: 8000, mid: 14000, luxury: 30000 } },
+    'Nepal': { budget: { hotel: 800, food: 400, transport: 300, activities: 400, misc: 200 }, mid: { hotel: 2000, food: 800, transport: 500, activities: 800, misc: 400 }, luxury: { hotel: 6000, food: 2000, transport: 1200, activities: 2000, misc: 800 }, flight: { budget: 8000, mid: 14000, luxury: 30000 } },
+    'Turkey': { budget: { hotel: 2500, food: 1000, transport: 500, activities: 600, misc: 300 }, mid: { hotel: 5500, food: 2000, transport: 1000, activities: 1500, misc: 700 }, luxury: { hotel: 14000, food: 4000, transport: 2500, activities: 3500, misc: 1500 }, flight: { budget: 25000, mid: 40000, luxury: 90000 } },
+    'Egypt': { budget: { hotel: 1800, food: 700, transport: 400, activities: 600, misc: 300 }, mid: { hotel: 4000, food: 1400, transport: 800, activities: 1200, misc: 600 }, luxury: { hotel: 10000, food: 3000, transport: 2000, activities: 3000, misc: 1500 }, flight: { budget: 20000, mid: 35000, luxury: 80000 } },
+    'Greece': { budget: { hotel: 4000, food: 1500, transport: 600, activities: 800, misc: 400 }, mid: { hotel: 8000, food: 3000, transport: 1200, activities: 2000, misc: 800 }, luxury: { hotel: 18000, food: 5500, transport: 2500, activities: 4000, misc: 2000 }, flight: { budget: 35000, mid: 55000, luxury: 120000 } },
+    'Italy': { budget: { hotel: 5000, food: 2000, transport: 800, activities: 1000, misc: 500 }, mid: { hotel: 10000, food: 3500, transport: 1500, activities: 2500, misc: 1000 }, luxury: { hotel: 25000, food: 7000, transport: 3500, activities: 5000, misc: 2500 }, flight: { budget: 40000, mid: 65000, luxury: 140000 } },
+    'France': { budget: { hotel: 5500, food: 2200, transport: 900, activities: 1200, misc: 600 }, mid: { hotel: 12000, food: 4000, transport: 1800, activities: 2800, misc: 1200 }, luxury: { hotel: 30000, food: 8000, transport: 4000, activities: 6000, misc: 3000 }, flight: { budget: 38000, mid: 60000, luxury: 130000 } },
+    'Switzerland': { budget: { hotel: 8000, food: 3000, transport: 1500, activities: 1500, misc: 800 }, mid: { hotel: 15000, food: 5000, transport: 2500, activities: 3500, misc: 1500 }, luxury: { hotel: 35000, food: 10000, transport: 5000, activities: 8000, misc: 4000 }, flight: { budget: 45000, mid: 70000, luxury: 150000 } },
+    'United Kingdom': { budget: { hotel: 5000, food: 2000, transport: 1000, activities: 1200, misc: 600 }, mid: { hotel: 10000, food: 3500, transport: 2000, activities: 2500, misc: 1200 }, luxury: { hotel: 25000, food: 7000, transport: 4000, activities: 5500, misc: 3000 }, flight: { budget: 40000, mid: 65000, luxury: 140000 } },
+    'United States': { budget: { hotel: 6000, food: 2500, transport: 1200, activities: 1500, misc: 800 }, mid: { hotel: 12000, food: 4500, transport: 2500, activities: 3500, misc: 1500 }, luxury: { hotel: 30000, food: 9000, transport: 5000, activities: 7000, misc: 4000 }, flight: { budget: 55000, mid: 85000, luxury: 180000 } },
+    'Australia': { budget: { hotel: 5000, food: 2200, transport: 1000, activities: 1200, misc: 600 }, mid: { hotel: 10000, food: 4000, transport: 2000, activities: 3000, misc: 1200 }, luxury: { hotel: 25000, food: 8000, transport: 4500, activities: 6000, misc: 3000 }, flight: { budget: 45000, mid: 70000, luxury: 150000 } },
+    'New Zealand': { budget: { hotel: 4500, food: 2000, transport: 1200, activities: 1500, misc: 600 }, mid: { hotel: 9000, food: 3500, transport: 2200, activities: 3000, misc: 1200 }, luxury: { hotel: 22000, food: 7000, transport: 4500, activities: 6000, misc: 3000 }, flight: { budget: 50000, mid: 80000, luxury: 170000 } },
+    'South Africa': { budget: { hotel: 2500, food: 1000, transport: 600, activities: 800, misc: 400 }, mid: { hotel: 5500, food: 2000, transport: 1200, activities: 1800, misc: 800 }, luxury: { hotel: 14000, food: 4500, transport: 3000, activities: 4000, misc: 2000 }, flight: { budget: 35000, mid: 55000, luxury: 120000 } },
+    'Kenya': { budget: { hotel: 2000, food: 800, transport: 500, activities: 1500, misc: 400 }, mid: { hotel: 5000, food: 1500, transport: 1000, activities: 3500, misc: 800 }, luxury: { hotel: 15000, food: 3500, transport: 2500, activities: 8000, misc: 2000 }, flight: { budget: 30000, mid: 50000, luxury: 110000 } },
+    'Morocco': { budget: { hotel: 1500, food: 600, transport: 400, activities: 500, misc: 300 }, mid: { hotel: 3500, food: 1200, transport: 800, activities: 1200, misc: 600 }, luxury: { hotel: 10000, food: 3000, transport: 2000, activities: 3000, misc: 1500 }, flight: { budget: 28000, mid: 45000, luxury: 100000 } },
+  };
+
+  const countries = Object.keys(countryData).sort();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: name === 'duration' || name === 'travelers' ? parseInt(value) : value }));
+  };
+
+  const calculateCost = () => {
+    if (!formData.country || !countryData[formData.country]) return;
+    
+    setLoading(true);
+    setTimeout(() => {
+      const data = countryData[formData.country];
+      const budgetKey = formData.budget_type === 'budget' ? 'budget' : formData.budget_type === 'mid_range' ? 'mid' : 'luxury';
+      const dailyCosts = data[budgetKey];
+      const flightCost = data.flight[budgetKey];
+      
+      const perDayTotal = Object.values(dailyCosts).reduce((a, b) => a + b, 0);
+      const totalDailyCost = perDayTotal * formData.duration * formData.travelers;
+      const totalFlightCost = flightCost * formData.travelers;
+      const grandTotal = totalDailyCost + totalFlightCost;
+      
+      setResult({
+        country: formData.country,
+        duration: formData.duration,
+        travelers: formData.travelers,
+        budget_type: formData.budget_type,
+        breakdown: {
+          flight: totalFlightCost,
+          hotel: dailyCosts.hotel * formData.duration * formData.travelers,
+          food: dailyCosts.food * formData.duration * formData.travelers,
+          transport: dailyCosts.transport * formData.duration * formData.travelers,
+          activities: dailyCosts.activities * formData.duration * formData.travelers,
+          misc: dailyCosts.misc * formData.duration * formData.travelers
+        },
+        perDayPerPerson: perDayTotal,
+        totalDailyCost,
+        totalFlightCost,
+        grandTotal
+      });
+      setLoading(false);
+    }, 500);
+  };
+
+  const formatINR = (amount) => {
+    return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(amount);
+  };
+
+  const getBudgetLabel = (type) => {
+    switch(type) {
+      case 'budget': return 'Budget';
+      case 'mid_range': return 'Mid-Range';
+      case 'luxury': return 'Luxury';
+      default: return type;
+    }
+  };
+
+  const resetForm = () => {
+    setResult(null);
+    setFormData({
+      country: '',
+      duration: 7,
+      travelers: 1,
+      budget_type: 'mid_range'
+    });
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 50 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 50 }}
+          className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          onClick={(e) => e.stopPropagation()}
+          data-testid="cost-estimator-modal"
+        >
+          {/* Header */}
+          <div className="sticky top-0 bg-gradient-to-r from-purple-600 to-pink-600 text-white p-6 rounded-t-2xl z-10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Calculator className="w-8 h-8" />
+                <div>
+                  <h2 className="text-2xl font-bold">Trip Cost Estimator</h2>
+                  <p className="text-purple-100 text-sm">Plan your budget for your next adventure</p>
+                </div>
+              </div>
+              <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition-all">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="p-6">
+            {!result ? (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Destination Country *</label>
+                    <select
+                      name="country"
+                      value={formData.country}
+                      onChange={handleInputChange}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      data-testid="cost-country-select"
+                    >
+                      <option value="">Select country</option>
+                      {countries.map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Trip Duration (Days)</label>
+                    <input
+                      type="number"
+                      name="duration"
+                      value={formData.duration}
+                      onChange={handleInputChange}
+                      min="1"
+                      max="90"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Number of Travelers</label>
+                    <input
+                      type="number"
+                      name="travelers"
+                      value={formData.travelers}
+                      onChange={handleInputChange}
+                      min="1"
+                      max="20"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-3">Budget Type</label>
+                    <div className="grid grid-cols-3 gap-4">
+                      {[
+                        { id: 'budget', label: 'Budget', desc: 'Hostels, street food, public transport', color: 'green' },
+                        { id: 'mid_range', label: 'Mid-Range', desc: '3-4 star hotels, restaurants, taxis', color: 'blue' },
+                        { id: 'luxury', label: 'Luxury', desc: '5-star hotels, fine dining, private tours', color: 'purple' }
+                      ].map(option => (
+                        <div
+                          key={option.id}
+                          onClick={() => setFormData(prev => ({ ...prev, budget_type: option.id }))}
+                          className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                            formData.budget_type === option.id 
+                              ? `border-${option.color}-500 bg-${option.color}-50` 
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className={`font-semibold ${formData.budget_type === option.id ? `text-${option.color}-700` : 'text-gray-800'}`}>
+                            {option.label}
+                          </div>
+                          <div className="text-xs text-gray-500 mt-1">{option.desc}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                <button
+                  onClick={calculateCost}
+                  disabled={!formData.country || loading}
+                  className="w-full py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Calculating...
+                    </>
+                  ) : (
+                    <>
+                      <Calculator className="w-5 h-5" />
+                      Calculate Trip Cost
+                    </>
+                  )}
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Summary Header */}
+                <div className="text-center pb-4 border-b border-gray-200">
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    {result.duration}-Day Trip to {result.country}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    {result.travelers} traveler{result.travelers > 1 ? 's' : ''} • {getBudgetLabel(result.budget_type)} Budget
+                  </p>
+                </div>
+
+                {/* Grand Total */}
+                <div className="bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl p-6 text-center">
+                  <div className="text-sm text-purple-600 font-medium mb-1">Estimated Total Cost</div>
+                  <div className="text-4xl font-bold text-purple-700 flex items-center justify-center gap-2">
+                    <IndianRupee className="w-8 h-8" />
+                    {formatINR(result.grandTotal).replace('₹', '')}
+                  </div>
+                  <div className="text-sm text-gray-600 mt-2">
+                    {formatINR(result.perDayPerPerson)} per person per day
+                  </div>
+                </div>
+
+                {/* Cost Breakdown */}
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-gray-800">Cost Breakdown</h4>
+                  
+                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <Plane className="w-5 h-5 text-blue-600" />
+                      <span className="text-gray-700">Flights (Round Trip)</span>
+                    </div>
+                    <span className="font-semibold text-gray-800">{formatINR(result.breakdown.flight)}</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <Hotel className="w-5 h-5 text-purple-600" />
+                      <span className="text-gray-700">Accommodation</span>
+                    </div>
+                    <span className="font-semibold text-gray-800">{formatINR(result.breakdown.hotel)}</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <Utensils className="w-5 h-5 text-orange-600" />
+                      <span className="text-gray-700">Food & Dining</span>
+                    </div>
+                    <span className="font-semibold text-gray-800">{formatINR(result.breakdown.food)}</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <Camera className="w-5 h-5 text-green-600" />
+                      <span className="text-gray-700">Activities & Tours</span>
+                    </div>
+                    <span className="font-semibold text-gray-800">{formatINR(result.breakdown.activities)}</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <svg className="w-5 h-5 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                      <span className="text-gray-700">Local Transport</span>
+                    </div>
+                    <span className="font-semibold text-gray-800">{formatINR(result.breakdown.transport)}</span>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <ShoppingBag className="w-5 h-5 text-gray-600" />
+                      <span className="text-gray-700">Shopping & Miscellaneous</span>
+                    </div>
+                    <span className="font-semibold text-gray-800">{formatINR(result.breakdown.misc)}</span>
+                  </div>
+                </div>
+
+                {/* Tips */}
+                <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
+                  <h4 className="font-semibold text-amber-800 mb-2">💡 Money Saving Tips</h4>
+                  <ul className="text-sm text-amber-700 space-y-1">
+                    <li>• Book flights 2-3 months in advance for best prices</li>
+                    <li>• Consider traveling during shoulder season</li>
+                    <li>• Use local transport apps for cheaper rides</li>
+                    <li>• Look for accommodation with breakfast included</li>
+                  </ul>
+                </div>
+
+                <div className="flex gap-4">
+                  <button
+                    onClick={resetForm}
+                    className="flex-1 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all"
+                  >
+                    Calculate Another
+                  </button>
+                  <button
+                    onClick={onClose}
+                    className="flex-1 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-all"
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
+export default CostEstimator;
