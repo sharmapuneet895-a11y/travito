@@ -130,16 +130,16 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
   };
 
   return (
-    <div className="relative" data-testid="world-map-container">
+    <div className="relative w-full" data-testid="world-map-container">
       <ComposableMap
         projection="geoNaturalEarth1"
         projectionConfig={{
-          scale: 160,
-          center: [0, 0]
+          scale: 185,
+          center: [0, 5]
         }}
         style={{ width: '100%', height: 'auto' }}
         width={980}
-        height={520}
+        height={580}
       >
         <defs>
           {/* Enhanced wavy water pattern with animation */}
@@ -206,127 +206,142 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         </defs>
         
         {/* Ocean background with enhanced blue color */}
-        <rect x="-50" y="-50" width="1100" height="650" fill="#A8D8F0" />
-        <rect x="-50" y="-50" width="1100" height="650" fill="url(#waves)" opacity="0.9" />
+        <rect x="-50" y="-50" width="1100" height="700" fill="#A8D8F0" />
+        <rect x="-50" y="-50" width="1100" height="700" fill="url(#waves)" opacity="0.9" />
         
-        {/* Ocean Labels - Positioned in clear ocean areas */}
-        {/* North Atlantic - between North America and Europe */}
+        {/* ===== OCEAN LABELS ===== */}
+        
+        {/* North Atlantic Ocean - between North America and Europe */}
         <text 
-          x="380" 
+          x="365" 
           y="145" 
           fill="#1565A0" 
-          fontSize="12" 
+          fontSize="11" 
           fontWeight="bold" 
           opacity="0.95" 
           fontStyle="italic"
           filter="url(#textGlow)"
-          letterSpacing="2"
+          letterSpacing="1"
           textAnchor="middle"
         >
-          NORTH
+          NORTH ATLANTIC
         </text>
         <text 
-          x="380" 
-          y="160" 
+          x="365" 
+          y="158" 
           fill="#1565A0" 
-          fontSize="12" 
+          fontSize="11" 
           fontWeight="bold" 
           opacity="0.95" 
           fontStyle="italic"
           filter="url(#textGlow)"
-          letterSpacing="2"
+          letterSpacing="1"
           textAnchor="middle"
         >
-          ATLANTIC
+          OCEAN
         </text>
         
-        {/* South Atlantic - between South America and Africa */}
+        {/* South Atlantic Ocean - between South America and Africa */}
         <text 
-          x="400" 
-          y="345" 
+          x="385" 
+          y="365" 
           fill="#1565A0" 
-          fontSize="12" 
+          fontSize="11" 
           fontWeight="bold" 
           opacity="0.95" 
           fontStyle="italic"
           filter="url(#textGlow)"
-          letterSpacing="2"
+          letterSpacing="1"
           textAnchor="middle"
         >
-          SOUTH
+          SOUTH ATLANTIC
         </text>
         <text 
-          x="400" 
-          y="360" 
+          x="385" 
+          y="378" 
           fill="#1565A0" 
-          fontSize="12" 
+          fontSize="11" 
           fontWeight="bold" 
           opacity="0.95" 
           fontStyle="italic"
           filter="url(#textGlow)"
-          letterSpacing="2"
+          letterSpacing="1"
           textAnchor="middle"
         >
-          ATLANTIC
+          OCEAN
         </text>
         
-        {/* North Pacific - left of North America */}
+        {/* North Pacific Ocean - left of North America */}
         <text 
-          x="100" 
+          x="95" 
           y="175" 
           fill="#1565A0" 
-          fontSize="12" 
+          fontSize="11" 
           fontWeight="bold" 
           opacity="0.95" 
           fontStyle="italic"
           filter="url(#textGlow)"
-          letterSpacing="2"
+          letterSpacing="1"
           textAnchor="middle"
         >
-          NORTH
+          NORTH PACIFIC
         </text>
         <text 
-          x="100" 
-          y="190" 
+          x="95" 
+          y="188" 
           fill="#1565A0" 
-          fontSize="12" 
+          fontSize="11" 
           fontWeight="bold" 
           opacity="0.95" 
           fontStyle="italic"
           filter="url(#textGlow)"
-          letterSpacing="2"
+          letterSpacing="1"
           textAnchor="middle"
         >
-          PACIFIC
+          OCEAN
         </text>
         
-        {/* South Pacific - bottom left */}
+        {/* South Pacific Ocean - bottom left */}
         <text 
-          x="100" 
-          y="380" 
+          x="95" 
+          y="395" 
           fill="#1565A0" 
-          fontSize="14" 
+          fontSize="11" 
           fontWeight="bold" 
           opacity="0.95" 
           fontStyle="italic"
           filter="url(#textGlow)"
-          letterSpacing="3"
+          letterSpacing="1"
           textAnchor="middle"
         >
           SOUTH PACIFIC
+        </text>
+        <text 
+          x="95" 
+          y="408" 
+          fill="#1565A0" 
+          fontSize="11" 
+          fontWeight="bold" 
+          opacity="0.95" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="1"
+          textAnchor="middle"
+        >
+          OCEAN
         </text>
         
         {/* Indian Ocean - between Africa and Australia */}
         <text 
           x="680" 
-          y="310" 
+          y="330" 
           fill="#1565A0" 
-          fontSize="14" 
+          fontSize="12" 
           fontWeight="bold" 
           opacity="0.95" 
           fontStyle="italic"
           filter="url(#textGlow)"
-          letterSpacing="3"
+          letterSpacing="2"
           textAnchor="middle"
         >
           INDIAN OCEAN
@@ -335,33 +350,225 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         {/* Southern Ocean - at the bottom */}
         <text 
           x="490" 
-          y="485" 
+          y="520" 
           fill="#1565A0" 
-          fontSize="12" 
+          fontSize="11" 
           fontWeight="bold" 
           opacity="0.9" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="3"
-          textAnchor="middle"
-        >
-          SOUTHERN OCEAN
-        </text>
-        
-        {/* West Pacific - between Asia and Australia */}
-        <text 
-          x="860" 
-          y="240" 
-          fill="#1565A0" 
-          fontSize="12" 
-          fontWeight="bold" 
-          opacity="0.95" 
           fontStyle="italic"
           filter="url(#textGlow)"
           letterSpacing="2"
           textAnchor="middle"
         >
+          SOUTHERN OCEAN
+        </text>
+        
+        {/* West Pacific Ocean - between Asia and Australia */}
+        <text 
+          x="870" 
+          y="255" 
+          fill="#1565A0" 
+          fontSize="10" 
+          fontWeight="bold" 
+          opacity="0.95" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="1"
+          textAnchor="middle"
+        >
           WEST PACIFIC
+        </text>
+        <text 
+          x="870" 
+          y="267" 
+          fill="#1565A0" 
+          fontSize="10" 
+          fontWeight="bold" 
+          opacity="0.95" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="1"
+          textAnchor="middle"
+        >
+          OCEAN
+        </text>
+        
+        {/* Arctic Ocean - at the top */}
+        <text 
+          x="490" 
+          y="35" 
+          fill="#1565A0" 
+          fontSize="11" 
+          fontWeight="bold" 
+          opacity="0.9" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="2"
+          textAnchor="middle"
+        >
+          ARCTIC OCEAN
+        </text>
+        
+        {/* ===== SEA LABELS ===== */}
+        
+        {/* Mediterranean Sea */}
+        <text 
+          x="510" 
+          y="168" 
+          fill="#1976D2" 
+          fontSize="8" 
+          fontWeight="600" 
+          opacity="0.9" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="0.5"
+          textAnchor="middle"
+        >
+          Mediterranean Sea
+        </text>
+        
+        {/* Caribbean Sea */}
+        <text 
+          x="260" 
+          y="215" 
+          fill="#1976D2" 
+          fontSize="7" 
+          fontWeight="600" 
+          opacity="0.9" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="0.5"
+          textAnchor="middle"
+        >
+          Caribbean Sea
+        </text>
+        
+        {/* Arabian Sea */}
+        <text 
+          x="635" 
+          y="222" 
+          fill="#1976D2" 
+          fontSize="8" 
+          fontWeight="600" 
+          opacity="0.9" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="0.5"
+          textAnchor="middle"
+        >
+          Arabian Sea
+        </text>
+        
+        {/* Bay of Bengal */}
+        <text 
+          x="700" 
+          y="218" 
+          fill="#1976D2" 
+          fontSize="7" 
+          fontWeight="600" 
+          opacity="0.9" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="0.5"
+          textAnchor="middle"
+        >
+          Bay of Bengal
+        </text>
+        
+        {/* South China Sea */}
+        <text 
+          x="775" 
+          y="220" 
+          fill="#1976D2" 
+          fontSize="7" 
+          fontWeight="600" 
+          opacity="0.9" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="0.5"
+          textAnchor="middle"
+        >
+          South China Sea
+        </text>
+        
+        {/* Coral Sea */}
+        <text 
+          x="885" 
+          y="325" 
+          fill="#1976D2" 
+          fontSize="7" 
+          fontWeight="600" 
+          opacity="0.9" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="0.5"
+          textAnchor="middle"
+        >
+          Coral Sea
+        </text>
+        
+        {/* Gulf of Mexico */}
+        <text 
+          x="232" 
+          y="190" 
+          fill="#1976D2" 
+          fontSize="6" 
+          fontWeight="600" 
+          opacity="0.85" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="0.3"
+          textAnchor="middle"
+        >
+          Gulf of Mexico
+        </text>
+        
+        {/* Red Sea */}
+        <text 
+          x="575" 
+          y="215" 
+          fill="#1976D2" 
+          fontSize="6" 
+          fontWeight="600" 
+          opacity="0.85" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="0.3"
+          textAnchor="middle"
+        >
+          Red Sea
+        </text>
+        
+        {/* Sea of Japan */}
+        <text 
+          x="805" 
+          y="155" 
+          fill="#1976D2" 
+          fontSize="6" 
+          fontWeight="600" 
+          opacity="0.85" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="0.3"
+          textAnchor="middle"
+        >
+          Sea of Japan
+        </text>
+        
+        {/* Bering Sea */}
+        <text 
+          x="52" 
+          y="95" 
+          fill="#1976D2" 
+          fontSize="6" 
+          fontWeight="600" 
+          opacity="0.85" 
+          fontStyle="italic"
+          filter="url(#textGlow)"
+          letterSpacing="0.3"
+          textAnchor="middle"
+        >
+          Bering Sea
         </text>
         
         <Geographies geography={geoUrl}>
