@@ -312,7 +312,16 @@ const Seasons = () => {
                 return (
                   <button
                     key={cat.id}
-                    onClick={() => setSelectedCategory(cat.id)}
+                    onClick={() => {
+                      setSelectedCategory(cat.id);
+                      // Scroll to destinations section after a short delay
+                      setTimeout(() => {
+                        const destinationsSection = document.getElementById('destinations-section');
+                        if (destinationsSection) {
+                          destinationsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                      }, 100);
+                    }}
                     disabled={count === 0 && cat.id !== 'all'}
                     className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all whitespace-nowrap border-2 ${
                       isActive 
@@ -377,7 +386,7 @@ const Seasons = () => {
           </div>
 
           {/* Country Lists by Season */}
-          <div className="mt-12 space-y-8">
+          <div className="mt-12 space-y-8" id="destinations-section">
             {/* Category Filtered Peak Destinations */}
             {selectedCategory !== 'all' && categoryFilteredData.length > 0 && (
               <div>

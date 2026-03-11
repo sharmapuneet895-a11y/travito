@@ -86,13 +86,28 @@ const CountryDetailModal = ({ country, onClose }) => {
 
         // Find forex rate for this country
         const forexRates = forexRes.data?.rates || {};
-        // Currency to country code mapping
+        // Currency to country code mapping (expanded)
         const currencyToCountry = {
           'THB': 'THA', 'JPY': 'JPN', 'SGD': 'SGP', 'MYR': 'MYS', 'IDR': 'IDN', 'VND': 'VNM', 'PHP': 'PHL',
           'AUD': 'AUS', 'NZD': 'NZL', 'USD': 'USA', 'EUR': 'FRA', 'GBP': 'GBR', 'CHF': 'CHE', 'CAD': 'CAN',
           'AED': 'ARE', 'SAR': 'SAU', 'EGP': 'EGY', 'ZAR': 'ZAF', 'KRW': 'KOR', 'CNY': 'CHN', 'HKD': 'HKG',
-          'BRL': 'BRA', 'MXN': 'MEX', 'TRY': 'TUR', 'RUB': 'RUS', 'NPR': 'NPL', 'LKR': 'LKA', 'MVR': 'MDV'
+          'BRL': 'BRA', 'MXN': 'MEX', 'TRY': 'TUR', 'RUB': 'RUS', 'NPR': 'NPL', 'LKR': 'LKA', 'MVR': 'MDV',
+          'TWD': 'TWN', 'PKR': 'PAK', 'BDT': 'BGD', 'MMK': 'MMR', 'KHR': 'KHM', 'LAK': 'LAO', 'BTN': 'BTN',
+          'AFN': 'AFG', 'IRR': 'IRN', 'IQD': 'IRQ', 'SYP': 'SYR', 'LBP': 'LBN', 'JOD': 'JOR', 'ILS': 'ISR',
+          'QAR': 'QAT', 'BHD': 'BHR', 'OMR': 'OMN', 'KWD': 'KWT', 'YER': 'YEM', 'CUP': 'CUB', 'JMD': 'JAM',
+          'DOP': 'DOM', 'CRC': 'CRI', 'PAB': 'PAN', 'GTQ': 'GTM', 'VES': 'VEN', 'UYU': 'URY', 'PYG': 'PRY',
+          'BOB': 'BOL', 'ARS': 'ARG', 'CLP': 'CHL', 'PEN': 'PER', 'COP': 'COL', 'HRK': 'HRV', 'CZK': 'CZE',
+          'HUF': 'HUN', 'PLN': 'POL', 'SEK': 'SWE', 'NOK': 'NOR', 'DKK': 'DNK', 'ISK': 'ISL', 'RON': 'ROU',
+          'BGN': 'BGR', 'UAH': 'UKR', 'BYN': 'BLR', 'RSD': 'SRB', 'MKD': 'MKD', 'BAM': 'BIH', 'GEL': 'GEO',
+          'AMD': 'ARM', 'AZN': 'AZE', 'KZT': 'KAZ', 'UZS': 'UZB', 'TJS': 'TJK', 'KGS': 'KGZ', 'MNT': 'MNG',
+          'MAD': 'MAR', 'TND': 'TUN', 'DZD': 'DZA', 'LYD': 'LBY', 'SDG': 'SDN', 'KES': 'KEN', 'TZS': 'TZA',
+          'UGX': 'UGA', 'ETB': 'ETH', 'NGN': 'NGA', 'GHS': 'GHA', 'XOF': 'SEN', 'XAF': 'CMR', 'MUR': 'MUS',
+          'MGA': 'MDG', 'ZWL': 'ZWE', 'ZMW': 'ZMB', 'BWP': 'BWA', 'NAD': 'NAM', 'MZN': 'MOZ', 'AOA': 'AGO',
+          'FJD': 'FJI', 'PGK': 'PNG'
         };
+        // Also create reverse mapping for UAE
+        currencyToCountry['AED'] = 'UAE';
+        
         let countryForex = null;
         for (const [currency, rate] of Object.entries(forexRates)) {
           if (currencyToCountry[currency] === code) {
@@ -290,7 +305,10 @@ const CountryDetailModal = ({ country, onClose }) => {
                     )}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground">No weather data available</p>
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin text-cyan-500" />
+                    <p className="text-sm text-cyan-600 font-medium">Updating live data...</p>
+                  </div>
                 )}
               </div>
 
@@ -311,6 +329,28 @@ const CountryDetailModal = ({ country, onClose }) => {
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">No plug data available</p>
+                )}
+              </div>
+
+              {/* Forex Rate - Moved higher */}
+              <div className="md:col-span-2 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-5 border border-emerald-100">
+                <div className="flex items-center gap-2 mb-3">
+                  <DollarSign className="w-5 h-5 text-emerald-500" />
+                  <h3 className="font-semibold text-primary">Exchange Rate (INR)</h3>
+                </div>
+                {countryData.forex ? (
+                  <div className="flex items-center gap-4">
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-emerald-700">₹{countryData.forex.rate?.toFixed(2)}</p>
+                      <p className="text-sm text-muted-foreground">= 1 {countryData.forex.currency}</p>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      <p>{countryData.forex.country_name}</p>
+                      <p className="text-xs">Currency: {countryData.forex.currency}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Exchange rate not available for this country</p>
                 )}
               </div>
 
@@ -413,26 +453,6 @@ const CountryDetailModal = ({ country, onClose }) => {
                         <p className="font-bold text-amber-800 text-xs">{countryData.safety.indian_embassy_phone}</p>
                       </div>
                     )}
-                  </div>
-                </div>
-              )}
-
-              {/* Forex Rate */}
-              {countryData.forex && (
-                <div className="md:col-span-2 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-5 border border-emerald-100">
-                  <div className="flex items-center gap-2 mb-3">
-                    <DollarSign className="w-5 h-5 text-emerald-500" />
-                    <h3 className="font-semibold text-primary">Exchange Rate</h3>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-center">
-                      <p className="text-2xl font-bold text-emerald-700">₹{countryData.forex.rate?.toFixed(2)}</p>
-                      <p className="text-sm text-muted-foreground">= 1 {countryData.forex.currency}</p>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      <p>{countryData.forex.country_name}</p>
-                      <p className="text-xs">Currency: {countryData.forex.currency}</p>
-                    </div>
                   </div>
                 </div>
               )}
