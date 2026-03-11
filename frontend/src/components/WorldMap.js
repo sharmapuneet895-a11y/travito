@@ -263,11 +263,11 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       <ComposableMap
         projection="geoNaturalEarth1"
         projectionConfig={{
-          scale: 240,
-          center: [10, 5]
+          scale: 260,
+          center: [0, 10]
         }}
-        style={{ width: '100%', height: 'auto', touchAction: 'pan-x pan-y' }}
-        width={1300}
+        style={{ width: '100%', height: 'auto', touchAction: 'pan-x pan-y', maxWidth: '100%' }}
+        width={1400}
         height={700}
       >
         <ZoomableGroup

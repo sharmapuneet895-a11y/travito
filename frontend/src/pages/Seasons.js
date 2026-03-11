@@ -25,6 +25,33 @@ const CATEGORIES = [
   { id: 'nature', label: 'Nature', icon: Trees, color: 'green' },
 ];
 
+// ISO3 to ISO2 country code mapping for flags
+const iso3ToIso2 = {
+  'USA': 'us', 'CAN': 'ca', 'MEX': 'mx', 'GBR': 'gb', 'FRA': 'fr', 'DEU': 'de', 'ITA': 'it', 'ESP': 'es',
+  'PRT': 'pt', 'NLD': 'nl', 'BEL': 'be', 'CHE': 'ch', 'AUT': 'at', 'GRC': 'gr', 'TUR': 'tr', 'RUS': 'ru',
+  'CHN': 'cn', 'JPN': 'jp', 'KOR': 'kr', 'IND': 'in', 'THA': 'th', 'VNM': 'vn', 'IDN': 'id', 'MYS': 'my',
+  'SGP': 'sg', 'PHL': 'ph', 'AUS': 'au', 'NZL': 'nz', 'BRA': 'br', 'ARG': 'ar', 'CHL': 'cl', 'PER': 'pe',
+  'COL': 'co', 'ZAF': 'za', 'EGY': 'eg', 'MAR': 'ma', 'KEN': 'ke', 'UAE': 'ae', 'ARE': 'ae', 'SAU': 'sa',
+  'ISR': 'il', 'JOR': 'jo', 'NPL': 'np', 'LKA': 'lk', 'MDV': 'mv', 'MMR': 'mm', 'KHM': 'kh', 'LAO': 'la',
+  'BTN': 'bt', 'BGD': 'bd', 'PAK': 'pk', 'AFG': 'af', 'IRN': 'ir', 'IRQ': 'iq', 'SYR': 'sy', 'LBN': 'lb',
+  'CUB': 'cu', 'JAM': 'jm', 'DOM': 'do', 'CRI': 'cr', 'PAN': 'pa', 'GTM': 'gt', 'ECU': 'ec', 'VEN': 've',
+  'URY': 'uy', 'PRY': 'py', 'BOL': 'bo', 'HRV': 'hr', 'CZE': 'cz', 'HUN': 'hu', 'POL': 'pl', 'SWE': 'se',
+  'NOR': 'no', 'DNK': 'dk', 'FIN': 'fi', 'IRL': 'ie', 'ISL': 'is', 'ROU': 'ro', 'BGR': 'bg', 'UKR': 'ua',
+  'BLR': 'by', 'SRB': 'rs', 'MNE': 'me', 'ALB': 'al', 'MKD': 'mk', 'BIH': 'ba', 'SVN': 'si', 'SVK': 'sk',
+  'EST': 'ee', 'LVA': 'lv', 'LTU': 'lt', 'GEO': 'ge', 'ARM': 'am', 'AZE': 'az', 'KAZ': 'kz', 'UZB': 'uz',
+  'TKM': 'tm', 'TJK': 'tj', 'KGZ': 'kg', 'MNG': 'mn', 'TWN': 'tw', 'HKG': 'hk', 'MAC': 'mo', 'FJI': 'fj',
+  'PNG': 'pg', 'TZA': 'tz', 'UGA': 'ug', 'ETH': 'et', 'NGA': 'ng', 'GHA': 'gh', 'SEN': 'sn', 'CIV': 'ci',
+  'CMR': 'cm', 'TUN': 'tn', 'DZA': 'dz', 'LBY': 'ly', 'SDN': 'sd', 'OMN': 'om', 'QAT': 'qa', 'BHR': 'bh',
+  'KWT': 'kw', 'YEM': 'ye', 'TLS': 'tl', 'BRN': 'bn', 'MUS': 'mu', 'MDG': 'mg', 'ZWE': 'zw', 'ZMB': 'zm',
+  'BWA': 'bw', 'NAM': 'na', 'MOZ': 'mz', 'AGO': 'ao', 'GAB': 'ga', 'COG': 'cg', 'COD': 'cd', 'RWA': 'rw',
+  'GRL': 'gl', 'LUX': 'lu', 'MLT': 'mt', 'CYP': 'cy', 'MDA': 'md'
+};
+
+const getFlag = (countryCode) => {
+  const iso2 = iso3ToIso2[countryCode] || countryCode?.toLowerCase().slice(0, 2) || 'un';
+  return `https://flagcdn.com/w40/${iso2}.png`;
+};
+
 const Seasons = () => {
   const [seasonsData, setSeasonsData] = useState([]);
   const [processedData, setProcessedData] = useState([]);
@@ -371,7 +398,12 @@ const Seasons = () => {
                       onClick={() => handleCountryCardClick(country)}
                     >
                       <div className="flex items-start gap-3">
-                        <div className="w-3 h-3 rounded-full mt-1.5 flex-shrink-0 bg-red-500" />
+                        <img 
+                          src={getFlag(country.country_code)} 
+                          alt={country.country_name}
+                          className="w-8 h-5 object-cover rounded shadow flex-shrink-0 mt-0.5"
+                          onError={(e) => { e.target.style.display = 'none'; }}
+                        />
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
                             <h4 className="font-semibold text-foreground">{country.country_name}</h4>
@@ -425,7 +457,12 @@ const Seasons = () => {
                       onClick={() => handleCountryCardClick(country)}
                     >
                       <div className="flex items-start gap-3">
-                        <div className="w-3 h-3 rounded-full mt-1.5 flex-shrink-0 bg-red-500" />
+                        <img 
+                          src={getFlag(country.country_code)} 
+                          alt={country.country_name}
+                          className="w-8 h-5 object-cover rounded shadow flex-shrink-0 mt-0.5"
+                          onError={(e) => { e.target.style.display = 'none'; }}
+                        />
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
                             <h4 className="font-semibold text-foreground">{country.country_name}</h4>
@@ -464,15 +501,20 @@ const Seasons = () => {
                   Good Time to Visit ({shoulderCountries.length} destinations)
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {shoulderCountries.map((country) => (
+                  {shoulderCountries.map((country, idx) => (
                     <div
-                      key={country.country_code}
+                      key={`shoulder-${country.country_code}-${idx}`}
                       className="bg-blue-50 rounded-lg p-4 border border-blue-200 hover:shadow-md transition-all cursor-pointer group"
                       data-testid={`country-card-${country.country_code}`}
                       onClick={() => handleCountryCardClick(country)}
                     >
                       <div className="flex items-start gap-3">
-                        <div className="w-3 h-3 rounded-full mt-1.5 flex-shrink-0 bg-blue-500" />
+                        <img 
+                          src={getFlag(country.country_code)} 
+                          alt={country.country_name}
+                          className="w-8 h-5 object-cover rounded shadow flex-shrink-0 mt-0.5"
+                          onError={(e) => { e.target.style.display = 'none'; }}
+                        />
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
                             <h4 className="font-semibold text-foreground">{country.country_name}</h4>
@@ -511,15 +553,20 @@ const Seasons = () => {
                   Off Season ({offCountries.length} destinations)
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {offCountries.slice(0, 12).map((country) => (
+                  {offCountries.slice(0, 12).map((country, idx) => (
                     <div
-                      key={country.country_code}
+                      key={`off-${country.country_code}-${idx}`}
                       className="bg-amber-50 rounded-lg p-4 border border-amber-200 hover:shadow-md transition-all cursor-pointer group"
                       data-testid={`country-card-${country.country_code}`}
                       onClick={() => handleCountryCardClick(country)}
                     >
                       <div className="flex items-start gap-3">
-                        <div className="w-3 h-3 rounded-full mt-1.5 flex-shrink-0 bg-amber-500" />
+                        <img 
+                          src={getFlag(country.country_code)} 
+                          alt={country.country_name}
+                          className="w-8 h-5 object-cover rounded shadow flex-shrink-0 mt-0.5"
+                          onError={(e) => { e.target.style.display = 'none'; }}
+                        />
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
                             <h4 className="font-semibold text-foreground">{country.country_name}</h4>

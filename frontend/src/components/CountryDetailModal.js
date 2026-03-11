@@ -1,10 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2 } from 'lucide-react';
+import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2, Shield, Phone, DollarSign } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+// Month abbreviations
+const MONTH_ABBREV = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+// ISO3 to ISO2 country code mapping for flags
+const iso3ToIso2 = {
+  'USA': 'us', 'CAN': 'ca', 'MEX': 'mx', 'GBR': 'gb', 'FRA': 'fr', 'DEU': 'de', 'ITA': 'it', 'ESP': 'es',
+  'PRT': 'pt', 'NLD': 'nl', 'BEL': 'be', 'CHE': 'ch', 'AUT': 'at', 'GRC': 'gr', 'TUR': 'tr', 'RUS': 'ru',
+  'CHN': 'cn', 'JPN': 'jp', 'KOR': 'kr', 'IND': 'in', 'THA': 'th', 'VNM': 'vn', 'IDN': 'id', 'MYS': 'my',
+  'SGP': 'sg', 'PHL': 'ph', 'AUS': 'au', 'NZL': 'nz', 'BRA': 'br', 'ARG': 'ar', 'CHL': 'cl', 'PER': 'pe',
+  'COL': 'co', 'ZAF': 'za', 'EGY': 'eg', 'MAR': 'ma', 'KEN': 'ke', 'UAE': 'ae', 'ARE': 'ae', 'SAU': 'sa',
+  'ISR': 'il', 'JOR': 'jo', 'NPL': 'np', 'LKA': 'lk', 'MDV': 'mv', 'MMR': 'mm', 'KHM': 'kh', 'LAO': 'la',
+  'BTN': 'bt', 'BGD': 'bd', 'PAK': 'pk', 'AFG': 'af', 'IRN': 'ir', 'IRQ': 'iq', 'SYR': 'sy', 'LBN': 'lb',
+  'CUB': 'cu', 'JAM': 'jm', 'DOM': 'do', 'CRI': 'cr', 'PAN': 'pa', 'GTM': 'gt', 'ECU': 'ec', 'VEN': 've',
+  'URY': 'uy', 'PRY': 'py', 'BOL': 'bo', 'HRV': 'hr', 'CZE': 'cz', 'HUN': 'hu', 'POL': 'pl', 'SWE': 'se',
+  'NOR': 'no', 'DNK': 'dk', 'FIN': 'fi', 'IRL': 'ie', 'ISL': 'is', 'ROU': 'ro', 'BGR': 'bg', 'UKR': 'ua',
+  'BLR': 'by', 'SRB': 'rs', 'MNE': 'me', 'ALB': 'al', 'MKD': 'mk', 'BIH': 'ba', 'SVN': 'si', 'SVK': 'sk',
+  'EST': 'ee', 'LVA': 'lv', 'LTU': 'lt', 'GEO': 'ge', 'ARM': 'am', 'AZE': 'az', 'KAZ': 'kz', 'UZB': 'uz',
+  'TKM': 'tm', 'TJK': 'tj', 'KGZ': 'kg', 'MNG': 'mn', 'TWN': 'tw', 'HKG': 'hk', 'MAC': 'mo', 'FJI': 'fj',
+  'PNG': 'pg', 'TZA': 'tz', 'UGA': 'ug', 'ETH': 'et', 'NGA': 'ng', 'GHA': 'gh', 'SEN': 'sn', 'CIV': 'ci',
+  'CMR': 'cm', 'TUN': 'tn', 'DZA': 'dz', 'LBY': 'ly', 'SDN': 'sd', 'OMN': 'om', 'QAT': 'qa', 'BHR': 'bh',
+  'KWT': 'kw', 'YEM': 'ye', 'TLS': 'tl', 'BRN': 'bn', 'MUS': 'mu', 'MDG': 'mg', 'ZWE': 'zw', 'ZMB': 'zm',
+  'BWA': 'bw', 'NAM': 'na', 'MOZ': 'mz', 'AGO': 'ao', 'GAB': 'ga', 'COG': 'cg', 'COD': 'cd', 'RWA': 'rw',
+  'GRL': 'gl', 'LUX': 'lu', 'MLT': 'mt', 'CYP': 'cy', 'MDA': 'md'
+};
+
+const getFlag = (countryCode) => {
+  const iso2 = iso3ToIso2[countryCode] || countryCode?.toLowerCase().slice(0, 2) || 'un';
+  return `https://flagcdn.com/w80/${iso2}.png`;
+};
 
 const CountryDetailModal = ({ country, onClose }) => {
   const [loading, setLoading] = useState(true);
@@ -15,24 +45,29 @@ const CountryDetailModal = ({ country, onClose }) => {
     plugs: null,
     festivals: [],
     dishes: [],
-    apps: []
+    apps: [],
+    safety: null,
+    forex: null
   });
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   const inWishlist = isInWishlist(country.country_code);
+  const currentMonth = MONTH_ABBREV[new Date().getMonth()];
 
   useEffect(() => {
     const fetchAllData = async () => {
       setLoading(true);
       try {
         // Load critical data first (fast endpoints)
-        const [seasonsRes, visaRes, plugsRes, festivalsRes, dishesRes, appsRes] = await Promise.all([
+        const [seasonsRes, visaRes, plugsRes, festivalsRes, dishesRes, appsRes, safetyRes, forexRes] = await Promise.all([
           axios.get(`${BACKEND_URL}/api/seasons`),
           axios.get(`${BACKEND_URL}/api/visa`),
           axios.get(`${BACKEND_URL}/api/plugs`),
           axios.get(`${BACKEND_URL}/api/festivals`),
           axios.get(`${BACKEND_URL}/api/dishes`),
-          axios.get(`${BACKEND_URL}/api/apps`)
+          axios.get(`${BACKEND_URL}/api/apps`),
+          axios.get(`${BACKEND_URL}/api/safety`),
+          axios.get(`${BACKEND_URL}/api/forex/rates`)
         ]);
 
         const code = country.country_code;
@@ -49,14 +84,33 @@ const CountryDetailModal = ({ country, onClose }) => {
           }
         });
 
+        // Find forex rate for this country
+        const forexRates = forexRes.data?.rates || {};
+        // Currency to country code mapping
+        const currencyToCountry = {
+          'THB': 'THA', 'JPY': 'JPN', 'SGD': 'SGP', 'MYR': 'MYS', 'IDR': 'IDN', 'VND': 'VNM', 'PHP': 'PHL',
+          'AUD': 'AUS', 'NZD': 'NZL', 'USD': 'USA', 'EUR': 'FRA', 'GBP': 'GBR', 'CHF': 'CHE', 'CAD': 'CAN',
+          'AED': 'ARE', 'SAR': 'SAU', 'EGP': 'EGY', 'ZAR': 'ZAF', 'KRW': 'KOR', 'CNY': 'CHN', 'HKD': 'HKG',
+          'BRL': 'BRA', 'MXN': 'MEX', 'TRY': 'TUR', 'RUB': 'RUS', 'NPR': 'NPL', 'LKR': 'LKA', 'MVR': 'MDV'
+        };
+        let countryForex = null;
+        for (const [currency, rate] of Object.entries(forexRates)) {
+          if (currencyToCountry[currency] === code) {
+            countryForex = { currency, rate, country_name: name };
+            break;
+          }
+        }
+
         setCountryData({
           seasons: seasonsRes.data.data?.find(d => d.country_code === code || d.country_name === name),
           visa: visaRes.data.data?.find(d => d.country_code === code || d.country_name === name),
-          weather: null, // Will load separately
+          weather: null,
           plugs: plugsRes.data.data?.find(d => d.country_code === code || d.country_name === name),
           festivals: festivalsRes.data.data?.filter(d => d.country_code === code || d.country_name === name) || [],
           dishes: allDishes,
-          apps: appsRes.data.data?.filter(d => d.country_code === code || d.country_name === name) || []
+          apps: appsRes.data.data?.filter(d => d.country_code === code || d.country_name === name) || [],
+          safety: safetyRes.data.data?.find(d => d.country_code === code || d.country_name === name),
+          forex: countryForex
         });
         setLoading(false);
         
@@ -126,7 +180,7 @@ const CountryDetailModal = ({ country, onClose }) => {
           <div className="sticky top-0 bg-white border-b border-border p-6 flex items-center justify-between z-10">
             <div className="flex items-center gap-4">
               <img
-                src={`https://flagcdn.com/w80/${country.country_code?.toLowerCase().slice(0, 2) || 'un'}.png`}
+                src={getFlag(country.country_code)}
                 alt={country.country_name}
                 className="w-12 h-8 object-cover rounded shadow"
                 onError={(e) => { e.target.style.display = 'none'; }}
@@ -170,12 +224,21 @@ const CountryDetailModal = ({ country, onClose }) => {
                 </div>
                 {countryData.seasons ? (
                   <div>
-                    <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getSeasonColor(countryData.seasons.season_type)}`}>
-                      {countryData.seasons.season_type?.toUpperCase()} Season
-                    </span>
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Best months: {countryData.seasons.best_months?.join(', ') || 'N/A'}
-                    </p>
+                    {(() => {
+                      const isCurrentlyBest = countryData.seasons.best_months?.includes(currentMonth);
+                      return (
+                        <>
+                          <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                            isCurrentlyBest ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                          }`}>
+                            {isCurrentlyBest ? '✓ BEST TIME NOW' : 'NOT IDEAL NOW'}
+                          </span>
+                          <p className="mt-2 text-sm text-muted-foreground">
+                            Best months: {countryData.seasons.best_months?.join(', ') || 'N/A'}
+                          </p>
+                        </>
+                      );
+                    })()}
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">No season data available</p>
@@ -310,6 +373,66 @@ const CountryDetailModal = ({ country, onClose }) => {
                         <p className="text-xs text-muted-foreground capitalize">{app.category}</p>
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Safety & Emergency */}
+              {countryData.safety && (
+                <div className="md:col-span-2 bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-5 border border-red-100">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Shield className="w-5 h-5 text-red-500" />
+                    <h3 className="font-semibold text-primary">Safety & Emergency</h3>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                    {countryData.safety.emergency_police && (
+                      <div className="bg-blue-50 p-2 rounded text-center">
+                        <Phone className="w-4 h-4 text-blue-600 mx-auto mb-1" />
+                        <p className="text-xs text-blue-600 font-medium">Police</p>
+                        <p className="font-bold text-blue-800">{countryData.safety.emergency_police}</p>
+                      </div>
+                    )}
+                    {countryData.safety.emergency_ambulance && (
+                      <div className="bg-red-50 p-2 rounded text-center">
+                        <Phone className="w-4 h-4 text-red-600 mx-auto mb-1" />
+                        <p className="text-xs text-red-600 font-medium">Ambulance</p>
+                        <p className="font-bold text-red-800">{countryData.safety.emergency_ambulance}</p>
+                      </div>
+                    )}
+                    {countryData.safety.emergency_fire && (
+                      <div className="bg-orange-50 p-2 rounded text-center">
+                        <Phone className="w-4 h-4 text-orange-600 mx-auto mb-1" />
+                        <p className="text-xs text-orange-600 font-medium">Fire</p>
+                        <p className="font-bold text-orange-800">{countryData.safety.emergency_fire}</p>
+                      </div>
+                    )}
+                    {countryData.safety.indian_embassy_phone && (
+                      <div className="bg-amber-50 p-2 rounded text-center">
+                        <Phone className="w-4 h-4 text-amber-600 mx-auto mb-1" />
+                        <p className="text-xs text-amber-600 font-medium">Indian Embassy</p>
+                        <p className="font-bold text-amber-800 text-xs">{countryData.safety.indian_embassy_phone}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Forex Rate */}
+              {countryData.forex && (
+                <div className="md:col-span-2 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-5 border border-emerald-100">
+                  <div className="flex items-center gap-2 mb-3">
+                    <DollarSign className="w-5 h-5 text-emerald-500" />
+                    <h3 className="font-semibold text-primary">Exchange Rate</h3>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-emerald-700">₹{countryData.forex.rate?.toFixed(2)}</p>
+                      <p className="text-sm text-muted-foreground">= 1 {countryData.forex.currency}</p>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      <p>{countryData.forex.country_name}</p>
+                      <p className="text-xs">Currency: {countryData.forex.currency}</p>
+                    </div>
                   </div>
                 </div>
               )}

@@ -38,6 +38,22 @@ const MONTH_COLORS = {
   12: '#EF4444'
 };
 
+// Helper to normalize month to number (1-12)
+const normalizeMonth = (month) => {
+  if (typeof month === 'number' && month >= 1 && month <= 12) {
+    return month;
+  }
+  if (typeof month === 'string') {
+    const monthMap = {
+      'january': 1, 'february': 2, 'march': 3, 'april': 4, 'may': 5, 'june': 6,
+      'july': 7, 'august': 8, 'september': 9, 'october': 10, 'november': 11, 'december': 12,
+      'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'jun': 6, 'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12
+    };
+    return monthMap[month.toLowerCase()] || 0;
+  }
+  return 0; // Unknown/Various
+};
+
 const Festivals = () => {
   const [festivals, setFestivals] = useState([]);
   const [filteredFestivals, setFilteredFestivals] = useState([]);
@@ -93,13 +109,14 @@ const Festivals = () => {
     if (selectedMonth === 0) {
       setFilteredFestivals(festivals);
     } else {
-      setFilteredFestivals(festivals.filter(f => f.month === selectedMonth));
+      setFilteredFestivals(festivals.filter(f => normalizeMonth(f.month) === selectedMonth));
     }
   }, [selectedMonth, festivals]);
 
-  // Group festivals by month
+  // Group festivals by month (normalized)
   const festivalsByMonth = filteredFestivals.reduce((acc, festival) => {
-    const monthName = MONTHS.find(m => m.value === festival.month)?.label || 'Unknown';
+    const monthNum = normalizeMonth(festival.month);
+    const monthName = monthNum > 0 ? MONTHS.find(m => m.value === monthNum)?.label : 'Various';
     if (!acc[monthName]) {
       acc[monthName] = [];
     }
