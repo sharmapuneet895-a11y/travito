@@ -45,41 +45,40 @@ const numericToISO3 = {
   "776": "TON", "882": "WSM", "296": "KIR", "798": "TUV"
 };
 
-// Ocean labels - positioned carefully in open ocean areas
+// Ocean labels - positioned in deep ocean areas away from all landmasses
 const OCEAN_LABELS = [
-  { name: 'North Pacific Ocean', coords: [-155, 35], size: 12 },
-  { name: 'South Pacific Ocean', coords: [-130, -25], size: 12 },
-  { name: 'North Atlantic Ocean', coords: [-45, 35], size: 11 },
-  { name: 'South Atlantic Ocean', coords: [-20, -25], size: 11 },
-  { name: 'Indian Ocean', coords: [80, -15], size: 12 },
-  { name: 'Southern Ocean', coords: [0, -58], size: 10 },
-  { name: 'Arctic Ocean', coords: [0, 75], size: 10 },
+  { name: 'North Pacific Ocean', coords: [-170, 30], size: 11 },
+  { name: 'South Pacific Ocean', coords: [-130, -30], size: 11 },
+  { name: 'North Atlantic Ocean', coords: [-40, 30], size: 10 },
+  { name: 'South Atlantic Ocean', coords: [-15, -30], size: 10 },
+  { name: 'Indian Ocean', coords: [75, -25], size: 11 },
+  { name: 'Southern Ocean', coords: [0, -55], size: 9 },
+  { name: 'Arctic Ocean', coords: [-20, 75], size: 9 },
 ];
 
-// Sea labels - positioned precisely in actual sea locations away from land
+// Sea labels - positioned in CENTER of each sea body, away from ALL coastlines
 const SEA_LABELS = [
-  { name: 'Caribbean Sea', coords: [-75, 17], size: 8 },
-  { name: 'Gulf of Mexico', coords: [-90, 25], size: 8 },
-  { name: 'Mediterranean Sea', coords: [18, 37], size: 8 },
-  { name: 'Arabian Sea', coords: [63, 16], size: 8 },
-  { name: 'Bay of Bengal', coords: [87, 15], size: 8 },
-  { name: 'South China Sea', coords: [115, 15], size: 8 },
-  { name: 'Coral Sea', coords: [155, -18], size: 8 },
-  { name: 'Tasman Sea', coords: [165, -35], size: 8 },
-  { name: 'Sea of Japan', coords: [135, 40], size: 7 },
-  { name: 'Philippine Sea', coords: [135, 20], size: 7 },
-  { name: 'Bering Sea', coords: [-175, 57], size: 7 },
+  { name: 'Caribbean Sea', coords: [-68, 12], size: 7 },
+  { name: 'Gulf of Mexico', coords: [-90, 24], size: 7 },
+  { name: 'Mediterranean Sea', coords: [15, 35], size: 7 },
+  { name: 'Arabian Sea', coords: [60, 10], size: 7 },
+  { name: 'Bay of Bengal', coords: [87, 8], size: 7 },
+  { name: 'South China Sea', coords: [112, 6], size: 7 },
+  { name: 'Coral Sea', coords: [155, -22], size: 7 },
+  { name: 'Tasman Sea', coords: [165, -40], size: 7 },
+  { name: 'Sea of Japan', coords: [134, 40], size: 6 },
+  { name: 'Bering Sea', coords: [-178, 56], size: 6 },
 ];
 
 const WorldMap = ({ data, mode, onCountryClick }) => {
   const [tooltipContent, setTooltipContent] = useState('');
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [center, setCenter] = useState([0, 20]);
+  const [center, setCenter] = useState([0, 15]);
 
   const handleZoomIn = () => setZoom(prev => Math.min(prev * 1.5, 8));
   const handleZoomOut = () => setZoom(prev => Math.max(prev / 1.5, 1));
-  const handleReset = () => { setZoom(1); setCenter([0, 20]); };
+  const handleReset = () => { setZoom(1); setCenter([0, 15]); };
 
   const getColorByMode = (geo) => {
     const numericId = String(geo.id);
@@ -187,12 +186,12 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       </div>
 
       <ComposableMap
-        projection="geoEquirectangular"
+        projection="geoNaturalEarth1"
         projectionConfig={{ 
-          scale: 160,
-          center: [0, 20]
+          scale: 170,
+          center: [0, 10]
         }}
-        width={980}
+        width={960}
         height={500}
         style={{ width: '100%', height: 'auto' }}
       >
@@ -254,7 +253,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
                   fontSize: `${ocean.size}px`, 
                   fontWeight: '600', 
                   fill: '#0369A1', 
-                  opacity: 0.85,
+                  opacity: 0.8,
                   fontStyle: 'italic',
                   letterSpacing: '1px'
                 }}
@@ -273,7 +272,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
                   fontFamily: 'Georgia, serif',
                   fontSize: `${sea.size}px`, 
                   fill: '#0284C7', 
-                  opacity: 0.75,
+                  opacity: 0.7,
                   fontStyle: 'italic'
                 }}
               >
