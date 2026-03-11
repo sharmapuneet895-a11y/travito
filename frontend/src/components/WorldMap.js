@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { ComposableMap, Geographies, Geography, ZoomableGroup, Marker } from 'react-simple-maps';
 import { motion } from 'framer-motion';
 
-// Using Natural Earth map data - standard international boundaries
 const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
 
 // Mapping from numeric IDs to ISO3 codes
@@ -54,17 +53,17 @@ const OCEAN_LABELS = [
   { name: 'South Atlantic Ocean', coords: [-10, -28], size: 9 },
   { name: 'Indian Ocean', coords: [75, -20], size: 10 },
   { name: 'Southern Ocean', coords: [0, -58], size: 8 },
-  { name: 'Arctic Ocean', coords: [-60, 72], size: 8 },
+  { name: 'Arctic Ocean', coords: [-140, 70], size: 8 },
 ];
 
 // Sea labels - positioned clearly in the water
 const SEA_LABELS = [
-  { name: 'Caribbean Sea', coords: [-74, 16], size: 6 },
-  { name: 'Gulf of Mexico', coords: [-93, 26], size: 6 },
-  { name: 'Mediterranean', coords: [18, 37], size: 6 },
-  { name: 'Arabian Sea', coords: [63, 14], size: 6 },
+  { name: 'Caribbean Sea', coords: [-76, 17], size: 6 },
+  { name: 'Gulf of Mexico', coords: [-92, 26], size: 6 },
+  { name: 'Mediterranean', coords: [16, 36], size: 6 },
+  { name: 'Arabian Sea', coords: [64, 15], size: 6 },
   { name: 'Bay of Bengal', coords: [90, 14], size: 6 },
-  { name: 'South China Sea', coords: [116, 12], size: 6 },
+  { name: 'South China Sea', coords: [117, 14], size: 6 },
   { name: 'Coral Sea', coords: [155, -18], size: 6 },
   { name: 'Tasman Sea', coords: [162, -38], size: 6 },
 ];
@@ -194,21 +193,17 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         height={420}
         style={{ width: '100%', height: 'auto' }}
       >
-        {/* Ocean background with wave pattern */}
+        {/* Ocean background - solid blue color */}
         <defs>
-          <linearGradient id="oceanGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#E0F2FE" />
-            <stop offset="50%" stopColor="#BAE6FD" />
-            <stop offset="100%" stopColor="#7DD3FC" />
-          </linearGradient>
           <pattern id="waves" x="0" y="0" width="80" height="15" patternUnits="userSpaceOnUse">
-            <path d="M0 8 Q20 4 40 8 T80 8" stroke="#0EA5E9" strokeWidth="0.25" fill="none" opacity="0.35"/>
-            <path d="M0 12 Q20 8 40 12 T80 12" stroke="#0EA5E9" strokeWidth="0.25" fill="none" opacity="0.25"/>
+            <path d="M0 8 Q20 4 40 8 T80 8" stroke="#0284C7" strokeWidth="0.3" fill="none" opacity="0.3"/>
+            <path d="M0 12 Q20 8 40 12 T80 12" stroke="#0284C7" strokeWidth="0.3" fill="none" opacity="0.2"/>
           </pattern>
         </defs>
         
-        <rect x="-10" y="-10" width="920" height="440" fill="url(#oceanGrad)" />
-        <rect x="-10" y="-10" width="920" height="440" fill="url(#waves)" />
+        {/* Solid ocean blue background */}
+        <rect x="-10" y="-10" width="920" height="470" fill="#7DD3FC" />
+        <rect x="-10" y="-10" width="920" height="470" fill="url(#waves)" />
         
         <ZoomableGroup 
           zoom={zoom} 
