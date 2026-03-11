@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ComposableMap, Geographies, Geography, ZoomableGroup, Marker } from 'react-simple-maps';
+import { ComposableMap, Geographies, Geography, ZoomableGroup, Marker, Annotation } from 'react-simple-maps';
 import { motion } from 'framer-motion';
 
 const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
@@ -45,38 +45,67 @@ const numericToISO3 = {
   "776": "TON", "882": "WSM", "296": "KIR", "798": "TUV"
 };
 
-// Ocean labels - positioned in open ocean areas (away from all landmasses)
+// Ocean labels positioned like in the reference map
 const OCEAN_LABELS = [
-  { name: 'North Pacific Ocean', coords: [-155, 30], size: 9 },
-  { name: 'South Pacific Ocean', coords: [-130, -35], size: 9 },
-  { name: 'North Atlantic Ocean', coords: [-45, 32], size: 8 },
-  { name: 'South Atlantic Ocean', coords: [-18, -32], size: 8 },
-  { name: 'Indian Ocean', coords: [75, -25], size: 9 },
-  { name: 'Southern Ocean', coords: [30, -62], size: 7 },
-  { name: 'Arctic Ocean', coords: [150, 75], size: 7 },
+  { name: 'ARCTIC', name2: 'OCEAN', coords: [0, 82], size: 11 },
+  { name: 'NORTH', name2: 'PACIFIC', name3: 'OCEAN', coords: [-160, 35], size: 10 },
+  { name: 'SOUTH', name2: 'PACIFIC', name3: 'OCEAN', coords: [-130, -35], size: 10 },
+  { name: 'NORTH', name2: 'ATLANTIC', name3: 'OCEAN', coords: [-45, 35], size: 9 },
+  { name: 'SOUTH', name2: 'ATLANTIC', name3: 'OCEAN', coords: [-25, -30], size: 9 },
+  { name: 'INDIAN', name2: 'OCEAN', coords: [75, -25], size: 10 },
+  { name: 'SOUTHERN OCEAN', coords: [0, -65], size: 9 },
 ];
 
-// Sea labels - positioned clearly in the water
+// Sea labels positioned like in the reference map
 const SEA_LABELS = [
-  { name: 'Caribbean Sea', coords: [-76, 17], size: 5 },
-  { name: 'Gulf of Mexico', coords: [-92, 26], size: 5 },
-  { name: 'Mediterranean', coords: [16, 36], size: 5 },
-  { name: 'Arabian Sea', coords: [64, 15], size: 5 },
-  { name: 'Bay of Bengal', coords: [90, 14], size: 5 },
-  { name: 'South China Sea', coords: [117, 14], size: 5 },
-  { name: 'Coral Sea', coords: [155, -18], size: 5 },
-  { name: 'Tasman Sea', coords: [162, -38], size: 5 },
+  { name: 'Caribbean Sea', coords: [-75, 17], size: 6 },
+  { name: 'Gulf of', name2: 'Mexico', coords: [-92, 24], size: 6 },
+  { name: 'Gulf of', name2: 'Alaska', coords: [-145, 55], size: 5 },
+  { name: 'Hudson', name2: 'Bay', coords: [-85, 60], size: 5 },
+  { name: 'Baffin', name2: 'Bay', coords: [-65, 72], size: 5 },
+  { name: 'Labrador', name2: 'Sea', coords: [-55, 58], size: 5 },
+  { name: 'Norwegian', name2: 'Sea', coords: [5, 68], size: 5 },
+  { name: 'Barents', name2: 'Sea', coords: [40, 73], size: 5 },
+  { name: 'Kara', name2: 'Sea', coords: [70, 75], size: 5 },
+  { name: 'Laptev', name2: 'Sea', coords: [120, 76], size: 5 },
+  { name: 'Mediterranean Sea', coords: [18, 37], size: 6 },
+  { name: 'Black Sea', coords: [35, 43], size: 5 },
+  { name: 'Caspian', name2: 'Sea', coords: [51, 42], size: 5 },
+  { name: 'Arabian', name2: 'Sea', coords: [63, 15], size: 6 },
+  { name: 'Bay of', name2: 'Bengal', coords: [88, 14], size: 6 },
+  { name: 'South China', name2: 'Sea', coords: [115, 14], size: 6 },
+  { name: 'Sea of', name2: 'Japan', coords: [135, 40], size: 5 },
+  { name: 'Sea of', name2: 'Okhotsk', coords: [150, 55], size: 5 },
+  { name: 'Coral', name2: 'Sea', coords: [155, -18], size: 6 },
+  { name: 'Tasman', name2: 'Sea', coords: [162, -38], size: 6 },
+  { name: 'Beaufort', name2: 'Sea', coords: [-140, 72], size: 5 },
+];
+
+// Major country labels with coordinates
+const COUNTRY_LABELS = [
+  { name: 'Russia', coords: [100, 62], size: 12 },
+  { name: 'Canada', coords: [-100, 60], size: 11 },
+  { name: 'United States', name2: 'of America', coords: [-100, 40], size: 9 },
+  { name: 'Brazil', coords: [-55, -12], size: 10 },
+  { name: 'Australia', coords: [135, -25], size: 10 },
+  { name: 'China', coords: [100, 35], size: 10 },
+  { name: 'India', coords: [80, 22], size: 9 },
+  { name: 'Argentina', coords: [-65, -35], size: 8 },
+  { name: 'Kazakhstan', coords: [68, 48], size: 7 },
+  { name: 'Mongolia', coords: [105, 47], size: 7 },
+  { name: 'Greenland', name2: '(Denmark)', coords: [-42, 72], size: 7 },
+  { name: 'Alaska', name2: '(USA)', coords: [-153, 64], size: 6 },
 ];
 
 const WorldMap = ({ data, mode, onCountryClick }) => {
   const [tooltipContent, setTooltipContent] = useState('');
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [center, setCenter] = useState([0, 15]);
+  const [center, setCenter] = useState([0, 20]);
 
   const handleZoomIn = () => setZoom(prev => Math.min(prev * 1.5, 8));
   const handleZoomOut = () => setZoom(prev => Math.max(prev / 1.5, 1));
-  const handleReset = () => { setZoom(1); setCenter([0, 15]); };
+  const handleReset = () => { setZoom(1); setCenter([0, 20]); };
 
   const getColorByMode = (geo) => {
     const numericId = String(geo.id);
@@ -179,34 +208,30 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       </div>
       
       {/* Mobile Hint */}
-      <div className="absolute bottom-8 left-2 z-10 md:hidden bg-white/80 text-xs text-gray-600 px-2 py-1 rounded">
+      <div className="absolute bottom-10 left-2 z-10 md:hidden bg-white/80 text-xs text-gray-600 px-2 py-1 rounded">
         Pinch to zoom
       </div>
 
       <ComposableMap
-        projection="geoEqualEarth"
+        projection="geoMercator"
         projectionConfig={{ 
-          scale: 140,
-          center: [0, 5]
+          scale: 120,
+          center: [0, 30]
         }}
-        width={850}
-        height={380}
+        width={900}
+        height={480}
         style={{ width: '100%', height: 'auto', maxHeight: '55vh' }}
       >
-        {/* Ocean background with professional gradient */}
+        {/* Ocean background - light blue like reference */}
         <defs>
           <linearGradient id="oceanGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#93C5FD" />
-            <stop offset="100%" stopColor="#60A5FA" />
+            <stop offset="0%" stopColor="#B3E0FF" />
+            <stop offset="100%" stopColor="#87CEEB" />
           </linearGradient>
-          <pattern id="waves" x="0" y="0" width="60" height="10" patternUnits="userSpaceOnUse">
-            <path d="M0 5 Q15 2 30 5 T60 5" stroke="#3B82F6" strokeWidth="0.2" fill="none" opacity="0.25"/>
-          </pattern>
         </defs>
         
         {/* Ocean background */}
-        <rect x="-10" y="-10" width="870" height="400" fill="url(#oceanGradient)" />
-        <rect x="-10" y="-10" width="870" height="400" fill="url(#waves)" />
+        <rect x="-10" y="-10" width="920" height="500" fill="url(#oceanGradient)" />
         
         <ZoomableGroup 
           zoom={zoom} 
@@ -223,7 +248,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
                   geography={geo}
                   fill={getColorByMode(geo)}
                   stroke="#FFFFFF"
-                  strokeWidth={0.3}
+                  strokeWidth={0.5}
                   style={{
                     default: { outline: 'none' },
                     hover: { fill: '#FCD34D', outline: 'none', cursor: 'pointer' },
@@ -239,48 +264,58 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
             }
           </Geographies>
           
-          {/* Ocean Labels */}
+          {/* Ocean Labels - Large text like reference */}
           {OCEAN_LABELS.map((ocean, idx) => (
             <Marker key={`ocean-${idx}`} coordinates={ocean.coords}>
-              <text
-                textAnchor="middle"
-                style={{ 
-                  fontFamily: 'Georgia, serif',
-                  fontSize: `${ocean.size}px`, 
-                  fontWeight: '500', 
-                  fill: '#1E40AF', 
-                  opacity: 0.7,
-                  fontStyle: 'italic',
-                  letterSpacing: '0.5px'
-                }}
-              >
-                {ocean.name}
-              </text>
+              {ocean.name3 ? (
+                <>
+                  <text textAnchor="middle" y={-10} style={{ fontFamily: 'Arial, sans-serif', fontSize: `${ocean.size}px`, fontWeight: 'bold', fill: '#0066CC', letterSpacing: '3px' }}>{ocean.name}</text>
+                  <text textAnchor="middle" y={2} style={{ fontFamily: 'Arial, sans-serif', fontSize: `${ocean.size}px`, fontWeight: 'bold', fill: '#0066CC', letterSpacing: '3px' }}>{ocean.name2}</text>
+                  <text textAnchor="middle" y={14} style={{ fontFamily: 'Arial, sans-serif', fontSize: `${ocean.size}px`, fontWeight: 'bold', fill: '#0066CC', letterSpacing: '3px' }}>{ocean.name3}</text>
+                </>
+              ) : ocean.name2 ? (
+                <>
+                  <text textAnchor="middle" y={-5} style={{ fontFamily: 'Arial, sans-serif', fontSize: `${ocean.size}px`, fontWeight: 'bold', fill: '#0066CC', letterSpacing: '3px' }}>{ocean.name}</text>
+                  <text textAnchor="middle" y={8} style={{ fontFamily: 'Arial, sans-serif', fontSize: `${ocean.size}px`, fontWeight: 'bold', fill: '#0066CC', letterSpacing: '3px' }}>{ocean.name2}</text>
+                </>
+              ) : (
+                <text textAnchor="middle" style={{ fontFamily: 'Arial, sans-serif', fontSize: `${ocean.size}px`, fontWeight: 'bold', fill: '#0066CC', letterSpacing: '2px' }}>{ocean.name}</text>
+              )}
             </Marker>
           ))}
           
-          {/* Sea Labels */}
+          {/* Sea Labels - Smaller italic text like reference */}
           {SEA_LABELS.map((sea, idx) => (
             <Marker key={`sea-${idx}`} coordinates={sea.coords}>
-              <text
-                textAnchor="middle"
-                style={{ 
-                  fontFamily: 'Georgia, serif',
-                  fontSize: `${sea.size}px`, 
-                  fill: '#1D4ED8', 
-                  opacity: 0.6,
-                  fontStyle: 'italic'
-                }}
-              >
-                {sea.name}
-              </text>
+              {sea.name2 ? (
+                <>
+                  <text textAnchor="middle" y={-3} style={{ fontFamily: 'Arial, sans-serif', fontSize: `${sea.size}px`, fill: '#0077AA', fontStyle: 'italic' }}>{sea.name}</text>
+                  <text textAnchor="middle" y={6} style={{ fontFamily: 'Arial, sans-serif', fontSize: `${sea.size}px`, fill: '#0077AA', fontStyle: 'italic' }}>{sea.name2}</text>
+                </>
+              ) : (
+                <text textAnchor="middle" style={{ fontFamily: 'Arial, sans-serif', fontSize: `${sea.size}px`, fill: '#0077AA', fontStyle: 'italic' }}>{sea.name}</text>
+              )}
+            </Marker>
+          ))}
+
+          {/* Country Labels - Like reference map */}
+          {COUNTRY_LABELS.map((country, idx) => (
+            <Marker key={`country-label-${idx}`} coordinates={country.coords}>
+              {country.name2 ? (
+                <>
+                  <text textAnchor="middle" y={-3} style={{ fontFamily: 'Arial, sans-serif', fontSize: `${country.size}px`, fontWeight: '600', fill: '#333333' }}>{country.name}</text>
+                  <text textAnchor="middle" y={country.size} style={{ fontFamily: 'Arial, sans-serif', fontSize: `${country.size - 2}px`, fill: '#555555' }}>{country.name2}</text>
+                </>
+              ) : (
+                <text textAnchor="middle" style={{ fontFamily: 'Arial, sans-serif', fontSize: `${country.size}px`, fontWeight: '600', fill: '#333333' }}>{country.name}</text>
+              )}
             </Marker>
           ))}
         </ZoomableGroup>
       </ComposableMap>
 
       {/* Disclaimer */}
-      <div className="text-center mt-2 text-xs text-gray-500 italic">
+      <div className="text-center mt-1 text-xs text-gray-500 italic">
         * Map boundaries are for illustrative purposes only and may not reflect the official position on international borders.
       </div>
 
