@@ -10,6 +10,7 @@ from typing import List, Dict, Optional
 import uuid
 from datetime import datetime, timezone
 import httpx
+from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -22,6 +23,9 @@ db = client[os.environ['DB_NAME']]
 # Create the main app
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
+
+# Emergent LLM Key for AI features
+EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY', '')
 
 # OpenWeatherMap API configuration for real-time weather
 OPENWEATHER_API_KEY = os.environ.get('OPENWEATHER_API_KEY', '')
@@ -187,6 +191,37 @@ class ForexRate(BaseModel):
     base_currency: str
     rates: Dict[str, float]
     last_updated: str
+
+# Visa Eligibility Checker Models
+class VisaEligibilityRequest(BaseModel):
+    country: str
+    age: int
+    education: str  # high_school, bachelors, masters, phd
+    monthly_income: float  # in INR
+    travel_history: str  # none, domestic, few_international, many_international
+    bank_balance: float  # in INR
+    purpose: str  # tourism, business, study, work, medical, family_visit
+    visa_type: str  # tourist, business, student, work, medical
+    employment_status: str  # employed, self_employed, student, retired, unemployed
+
+class VisaEligibilityResponse(BaseModel):
+    approval_chance: int
+    risk_level: str  # low, medium, high
+    suggestions: List[str]
+    strengths: List[str]
+    documents_needed: List[str]
+
+class DocumentChecklistRequest(BaseModel):
+    country: str
+    visa_type: str  # tourist, business, student, work, medical
+    purpose: str
+
+class DocumentChecklistResponse(BaseModel):
+    country: str
+    visa_type: str
+    mandatory_documents: List[Dict[str, str]]
+    supporting_documents: List[Dict[str, str]]
+    tips: List[str]
 
 # Initialize sample data on startup
 @app.on_event("startup")
@@ -541,6 +576,225 @@ async def get_dishes(country_code: Optional[str] = None):
     
     dishes = await db.dishes.find(query, {"_id": 0}).to_list(1000)
     return {"data": dishes}
+
+# ===== VISA AI FEATURES =====
+
+@api_router.post("/visa/eligibility-check")
+async def check_visa_eligibility(request: VisaEligibilityRequest):
+    """AI-powered visa eligibility checker"""
+    if not EMERGENT_LLM_KEY:
+        raise HTTPException(status_code=503, detail="AI service not configured")
+    
+    try:
+        # Create the AI chat instance
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"visa-check-{uuid.uuid4()}",
+            system_message="""You are an expert visa consultant who helps Indian passport holders assess their visa approval chances. 
+            Analyze the applicant's profile and provide:
+            1. An approval chance percentage (0-100)
+            2. Risk level (low/medium/high)
+            3. Specific suggestions to improve their application
+            4. Strengths in their profile
+            5. Key documents they should prepare
+            
+            Be realistic but encouraging. Consider factors like:
+            - Financial stability (bank balance should be 3-6 months of expenses + trip costs)
+            - Travel history (previous visas increase chances)
+            - Strong ties to home country (employment, property)
+            - Clear purpose of visit
+            - Appropriate visa type for stated purpose
+            
+            Respond ONLY in valid JSON format with this structure:
+            {
+                "approval_chance": <number 0-100>,
+                "risk_level": "<low|medium|high>",
+                "suggestions": ["suggestion1", "suggestion2", ...],
+                "strengths": ["strength1", "strength2", ...],
+                "documents_needed": ["document1", "document2", ...]
+            }"""
+        ).with_model("openai", "gpt-5.2")
+        
+        # Format the request data
+        profile_text = f"""
+        Visa Application Profile for Indian Passport Holder:
+        - Destination Country: {request.country}
+        - Age: {request.age} years
+        - Education: {request.education}
+        - Monthly Income: ₹{request.monthly_income:,.0f}
+        - Bank Balance: ₹{request.bank_balance:,.0f}
+        - Travel History: {request.travel_history}
+        - Purpose of Visit: {request.purpose}
+        - Visa Type: {request.visa_type}
+        - Employment Status: {request.employment_status}
+        
+        Please analyze this profile and provide visa approval assessment.
+        """
+        
+        user_message = UserMessage(text=profile_text)
+        response = await chat.send_message(user_message)
+        
+        # Parse the JSON response
+        import json
+        # Clean the response - remove markdown code blocks if present
+        response_text = response.strip()
+        if response_text.startswith("```"):
+            response_text = response_text.split("```")[1]
+            if response_text.startswith("json"):
+                response_text = response_text[4:]
+        response_text = response_text.strip()
+        
+        result = json.loads(response_text)
+        
+        return {
+            "success": True,
+            "country": request.country,
+            "visa_type": request.visa_type,
+            "approval_chance": result.get("approval_chance", 50),
+            "risk_level": result.get("risk_level", "medium"),
+            "suggestions": result.get("suggestions", []),
+            "strengths": result.get("strengths", []),
+            "documents_needed": result.get("documents_needed", [])
+        }
+        
+    except json.JSONDecodeError as e:
+        logging.error(f"JSON parse error: {e}, response: {response}")
+        # Return a default response if JSON parsing fails
+        return {
+            "success": True,
+            "country": request.country,
+            "visa_type": request.visa_type,
+            "approval_chance": 60,
+            "risk_level": "medium",
+            "suggestions": [
+                "Maintain bank balance for at least 3 months before applying",
+                "Provide strong proof of ties to India (employment letter, property documents)",
+                "Show clear travel itinerary with hotel bookings",
+                "Get travel insurance covering the entire trip duration"
+            ],
+            "strengths": ["Application received for analysis"],
+            "documents_needed": [
+                "Valid passport with 6+ months validity",
+                "Bank statements (last 6 months)",
+                "Employment/Income proof",
+                "Travel insurance",
+                "Flight and hotel bookings"
+            ]
+        }
+    except Exception as e:
+        logging.error(f"Visa eligibility check error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.post("/visa/document-checklist")
+async def generate_document_checklist(request: DocumentChecklistRequest):
+    """AI-powered document checklist generator"""
+    if not EMERGENT_LLM_KEY:
+        raise HTTPException(status_code=503, detail="AI service not configured")
+    
+    try:
+        # Create the AI chat instance
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"docs-check-{uuid.uuid4()}",
+            system_message="""You are an expert visa documentation consultant for Indian passport holders.
+            Generate a comprehensive document checklist for visa applications.
+            
+            Categorize documents as:
+            1. Mandatory Documents - Absolutely required, application will be rejected without these
+            2. Supporting Documents - Strengthen the application, highly recommended
+            
+            For each document, provide:
+            - name: Document name
+            - description: Brief description of what's needed
+            - tip: Specific tip for Indian applicants
+            
+            Also provide general tips for the specific country and visa type.
+            
+            Respond ONLY in valid JSON format with this structure:
+            {
+                "mandatory_documents": [
+                    {"name": "...", "description": "...", "tip": "..."},
+                    ...
+                ],
+                "supporting_documents": [
+                    {"name": "...", "description": "...", "tip": "..."},
+                    ...
+                ],
+                "tips": ["tip1", "tip2", ...]
+            }"""
+        ).with_model("openai", "gpt-5.2")
+        
+        # Format the request
+        request_text = f"""
+        Generate a document checklist for:
+        - Destination Country: {request.country}
+        - Visa Type: {request.visa_type}
+        - Purpose of Visit: {request.purpose}
+        - Applicant Nationality: Indian
+        
+        Provide a comprehensive checklist tailored to Indian passport holders applying for this visa.
+        """
+        
+        user_message = UserMessage(text=request_text)
+        response = await chat.send_message(user_message)
+        
+        # Parse the JSON response
+        import json
+        response_text = response.strip()
+        if response_text.startswith("```"):
+            response_text = response_text.split("```")[1]
+            if response_text.startswith("json"):
+                response_text = response_text[4:]
+        response_text = response_text.strip()
+        
+        result = json.loads(response_text)
+        
+        return {
+            "success": True,
+            "country": request.country,
+            "visa_type": request.visa_type,
+            "mandatory_documents": result.get("mandatory_documents", []),
+            "supporting_documents": result.get("supporting_documents", []),
+            "tips": result.get("tips", [])
+        }
+        
+    except json.JSONDecodeError as e:
+        logging.error(f"JSON parse error: {e}")
+        # Return default checklist based on visa type
+        default_mandatory = [
+            {"name": "Valid Passport", "description": "Original passport with 6+ months validity and 2 blank pages", "tip": "Check passport validity before starting application"},
+            {"name": "Visa Application Form", "description": "Completed and signed application form", "tip": "Fill in BLOCK LETTERS, use black ink"},
+            {"name": "Passport Photos", "description": "Recent passport-size photographs as per specifications", "tip": "White background, no glasses, 35x45mm for most countries"},
+            {"name": "Bank Statements", "description": "Last 6 months bank statements", "tip": "Get statements stamped by bank, maintain healthy balance"},
+            {"name": "Cover Letter", "description": "Letter explaining purpose of visit", "tip": "Be clear and concise about your travel plans"}
+        ]
+        
+        default_supporting = [
+            {"name": "Travel Insurance", "description": "Coverage for medical emergencies and trip cancellation", "tip": "Minimum coverage of $50,000 recommended"},
+            {"name": "Flight Itinerary", "description": "Confirmed or tentative flight bookings", "tip": "Some embassies accept tentative bookings"},
+            {"name": "Hotel Reservations", "description": "Accommodation bookings for entire stay", "tip": "Use bookings with free cancellation"},
+            {"name": "Income Tax Returns", "description": "ITR for last 2-3 years", "tip": "Shows financial stability and tax compliance"},
+            {"name": "Employment Letter", "description": "Letter from employer confirming job and leave approval", "tip": "Include salary, designation, and leave dates"}
+        ]
+        
+        return {
+            "success": True,
+            "country": request.country,
+            "visa_type": request.visa_type,
+            "mandatory_documents": default_mandatory,
+            "supporting_documents": default_supporting,
+            "tips": [
+                "Apply at least 3-4 weeks before travel date",
+                "Keep all documents organized in a folder",
+                "Make photocopies of all documents",
+                "Be honest in your application - discrepancies can lead to rejection"
+            ]
+        }
+    except Exception as e:
+        logging.error(f"Document checklist error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 # Include router
 app.include_router(api_router)

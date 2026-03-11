@@ -22,6 +22,7 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
 8. **Scroll to Top on Navigation**: Pages start from top when clicking menu links
 9. **Country Search with Details**: Search shows comprehensive info from all data sources
 10. **Travel Wishlist**: Save favorite countries to a local wishlist
+11. **AI Visa Tools**: Visa eligibility checker and document checklist generator
 
 ## What's Been Implemented (March 2026)
 
@@ -38,40 +39,37 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
 ### Live API Integrations - COMPLETE
 - [x] **Weather**: Open-Meteo API (free, no key required) - LIVE
 - [x] **FOREX**: Frankfurter API (free, no key) with ExchangeRate-API fallback - LIVE
+- [x] **AI Features**: Emergent LLM (GPT-5.2) for visa eligibility and document checklist
+
+### AI-Powered Visa Tools (NEW) - COMPLETE
+- [x] **Visa Eligibility Checker**: 
+  - Multi-step form: country, age, education, income, travel history, bank balance, purpose, visa type, employment
+  - AI-powered analysis returns: approval chance %, risk level, suggestions to improve, strengths, documents needed
+  - Beautiful modal UI with progress steps
+- [x] **Document Checklist Generator**:
+  - Select country, visa type, and purpose
+  - AI generates: mandatory documents with descriptions & tips, supporting documents, pro tips
+  - Interactive checklist with progress tracking
+  - Print functionality
 
 ### UI/UX Improvements - COMPLETE
 - [x] Light gold header background (#F5E6C8)
 - [x] Enlarged map (1100x650, scale 210)
-- [x] Ocean labels with "OCEAN" suffix clearly visible
-- [x] Sea names added (Mediterranean, Caribbean, Arabian, Bay of Bengal, etc.)
-- [x] All ocean/sea labels properly positioned to avoid overlap with continents
-- [x] Country-to-map code matching improved (numeric ID to ISO3 mapping)
-- [x] Blog articles now expand with full content in modal
+- [x] Ocean labels rendered ON TOP of countries (not behind)
+- [x] 8 ocean labels + 12 sea labels clearly visible
+- [x] ~100 countries with live weather color-coding
+- [x] Back to Top button on all pages
+- [x] Scroll to top on navigation
+- [x] Country detail modal with comprehensive info
+- [x] Travel wishlist with localStorage persistence
 
-### New Features (March 11, 2026) - COMPLETE
-- [x] **Back to Top Button**: Floating arrow button appears on all pages after scrolling 300px
-- [x] **Scroll to Top on Navigation**: All pages automatically scroll to top when navigating via menu
-- [x] **Country Search with Details Modal**: Search for any country to see:
-  - Best season to visit
-  - Visa requirements
-  - Current weather (live)
-  - Power plug type
-  - Famous festivals
-  - Must-try local dishes
-  - Recommended apps
-- [x] **My Travel Wishlist**: 
-  - Save favorite countries by clicking heart icon
-  - View saved countries on dedicated wishlist page
-  - Click countries in wishlist to see detailed info
-  - Clear all or remove individual countries
-  - Persisted in localStorage
-
-### Data Coverage - COMPLETE
-- [x] Comprehensive data for African countries
-- [x] Top Apps data for major countries
-- [x] Festival data for major countries
-- [x] Local dishes data with veg/non-veg indicators
-- [x] Full blog article content in database
+### New Features (March 11, 2026)
+- [x] **Back to Top Button**: Floating arrow on all pages
+- [x] **Scroll to Top on Navigation**: Automatic scroll reset
+- [x] **Country Search with Details Modal**: All info from seasons, visa, weather, plugs, festivals, dishes, apps
+- [x] **My Travel Wishlist**: Save/remove countries, dedicated page
+- [x] **AI Visa Eligibility Checker**: GPT-5.2 powered assessment
+- [x] **AI Document Checklist Generator**: Country-specific checklists
 
 ## Technical Architecture
 
@@ -79,45 +77,38 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
 - `/app/backend/server.py` - Main application with all API routes
 - MongoDB for data storage
 - Live APIs: Open-Meteo (weather), Frankfurter (FOREX)
+- AI: Emergent LLM (GPT-5.2) for visa tools
 
 ### Frontend (React)
 ```
 /app/frontend/src/
 ├── components/
-│   ├── Navigation.js           # Light gold header with hamburger menu
-│   ├── WorldMap.js             # Map with ocean/sea labels
-│   ├── BackToTop.js            # Floating back-to-top button
-│   └── CountryDetailModal.js   # Comprehensive country info modal
+│   ├── Navigation.js                # Light gold header
+│   ├── WorldMap.js                  # Map with ocean/sea labels on top
+│   ├── BackToTop.js                 # Floating scroll button
+│   ├── CountryDetailModal.js        # Comprehensive country info
+│   ├── VisaEligibilityChecker.js    # AI visa checker modal
+│   └── DocumentChecklistGenerator.js # AI document generator modal
 ├── context/
-│   └── WishlistContext.js      # Wishlist state management with localStorage
+│   └── WishlistContext.js           # Wishlist state management
 ├── pages/
-│   ├── Seasons.js              # Landing page with country search
-│   ├── Visa.js                 # Visa information
-│   ├── Forex.js                # Live FOREX with flags
-│   ├── Apps.js                 # Top apps
-│   ├── Blog.js                 # Expandable articles
-│   ├── Weather.js              # Live weather data
-│   ├── PowerPlug.js            # Power plugs
-│   ├── Festivals.js            # Festivals & dishes
-│   └── Wishlist.js             # Travel wishlist page
-└── App.js                      # Routes with ScrollToTop component
+│   ├── Seasons.js                   # Landing page
+│   ├── Visa.js                      # Visa info + AI tools CTAs
+│   ├── Forex.js, Apps.js, Blog.js, Weather.js, PowerPlug.js, Festivals.js
+│   └── Wishlist.js                  # Travel wishlist page
+└── App.js                           # Routes + ScrollToTop
 ```
 
 ### Key API Endpoints
-- `GET /api/seasons` - Season data
-- `GET /api/visa` - Visa requirements
-- `GET /api/forex/rates` - Live FOREX (Frankfurter API)
-- `GET /api/weather/realtime` - Live weather (Open-Meteo API)
-- `GET /api/apps` - App recommendations
-- `GET /api/blogs` - Blog articles with full content
-- `GET /api/plugs` - Power plug data
-- `GET /api/festivals` - Festival information
-- `GET /api/dishes` - Local dishes
+- `GET /api/seasons`, `/api/visa`, `/api/forex/rates`, `/api/weather/realtime`
+- `GET /api/apps`, `/api/blogs`, `/api/plugs`, `/api/festivals`, `/api/dishes`
+- `POST /api/visa/eligibility-check` - AI visa assessment
+- `POST /api/visa/document-checklist` - AI document generator
 
 ## Future Enhancements (Backlog)
 - [ ] User authentication for cloud-synced wishlist
 - [ ] Trip planner feature
-- [ ] More country data coverage for weather map
+- [ ] Compare countries feature
 - [ ] Currency converter calculator
 - [ ] Offline mode for travelers
 - [ ] Share wishlist with friends
