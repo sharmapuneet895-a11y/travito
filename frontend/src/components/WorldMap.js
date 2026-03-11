@@ -101,7 +101,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
   const [zoom, setZoom] = useState(1);
   
   // Fixed center - no dragging allowed
-  const fixedCenter = [0, 25];
+  const fixedCenter = [0, 20];
 
   const handleZoomIn = () => setZoom(prev => Math.min(prev * 1.4, 6));
   const handleZoomOut = () => setZoom(prev => Math.max(prev / 1.4, 1));
@@ -210,12 +210,12 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       <ComposableMap
         projection="geoMercator"
         projectionConfig={{ 
-          scale: 110,
-          center: [0, 25]
+          scale: 105,
+          center: [0, 20]
         }}
         width={900}
-        height={500}
-        style={{ width: '100%', height: 'auto', maxHeight: '60vh' }}
+        height={480}
+        style={{ width: '100%', height: 'auto', maxHeight: '55vh' }}
       >
         {/* Light blue ocean background like reference image */}
         <rect x="-10" y="-10" width="920" height="520" fill="#87CEEB" />
