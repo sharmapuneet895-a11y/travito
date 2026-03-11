@@ -35,6 +35,7 @@ function App() {
           <Navigation />
           <Routes>
             <Route path="/" element={<Seasons />} />
+            <Route path="/seasons" element={<Seasons />} />
             <Route path="/visa" element={<Visa />} />
             <Route path="/forex" element={<Forex />} />
             <Route path="/apps" element={<Apps />} />
