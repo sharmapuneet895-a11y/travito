@@ -14,32 +14,35 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
 
 ## What's Been Implemented (March 11, 2026)
 
+### Latest Updates (March 11, 2026 - Session 2)
+- [x] **Map Improvements**: Larger map (scale=260, 1400x700), centered better with less white space
+- [x] **Zoom Controls**: Added +/- buttons and pinch-to-zoom (ZoomableGroup) for mobile
+- [x] **Festival Map Color Coding**: Red=Many(3+), Orange=Some(2), Blue=Few(1)
+- [x] **Festival Month Grouping**: normalizeMonth() properly groups by January, February, etc. (no more "Unknown")
+- [x] **Greenland Visa Fixed**: Shows orange (visa required) instead of grey
+- [x] **Country Flags**: Added iso3ToIso2 mapping for accurate flag display (Thailand=🇹🇭, Japan=🇯🇵, etc.)
+- [x] **Thailand Season Fix**: Modal shows "BEST TIME NOW" when current month is in best_months array
+- [x] **Safety & Emergency in Modal**: Police/Ambulance/Fire numbers + Indian Embassy contact
+- [x] **Forex in Modal**: Exchange rate with currency code displayed
+
 ### Core Features - COMPLETE
-- [x] Seasons page as landing page with search bar and date picker
-- [x] Visa information map for Indian travelers (193 countries covered)
+- [x] Seasons page with category filter tabs (Beach, Mountain, City, Culture, Adventure, Nature)
+- [x] Visa information map for Indian travelers (194 countries)
 - [x] FOREX rates page with flag images and swap feature
 - [x] Top Apps page with comprehensive data
 - [x] Weather page with real-time data (Open-Meteo API)
 - [x] Power Plug information page
 - [x] Festivals & Local Dishes page (117 festivals, 90 dishes)
 - [x] Travel Blog with expandable articles
-- [x] **NEW**: Safety & Emergency page with emergency numbers and Indian Embassy contacts
-
-### Latest Updates (March 11, 2026)
-- [x] **Category Filter Tabs**: Now show ONLY PEAK season countries for Beach (13), Mountain (3), City (9), Culture (16), Adventure (11), Nature (11)
-- [x] **Cost Estimator**: Moved to standalone button on Seasons page, expanded to 70 countries (was 24)
-- [x] **Country Detail Modal**: Fixed slow loading by separating weather API call. Now shows festivals (Songkran, Loi Krathong) and dishes (Pad Thai, Tom Yum) with descriptions
-- [x] **Safety & Emergency Page**: 63 countries with emergency numbers (Police, Ambulance, Fire), Indian Embassy contacts, and safety tips
-- [x] **Map Zoom Controls**: Added +/- zoom buttons and pinch-to-zoom for mobile (ZoomableGroup)
-- [x] **Greenland Data**: Added to seasons and weather data
+- [x] Safety & Emergency page with 63 countries
+- [x] Cost Estimator with 70 countries
 
 ### Data Coverage
-- **Visa**: 193 countries (expanded from 132)
-- **Seasons**: 199 countries with categories (beach, mountain, city, culture, adventure, nature)
+- **Visa**: 194 countries (Greenland added with Danish/Schengen visa)
+- **Seasons**: 199 countries with categories
 - **Festivals**: 117 festivals across many countries
-- **Dishes**: 90 dishes with veg/non-veg indicators and descriptions
-- **Safety**: 63 countries with emergency numbers and Indian Embassy info
-- **Weather**: ~100+ country capitals with live data
+- **Dishes**: 90 dishes with veg/non-veg indicators
+- **Safety**: 63 countries with emergency numbers
 - **Cost Estimator**: 70 countries with Budget/Mid-Range/Luxury pricing
 
 ### Live API Integrations
@@ -49,51 +52,20 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
 
 ## Technical Architecture
 
-### Backend (FastAPI)
-- `/app/backend/server.py` - Main application with all API routes
-- MongoDB for data storage
-- Live APIs: Open-Meteo (weather), Frankfurter (FOREX)
-- AI: Emergent LLM for visa tools
+### Key Components Updated
+- `/app/frontend/src/components/WorldMap.js` - ZoomableGroup, scale=260, 1400x700
+- `/app/frontend/src/components/CountryDetailModal.js` - Safety, Forex, fixed season logic
+- `/app/frontend/src/pages/Festivals.js` - normalizeMonth() for proper grouping
+- `/app/frontend/src/pages/Seasons.js` - iso3ToIso2 mapping for flags
 
-### Frontend (React)
-```
-/app/frontend/src/
-├── components/
-│   ├── Navigation.js                # With Safety & Emergency link
-│   ├── WorldMap.js                  # ZoomableGroup for pinch-to-zoom
-│   ├── BackToTop.js
-│   ├── CountryDetailModal.js        # Optimized loading, festivals & dishes
-│   ├── CostEstimator.js             # 70 countries
-│   ├── VisaEligibilityChecker.js
-│   └── DocumentChecklistGenerator.js
-├── context/
-│   └── WishlistContext.js
-├── pages/
-│   ├── Seasons.js                   # Category tabs for PEAK destinations
-│   ├── Safety.js                    # NEW: Emergency numbers & embassy info
-│   ├── Visa.js, Forex.js, Apps.js, Blog.js
-│   ├── Weather.js, PowerPlug.js, Festivals.js
-│   └── Wishlist.js
-└── App.js                           # Routes including /safety
-```
-
-### Key API Endpoints
-- `GET /api/seasons`, `/api/visa`, `/api/forex/rates`, `/api/weather/realtime`
-- `GET /api/apps`, `/api/blogs`, `/api/plugs`, `/api/festivals`, `/api/dishes`
-- `GET /api/safety` - NEW: Safety ratings and emergency contacts
-- `POST /api/visa/eligibility-check` - AI visa assessment
-- `POST /api/visa/document-checklist` - AI document generator
+### ISO3 to ISO2 Flag Mapping
+Countries use ISO3 codes (THA, JPN, USA) but flagcdn.com uses ISO2 (th, jp, us). Added mapping for 80+ countries.
 
 ## Future Enhancements (Backlog)
-- [ ] Compare Countries feature (P1) - Side-by-side comparison
-- [ ] Trip Planner feature (P2) - Day-by-day itinerary
-- [ ] Travel Budget Tracker - Log actual expenses vs estimated
-- [ ] User authentication for cloud-synced wishlist
-- [ ] Offline mode for travelers
-
-## Known Issues
-- Weather API is slow (~18 seconds) - handled by loading separately in Country Detail Modal
-- Duplicate key warnings in Seasons page country list (cosmetic, doesn't affect functionality)
+- [ ] Compare Countries feature (P1)
+- [ ] Trip Planner feature (P2)
+- [ ] Travel Budget Tracker
+- [ ] User authentication
 
 ## Live Preview
 https://visa-forex-explorer.preview.emergentagent.com
