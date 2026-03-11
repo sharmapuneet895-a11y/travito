@@ -161,6 +161,24 @@ COUNTRY_CAPITALS = {
     "HND": {"lat": 14.08, "lon": -87.22, "name": "Honduras"},
     "NIC": {"lat": 12.13, "lon": -86.25, "name": "Nicaragua"},
     "SLV": {"lat": 13.69, "lon": -89.19, "name": "El Salvador"},
+    # Arctic/Nordic territories
+    "GRL": {"lat": 64.18, "lon": -51.72, "name": "Greenland"},
+    "ISL": {"lat": 64.15, "lon": -21.95, "name": "Iceland"},
+    # Additional Pacific
+    "FJI": {"lat": -18.14, "lon": 178.44, "name": "Fiji"},
+    "PNG": {"lat": -6.21, "lon": 143.95, "name": "Papua New Guinea"},
+    # Additional small countries
+    "MDV": {"lat": 4.17, "lon": 73.51, "name": "Maldives"},
+    "BHR": {"lat": 26.23, "lon": 50.58, "name": "Bahrain"},
+    "LUX": {"lat": 49.61, "lon": 6.13, "name": "Luxembourg"},
+    "MLT": {"lat": 35.90, "lon": 14.51, "name": "Malta"},
+    "CYP": {"lat": 35.17, "lon": 33.36, "name": "Cyprus"},
+    "MNE": {"lat": 42.44, "lon": 19.26, "name": "Montenegro"},
+    "ALB": {"lat": 41.33, "lon": 19.82, "name": "Albania"},
+    "MKD": {"lat": 42.00, "lon": 21.43, "name": "North Macedonia"},
+    "BIH": {"lat": 43.86, "lon": 18.41, "name": "Bosnia and Herzegovina"},
+    "SVN": {"lat": 46.05, "lon": 14.51, "name": "Slovenia"},
+    "SVK": {"lat": 48.15, "lon": 17.11, "name": "Slovakia"},
 }
 
 # Models
@@ -576,6 +594,16 @@ async def get_dishes(country_code: Optional[str] = None):
     
     dishes = await db.dishes.find(query, {"_id": 0}).to_list(1000)
     return {"data": dishes}
+
+@api_router.get("/safety")
+async def get_safety(country_code: Optional[str] = None):
+    """Get safety ratings and emergency contacts by country"""
+    query = {}
+    if country_code:
+        query["country_code"] = country_code.upper()
+    
+    safety_data = await db.safety.find(query, {"_id": 0}).to_list(1000)
+    return {"data": safety_data}
 
 # ===== VISA AI FEATURES =====
 

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
+import React, { useState, useRef } from 'react';
+import { ComposableMap, Geographies, Geography, ZoomableGroup } from 'react-simple-maps';
 import { motion } from 'framer-motion';
 
 const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
@@ -20,6 +20,8 @@ const numericToISO3 = {
   "112": "BLR", "440": "LTU", "428": "LVA", "233": "EST", "498": "MDA",
   "8": "ALB", "807": "MKD", "688": "SRB", "499": "MNE", "70": "BIH",
   "643": "RUS", // Russia - important!
+  // Greenland
+  "304": "GRL",
   // Asia
   "392": "JPN", "156": "CHN", "356": "IND", "586": "PAK", "50": "BGD",
   "764": "THA", "704": "VNM", "360": "IDN", "458": "MYS", "608": "PHL",
@@ -55,6 +57,12 @@ const numericToISO3 = {
 const WorldMap = ({ data, mode, onCountryClick }) => {
   const [tooltipContent, setTooltipContent] = useState('');
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [center, setCenter] = useState([10, 0]);
+
+  const handleZoomIn = () => setZoom(prev => Math.min(prev * 1.5, 8));
+  const handleZoomOut = () => setZoom(prev => Math.max(prev / 1.5, 1));
+  const handleReset = () => { setZoom(1); setCenter([10, 0]); };
 
   const getColorByMode = (geo) => {
     // Get all possible identifiers
@@ -146,6 +154,21 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         default:
           return '#E8E8E6';
       }
+    } else if (mode === 'safety') {
+      switch (countryData.safety_level) {
+        case 'very_safe':
+          return '#22C55E'; // Green
+        case 'safe':
+          return '#34D399'; // Emerald
+        case 'moderate':
+          return '#EAB308'; // Yellow
+        case 'caution':
+          return '#F97316'; // Orange
+        case 'high_risk':
+          return '#EF4444'; // Red
+        default:
+          return '#E8E8E6';
+      }
     }
 
     return '#E8E8E6';
@@ -183,6 +206,15 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         info = `${countryData.country_name} - Type ${countryData.plug_type.toUpperCase()} (${countryData.voltage})`;
       } else if (mode === 'festivals') {
         info = `${countryData.country_name} - ${countryData.festival_count} festival${countryData.festival_count !== 1 ? 's' : ''}`;
+      } else if (mode === 'safety') {
+        const safetyLabels = {
+          'very_safe': 'Very Safe',
+          'safe': 'Safe',
+          'moderate': 'Exercise Caution',
+          'caution': 'Increased Caution',
+          'high_risk': 'High Risk'
+        };
+        info = `${countryData.country_name} - ${safetyLabels[countryData.safety_level] || 'Unknown'}`;
       }
       setTooltipContent(info);
     } else {
@@ -198,16 +230,56 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
 
   return (
     <div className="relative w-full" data-testid="world-map-container">
+      {/* Zoom Controls */}
+      <div className="absolute top-4 right-4 z-10 flex flex-col gap-2 bg-white/90 rounded-lg p-2 shadow-md">
+        <button
+          onClick={handleZoomIn}
+          className="w-8 h-8 bg-primary text-white rounded flex items-center justify-center hover:bg-primary/80 transition-all text-lg font-bold"
+          data-testid="zoom-in-btn"
+        >
+          +
+        </button>
+        <button
+          onClick={handleZoomOut}
+          className="w-8 h-8 bg-primary text-white rounded flex items-center justify-center hover:bg-primary/80 transition-all text-lg font-bold"
+          data-testid="zoom-out-btn"
+        >
+          −
+        </button>
+        <button
+          onClick={handleReset}
+          className="w-8 h-8 bg-gray-500 text-white rounded flex items-center justify-center hover:bg-gray-400 transition-all text-xs font-bold"
+          data-testid="zoom-reset-btn"
+        >
+          ↺
+        </button>
+      </div>
+      
+      {/* Mobile Pinch Hint */}
+      <div className="absolute bottom-4 left-4 z-10 md:hidden bg-white/80 text-xs text-gray-600 px-2 py-1 rounded">
+        Pinch to zoom
+      </div>
+
       <ComposableMap
         projection="geoNaturalEarth1"
         projectionConfig={{
-          scale: 210,
-          center: [10, 0]
+          scale: 240,
+          center: [10, 5]
         }}
-        style={{ width: '100%', height: 'auto' }}
-        width={1100}
-        height={650}
+        style={{ width: '100%', height: 'auto', touchAction: 'pan-x pan-y' }}
+        width={1300}
+        height={700}
       >
+        <ZoomableGroup
+          zoom={zoom}
+          center={center}
+          onMoveEnd={({ coordinates, zoom: newZoom }) => {
+            setCenter(coordinates);
+            setZoom(newZoom);
+          }}
+          minZoom={1}
+          maxZoom={8}
+        >
         <defs>
           {/* Enhanced wavy water pattern with animation */}
           <pattern id="waves" x="0" y="0" width="120" height="30" patternUnits="userSpaceOnUse">
@@ -426,6 +498,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         <text x="1010" y="435" fill="#1565C0" fontSize="7" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="0.3" textAnchor="middle">
           Tasman Sea
         </text>
+        </ZoomableGroup>
       </ComposableMap>
 
       {tooltipContent && (

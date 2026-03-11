@@ -10,6 +10,7 @@ import Apps from './pages/Apps';
 import Weather from './pages/Weather';
 import PowerPlug from './pages/PowerPlug';
 import Festivals from './pages/Festivals';
+import Safety from './pages/Safety';
 import CountryDetail from './pages/CountryDetail';
 import Blog from './pages/Blog';
 import Wishlist from './pages/Wishlist';
@@ -42,6 +43,7 @@ function App() {
             <Route path="/weather" element={<Weather />} />
             <Route path="/plugs" element={<PowerPlug />} />
             <Route path="/festivals" element={<Festivals />} />
+            <Route path="/safety" element={<Safety />} />
             <Route path="/country/:countryCode" element={<CountryDetail />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/wishlist" element={<Wishlist />} />

@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2, Calculator } from 'lucide-react';
+import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
-import CostEstimator from './CostEstimator';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const CountryDetailModal = ({ country, onClose }) => {
   const [loading, setLoading] = useState(true);
-  const [showCostEstimator, setShowCostEstimator] = useState(false);
   const [countryData, setCountryData] = useState({
     seasons: null,
     visa: null,
@@ -27,10 +25,10 @@ const CountryDetailModal = ({ country, onClose }) => {
     const fetchAllData = async () => {
       setLoading(true);
       try {
-        const [seasonsRes, visaRes, weatherRes, plugsRes, festivalsRes, dishesRes, appsRes] = await Promise.all([
+        // Load critical data first (fast endpoints)
+        const [seasonsRes, visaRes, plugsRes, festivalsRes, dishesRes, appsRes] = await Promise.all([
           axios.get(`${BACKEND_URL}/api/seasons`),
           axios.get(`${BACKEND_URL}/api/visa`),
-          axios.get(`${BACKEND_URL}/api/weather/realtime`),
           axios.get(`${BACKEND_URL}/api/plugs`),
           axios.get(`${BACKEND_URL}/api/festivals`),
           axios.get(`${BACKEND_URL}/api/dishes`),
@@ -40,22 +38,43 @@ const CountryDetailModal = ({ country, onClose }) => {
         const code = country.country_code;
         const name = country.country_name;
 
+        // Process dishes - handle nested structure
+        let allDishes = [];
+        const dishData = dishesRes.data.data?.filter(d => d.country_code === code || d.country_name === name) || [];
+        dishData.forEach(d => {
+          if (d.dishes && Array.isArray(d.dishes)) {
+            allDishes = [...allDishes, ...d.dishes];
+          } else if (d.name) {
+            allDishes.push(d);
+          }
+        });
+
         setCountryData({
           seasons: seasonsRes.data.data?.find(d => d.country_code === code || d.country_name === name),
           visa: visaRes.data.data?.find(d => d.country_code === code || d.country_name === name),
-          weather: weatherRes.data.data?.find(d => d.country_code === code || d.country_name === name),
+          weather: null, // Will load separately
           plugs: plugsRes.data.data?.find(d => d.country_code === code || d.country_name === name),
           festivals: festivalsRes.data.data?.filter(d => d.country_code === code || d.country_name === name) || [],
-          dishes: dishesRes.data.data?.filter(d => d.country_code === code || d.country_name === name) || [],
+          dishes: allDishes,
           apps: appsRes.data.data?.filter(d => d.country_code === code || d.country_name === name) || []
         });
+        setLoading(false);
+        
+        // Load weather separately (slow endpoint)
+        try {
+          const weatherRes = await axios.get(`${BACKEND_URL}/api/weather/realtime`);
+          setCountryData(prev => ({
+            ...prev,
+            weather: weatherRes.data.data?.find(d => d.country_code === code || d.country_name === name)
+          }));
+        } catch (e) {
+          console.log('Weather data unavailable');
+        }
       } catch (error) {
         console.error('Error fetching country data:', error);
-      } finally {
         setLoading(false);
       }
     };
-
     fetchAllData();
   }, [country]);
 
@@ -240,12 +259,16 @@ const CountryDetailModal = ({ country, onClose }) => {
                 </div>
                 {countryData.festivals.length > 0 ? (
                   <div className="space-y-2">
-                    {countryData.festivals.slice(0, 3).map((festival, idx) => (
-                      <div key={idx} className="flex items-center justify-between text-sm">
-                        <span className="font-medium">{festival.name}</span>
-                        <span className="text-muted-foreground">{festival.month}</span>
-                      </div>
-                    ))}
+                    {countryData.festivals.slice(0, 3).map((festival, idx) => {
+                      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                      const monthDisplay = typeof festival.month === 'number' ? monthNames[festival.month - 1] : festival.month;
+                      return (
+                        <div key={idx} className="flex items-center justify-between text-sm">
+                          <span className="font-medium">{festival.festival_name || festival.name}</span>
+                          <span className="text-muted-foreground">{monthDisplay}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">No festival data available</p>
@@ -262,8 +285,9 @@ const CountryDetailModal = ({ country, onClose }) => {
                   <div className="space-y-2">
                     {countryData.dishes.slice(0, 4).map((dish, idx) => (
                       <div key={idx} className="flex items-center gap-2 text-sm">
-                        <span className={`w-2 h-2 rounded-full ${dish.type === 'veg' ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                        <span className={`w-2 h-2 rounded-full ${dish.veg === true || dish.type === 'veg' ? 'bg-green-500' : 'bg-red-500'}`}></span>
                         <span>{dish.name}</span>
+                        {dish.description && <span className="text-muted-foreground text-xs">- {dish.description}</span>}
                       </div>
                     ))}
                   </div>
@@ -294,26 +318,16 @@ const CountryDetailModal = ({ country, onClose }) => {
 
           {/* Footer */}
           <div className="sticky bottom-0 bg-white border-t border-border p-4 flex justify-between items-center">
-            <div className="flex gap-2">
-              <button
-                onClick={handleWishlistToggle}
-                className={`px-4 py-2 rounded-full font-medium transition-all ${
-                  inWishlist 
-                    ? 'bg-red-100 text-red-600 hover:bg-red-200' 
-                    : 'bg-primary text-white hover:bg-primary/90'
-                }`}
-              >
-                {inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
-              </button>
-              <button
-                onClick={() => setShowCostEstimator(true)}
-                className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-medium hover:opacity-90 transition-all flex items-center gap-2"
-                data-testid="open-cost-estimator"
-              >
-                <Calculator className="w-4 h-4" />
-                Cost Estimator
-              </button>
-            </div>
+            <button
+              onClick={handleWishlistToggle}
+              className={`px-6 py-2 rounded-full font-medium transition-all ${
+                inWishlist 
+                  ? 'bg-red-100 text-red-600 hover:bg-red-200' 
+                  : 'bg-primary text-white hover:bg-primary/90'
+              }`}
+            >
+              {inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+            </button>
             <button
               onClick={onClose}
               className="px-6 py-2 bg-gray-100 text-gray-700 rounded-full font-medium hover:bg-gray-200 transition-all"
@@ -323,12 +337,6 @@ const CountryDetailModal = ({ country, onClose }) => {
           </div>
         </motion.div>
       </motion.div>
-
-      {/* Cost Estimator Modal */}
-      <CostEstimator 
-        isOpen={showCostEstimator} 
-        onClose={() => setShowCostEstimator(false)} 
-      />
     </AnimatePresence>
   );
 };

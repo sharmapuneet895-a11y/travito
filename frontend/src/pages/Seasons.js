@@ -3,8 +3,9 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import WorldMap from '../components/WorldMap';
 import CountryDetailModal from '../components/CountryDetailModal';
+import CostEstimator from '../components/CostEstimator';
 import BackToTop from '../components/BackToTop';
-import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees } from 'lucide-react';
+import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Calculator } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -15,7 +16,7 @@ const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'Ju
 
 // Category definitions
 const CATEGORIES = [
-  { id: 'all', label: 'All Destinations', icon: Compass, color: 'gray' },
+  { id: 'all', label: 'All Peak Destinations', icon: Compass, color: 'gray' },
   { id: 'beach', label: 'Beach', icon: Palmtree, color: 'cyan' },
   { id: 'mountain', label: 'Mountain', icon: Mountain, color: 'emerald' },
   { id: 'city', label: 'City', icon: Building2, color: 'violet' },
@@ -32,6 +33,7 @@ const Seasons = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [showCostEstimator, setShowCostEstimator] = useState(false);
   const { addToWishlist, isInWishlist } = useWishlist();
   
   // Date state - default to current month
@@ -88,24 +90,38 @@ const Seasons = () => {
     setProcessedData(processed);
   }, [seasonsData, selectedMonth, selectedMonthAbbrev]);
 
-  // Filter countries based on search and category
+  // Filter countries based on search and category - only show PEAK season countries for categories
   const filteredCountries = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const query = searchQuery.toLowerCase();
     let filtered = processedData.filter(c => 
       c.country_name?.toLowerCase().includes(query)
     );
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter(c => c.categories?.includes(selectedCategory));
-    }
     return filtered.slice(0, 8);
-  }, [searchQuery, processedData, selectedCategory]);
+  }, [searchQuery, processedData]);
 
-  // Filter data by category for display
+  // Filter data by category for display - ONLY PEAK SEASON countries for category tabs
   const categoryFilteredData = useMemo(() => {
-    if (selectedCategory === 'all') return processedData;
-    return processedData.filter(c => c.categories?.includes(selectedCategory));
+    // Get only peak season countries first
+    const peakOnly = processedData.filter(c => c.current_season === 'peak');
+    
+    if (selectedCategory === 'all') return peakOnly;
+    return peakOnly.filter(c => c.categories?.includes(selectedCategory));
   }, [processedData, selectedCategory]);
+
+  // Count for each category (only peak season)
+  const categoryCounts = useMemo(() => {
+    const peakOnly = processedData.filter(c => c.current_season === 'peak');
+    const counts = {};
+    CATEGORIES.forEach(cat => {
+      if (cat.id === 'all') {
+        counts[cat.id] = peakOnly.length;
+      } else {
+        counts[cat.id] = peakOnly.filter(c => c.categories?.includes(cat.id)).length;
+      }
+    });
+    return counts;
+  }, [processedData]);
 
   const handleCountrySelect = (country) => {
     setSearchQuery(country.country_name);
@@ -125,10 +141,10 @@ const Seasons = () => {
     { color: '#D6D6D6', label: 'No Data', description: 'Information not available', icon: null }
   ];
 
-  // Separate countries by current season status (using category filtered data)
-  const peakCountries = categoryFilteredData.filter(c => c.current_season === 'peak');
-  const shoulderCountries = categoryFilteredData.filter(c => c.current_season === 'shoulder');
-  const offCountries = categoryFilteredData.filter(c => c.current_season === 'off');
+  // For the all destinations view (without category filter)
+  const peakCountries = processedData.filter(c => c.current_season === 'peak');
+  const shoulderCountries = processedData.filter(c => c.current_season === 'shoulder');
+  const offCountries = processedData.filter(c => c.current_season === 'off');
 
   return (
     <div className="min-h-screen py-12 px-6">
@@ -235,8 +251,8 @@ const Seasons = () => {
             </div>
           </div>
 
-          {/* Current Selection Indicator */}
-          <div className="bg-accent/10 rounded-xl p-4 mb-6 text-center">
+          {/* Current Selection Indicator + Cost Estimator Button */}
+          <div className="bg-accent/10 rounded-xl p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <span className="text-lg font-semibold text-primary">
               📅 Showing travel conditions for: <span className="text-accent">{selectedMonthName} {selectedYear}</span>
               {selectedCategory !== 'all' && (
@@ -245,21 +261,37 @@ const Seasons = () => {
                 </span>
               )}
             </span>
+            <button
+              onClick={() => setShowCostEstimator(true)}
+              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-medium hover:opacity-90 transition-all shadow-lg"
+              data-testid="open-cost-estimator-btn"
+            >
+              <Calculator className="w-5 h-5" />
+              Trip Cost Estimator
+            </button>
           </div>
 
-          {/* Category Filter Tabs */}
-          <div className="bg-white rounded-xl p-4 mb-6 shadow-sm border border-border overflow-x-auto">
-            <div className="flex gap-2 min-w-max">
+          {/* Category Filter Tabs - Shows only PEAK SEASON destinations */}
+          <div className="bg-white rounded-xl p-4 mb-6 shadow-sm border border-border">
+            <h3 className="text-sm font-semibold text-primary mb-3 flex items-center gap-2">
+              <Sun className="w-4 h-4 text-red-500" />
+              Best Time to Visit in {selectedMonthName} - Filter by Type:
+            </h3>
+            <div className="flex gap-2 flex-wrap">
               {CATEGORIES.map((cat) => {
                 const Icon = cat.icon;
                 const isActive = selectedCategory === cat.id;
+                const count = categoryCounts[cat.id] || 0;
                 return (
                   <button
                     key={cat.id}
                     onClick={() => setSelectedCategory(cat.id)}
+                    disabled={count === 0 && cat.id !== 'all'}
                     className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all whitespace-nowrap ${
                       isActive 
                         ? `bg-${cat.color}-100 text-${cat.color}-700 border-2 border-${cat.color}-300` 
+                        : count === 0 && cat.id !== 'all'
+                        ? 'bg-gray-100 text-gray-400 border-2 border-transparent cursor-not-allowed'
                         : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border-2 border-transparent'
                     }`}
                     style={isActive ? {
@@ -270,13 +302,9 @@ const Seasons = () => {
                   >
                     <Icon className="w-4 h-4" />
                     <span>{cat.label}</span>
-                    {cat.id !== 'all' && (
-                      <span className="text-xs bg-white/50 px-1.5 py-0.5 rounded-full">
-                        {categoryFilteredData.filter(c => 
-                          cat.id === 'all' ? true : c.categories?.includes(cat.id)
-                        ).length || processedData.filter(c => c.categories?.includes(cat.id)).length}
-                      </span>
-                    )}
+                    <span className={`text-xs px-1.5 py-0.5 rounded-full ${isActive ? 'bg-white/50' : 'bg-gray-200'}`}>
+                      {count}
+                    </span>
                   </button>
                 );
               })}
@@ -327,17 +355,71 @@ const Seasons = () => {
 
           {/* Country Lists by Season */}
           <div className="mt-12 space-y-8">
-            {/* Best Time Now */}
-            {peakCountries.length > 0 && (
+            {/* Category Filtered Peak Destinations */}
+            {selectedCategory !== 'all' && categoryFilteredData.length > 0 && (
+              <div>
+                <h3 className="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
+                  <Sun className="w-6 h-6 text-red-500" />
+                  {CATEGORIES.find(c => c.id === selectedCategory)?.label} Destinations - Best in {selectedMonthName} ({categoryFilteredData.length})
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {categoryFilteredData.map((country, idx) => (
+                    <div
+                      key={`${country.country_code}-${idx}`}
+                      className="bg-red-50 rounded-lg p-4 border border-red-200 hover:shadow-md transition-all cursor-pointer group"
+                      data-testid={`category-country-card-${country.country_code}`}
+                      onClick={() => handleCountryCardClick(country)}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-3 h-3 rounded-full mt-1.5 flex-shrink-0 bg-red-500" />
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-semibold text-foreground">{country.country_name}</h4>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                addToWishlist(country);
+                              }}
+                              className={`p-1 rounded-full transition-all ${
+                                isInWishlist(country.country_code) 
+                                  ? 'text-red-500' 
+                                  : 'text-gray-300 hover:text-red-400 opacity-0 group-hover:opacity-100'
+                              }`}
+                            >
+                              <Heart className={`w-4 h-4 ${isInWishlist(country.country_code) ? 'fill-current' : ''}`} />
+                            </button>
+                          </div>
+                          <p className="text-sm text-green-700 font-medium">✓ Best in {selectedMonthAbbrev}</p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Best months: {country.best_months?.join(', ')}
+                          </p>
+                          {country.categories && (
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {country.categories.slice(0, 3).map(cat => (
+                                <span key={cat} className="text-xs px-2 py-0.5 bg-white rounded-full text-gray-600 capitalize">{cat}</span>
+                              ))}
+                            </div>
+                          )}
+                          <p className="text-xs text-primary mt-2 group-hover:underline">View details →</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* All Peak Destinations (when no category filter) */}
+            {selectedCategory === 'all' && peakCountries.length > 0 && (
               <div>
                 <h3 className="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
                   <Sun className="w-6 h-6 text-red-500" />
                   Best Time to Visit in {selectedMonthName} ({peakCountries.length} destinations)
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {peakCountries.map((country) => (
+                  {peakCountries.map((country, idx) => (
                     <div
-                      key={country.country_code}
+                      key={`${country.country_code}-${idx}`}
                       className="bg-red-50 rounded-lg p-4 border border-red-200 hover:shadow-md transition-all cursor-pointer group"
                       data-testid={`country-card-${country.country_code}`}
                       onClick={() => handleCountryCardClick(country)}
@@ -485,6 +567,12 @@ const Seasons = () => {
           onClose={() => setSelectedCountry(null)}
         />
       )}
+
+      {/* Cost Estimator Modal */}
+      <CostEstimator 
+        isOpen={showCostEstimator} 
+        onClose={() => setShowCostEstimator(false)} 
+      />
 
       <BackToTop />
     </div>
