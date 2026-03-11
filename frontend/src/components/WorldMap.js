@@ -45,29 +45,30 @@ const numericToISO3 = {
   "776": "TON", "882": "WSM", "296": "KIR", "798": "TUV"
 };
 
-// Ocean labels with geo coordinates [longitude, latitude]
+// Ocean labels - positioned carefully in open ocean areas
 const OCEAN_LABELS = [
-  { name: 'PACIFIC', subname: 'OCEAN', coords: [-160, 5] },
-  { name: 'ATLANTIC', subname: 'OCEAN', coords: [-38, -5] },
-  { name: 'INDIAN', subname: 'OCEAN', coords: [75, -25] },
-  { name: 'SOUTHERN OCEAN', coords: [0, -62] },
-  { name: 'ARCTIC OCEAN', coords: [-10, 82] },
+  { name: 'North Pacific Ocean', coords: [-155, 35], size: 12 },
+  { name: 'South Pacific Ocean', coords: [-130, -25], size: 12 },
+  { name: 'North Atlantic Ocean', coords: [-45, 35], size: 11 },
+  { name: 'South Atlantic Ocean', coords: [-20, -25], size: 11 },
+  { name: 'Indian Ocean', coords: [80, -15], size: 12 },
+  { name: 'Southern Ocean', coords: [0, -58], size: 10 },
+  { name: 'Arctic Ocean', coords: [0, 75], size: 10 },
 ];
 
-// Sea labels with geo coordinates [longitude, latitude] - positioned in actual sea locations
+// Sea labels - positioned precisely in actual sea locations away from land
 const SEA_LABELS = [
-  { name: 'Caribbean Sea', coords: [-76, 16] },
-  { name: 'Gulf of Mexico', coords: [-92, 24] },
-  { name: 'Mediterranean Sea', coords: [16, 36] },
-  { name: 'Arabian Sea', coords: [64, 14] },
-  { name: 'Bay of Bengal', coords: [88, 12] },
-  { name: 'South China Sea', coords: [114, 13] },
-  { name: 'Coral Sea', coords: [155, -16] },
-  { name: 'Tasman Sea', coords: [162, -38] },
-  { name: 'Bering Sea', coords: [-177, 58] },
-  { name: 'Sea of Japan', coords: [135, 40] },
-  { name: 'Red Sea', coords: [38, 20] },
-  { name: 'Persian Gulf', coords: [51, 27] },
+  { name: 'Caribbean Sea', coords: [-75, 17], size: 8 },
+  { name: 'Gulf of Mexico', coords: [-90, 25], size: 8 },
+  { name: 'Mediterranean Sea', coords: [18, 37], size: 8 },
+  { name: 'Arabian Sea', coords: [63, 16], size: 8 },
+  { name: 'Bay of Bengal', coords: [87, 15], size: 8 },
+  { name: 'South China Sea', coords: [115, 15], size: 8 },
+  { name: 'Coral Sea', coords: [155, -18], size: 8 },
+  { name: 'Tasman Sea', coords: [165, -35], size: 8 },
+  { name: 'Sea of Japan', coords: [135, 40], size: 7 },
+  { name: 'Philippine Sea', coords: [135, 20], size: 7 },
+  { name: 'Bering Sea', coords: [-175, 57], size: 7 },
 ];
 
 const WorldMap = ({ data, mode, onCountryClick }) => {
@@ -89,56 +90,56 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       d.country_name === geo.properties?.name
     );
 
-    if (!countryData) return '#E8E8E6';
+    if (!countryData) return '#D4D4D4';
 
     if (mode === 'seasons') {
       switch (countryData.season_type || countryData.current_season) {
-        case 'peak': return '#E25A53';
-        case 'shoulder': return '#4B89AC';
-        case 'off': return '#F2A900';
-        default: return '#E8E8E6';
+        case 'peak': return '#DC2626';
+        case 'shoulder': return '#2563EB';
+        case 'off': return '#F59E0B';
+        default: return '#D4D4D4';
       }
     } else if (mode === 'visa') {
       switch (countryData.visa_type) {
-        case 'visa_free': return '#22C55E';
-        case 'visa_on_arrival': return '#E25A53';
-        case 'e_visa': return '#4B89AC';
-        case 'visa_required': return '#F2A900';
-        default: return '#E8E8E6';
+        case 'visa_free': return '#16A34A';
+        case 'visa_on_arrival': return '#DC2626';
+        case 'e_visa': return '#2563EB';
+        case 'visa_required': return '#F59E0B';
+        default: return '#D4D4D4';
       }
     } else if (mode === 'weather') {
       switch (countryData.weather_type) {
-        case 'hot': return '#E25A53';
-        case 'warm': return '#F2A900';
-        case 'mild': return '#4B89AC';
+        case 'hot': return '#DC2626';
+        case 'warm': return '#F59E0B';
+        case 'mild': return '#2563EB';
         case 'cold': return '#67B7D1';
-        case 'snow': return '#FFFFFF';
-        default: return '#E8E8E6';
+        case 'snow': return '#F3F4F6';
+        default: return '#D4D4D4';
       }
     } else if (mode === 'plug') {
       const plugColors = {
-        'a': '#E25A53', 'b': '#4B89AC', 'c': '#F2A900', 'd': '#22C55E',
+        'a': '#DC2626', 'b': '#2563EB', 'c': '#F59E0B', 'd': '#16A34A',
         'e': '#9333EA', 'f': '#EC4899', 'g': '#F97316', 'mixed': '#6B7280'
       };
-      return plugColors[countryData.plug_type?.toLowerCase()] || '#E8E8E6';
+      return plugColors[countryData.plug_type?.toLowerCase()] || '#D4D4D4';
     } else if (mode === 'festivals') {
       switch (countryData.festival_type) {
-        case 'many': return '#E25A53';
-        case 'some': return '#F2A900';
-        case 'few': return '#4B89AC';
-        default: return '#E8E8E6';
+        case 'many': return '#DC2626';
+        case 'some': return '#F59E0B';
+        case 'few': return '#2563EB';
+        default: return '#D4D4D4';
       }
     } else if (mode === 'safety') {
       switch (countryData.safety_level) {
-        case 'very_safe': return '#22C55E';
-        case 'safe': return '#34D399';
+        case 'very_safe': return '#16A34A';
+        case 'safe': return '#22C55E';
         case 'moderate': return '#EAB308';
         case 'caution': return '#F97316';
-        case 'high_risk': return '#EF4444';
-        default: return '#E8E8E6';
+        case 'high_risk': return '#DC2626';
+        default: return '#D4D4D4';
       }
     }
-    return '#E8E8E6';
+    return '#D4D4D4';
   };
 
   const handleMouseEnter = (geo, evt) => {
@@ -186,34 +187,31 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       </div>
 
       <ComposableMap
-        projection="geoMercator"
+        projection="geoEquirectangular"
         projectionConfig={{ 
-          scale: 120,
-          center: [0, 25]
+          scale: 160,
+          center: [0, 20]
         }}
-        width={900}
-        height={480}
+        width={980}
+        height={500}
         style={{ width: '100%', height: 'auto' }}
       >
-        {/* Ocean background with wave pattern */}
+        {/* Ocean background with subtle wave pattern */}
         <defs>
-          <linearGradient id="oceanGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#87CEEB" />
-            <stop offset="50%" stopColor="#6BB3D9" />
-            <stop offset="100%" stopColor="#5BA3C9" />
+          <linearGradient id="oceanGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#E0F2FE" />
+            <stop offset="50%" stopColor="#BAE6FD" />
+            <stop offset="100%" stopColor="#7DD3FC" />
           </linearGradient>
-          <pattern id="wavePattern" x="0" y="0" width="60" height="10" patternUnits="userSpaceOnUse">
-            <path d="M0 5 Q15 0 30 5 T60 5" stroke="#4A90A4" strokeWidth="0.5" fill="none" opacity="0.3"/>
-          </pattern>
-          <pattern id="combinedPattern" x="0" y="0" width="60" height="10" patternUnits="userSpaceOnUse">
-            <rect width="60" height="10" fill="url(#oceanGradient)"/>
-            <path d="M0 5 Q15 0 30 5 T60 5" stroke="#4A90A4" strokeWidth="0.5" fill="none" opacity="0.3"/>
+          <pattern id="waves" x="0" y="0" width="100" height="20" patternUnits="userSpaceOnUse">
+            <path d="M0 10 Q25 5 50 10 T100 10" stroke="#0EA5E9" strokeWidth="0.3" fill="none" opacity="0.4"/>
+            <path d="M0 15 Q25 10 50 15 T100 15" stroke="#0EA5E9" strokeWidth="0.3" fill="none" opacity="0.3"/>
           </pattern>
         </defs>
         
         {/* Ocean background */}
-        <rect x="-50" y="-50" width="1000" height="600" fill="url(#oceanGradient)" />
-        <rect x="-50" y="-50" width="1000" height="600" fill="url(#wavePattern)" />
+        <rect x="-10" y="-10" width="1000" height="520" fill="url(#oceanGrad)" />
+        <rect x="-10" y="-10" width="1000" height="520" fill="url(#waves)" />
         
         <ZoomableGroup 
           zoom={zoom} 
@@ -230,10 +228,10 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
                   geography={geo}
                   fill={getColorByMode(geo)}
                   stroke="#FFFFFF"
-                  strokeWidth={0.5}
+                  strokeWidth={0.4}
                   style={{
                     default: { outline: 'none' },
-                    hover: { fill: '#D4AF37', outline: 'none', cursor: 'pointer' },
+                    hover: { fill: '#FBBF24', outline: 'none', cursor: 'pointer' },
                     pressed: { outline: 'none' }
                   }}
                   onMouseEnter={(evt) => handleMouseEnter(geo, evt)}
@@ -246,71 +244,36 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
             }
           </Geographies>
           
-          {/* Ocean Labels using Marker for proper geo-positioning */}
+          {/* Ocean Labels */}
           {OCEAN_LABELS.map((ocean, idx) => (
             <Marker key={`ocean-${idx}`} coordinates={ocean.coords}>
-              {ocean.subname ? (
-                <>
-                  <text
-                    textAnchor="middle"
-                    y={-6}
-                    style={{ 
-                      fontFamily: 'Georgia, serif',
-                      fontSize: '11px', 
-                      fontWeight: 'bold', 
-                      fill: '#1565C0', 
-                      opacity: 0.7,
-                      fontStyle: 'italic',
-                      letterSpacing: '2px'
-                    }}
-                  >
-                    {ocean.name}
-                  </text>
-                  <text
-                    textAnchor="middle"
-                    y={8}
-                    style={{ 
-                      fontFamily: 'Georgia, serif',
-                      fontSize: '11px', 
-                      fontWeight: 'bold', 
-                      fill: '#1565C0', 
-                      opacity: 0.7,
-                      fontStyle: 'italic',
-                      letterSpacing: '2px'
-                    }}
-                  >
-                    {ocean.subname}
-                  </text>
-                </>
-              ) : (
-                <text
-                  textAnchor="middle"
-                  style={{ 
-                    fontFamily: 'Georgia, serif',
-                    fontSize: '9px', 
-                    fontWeight: 'bold', 
-                    fill: '#1565C0', 
-                    opacity: 0.6,
-                    fontStyle: 'italic',
-                    letterSpacing: '1px'
-                  }}
-                >
-                  {ocean.name}
-                </text>
-              )}
+              <text
+                textAnchor="middle"
+                style={{ 
+                  fontFamily: 'Georgia, serif',
+                  fontSize: `${ocean.size}px`, 
+                  fontWeight: '600', 
+                  fill: '#0369A1', 
+                  opacity: 0.85,
+                  fontStyle: 'italic',
+                  letterSpacing: '1px'
+                }}
+              >
+                {ocean.name}
+              </text>
             </Marker>
           ))}
           
-          {/* Sea Labels using Marker for proper geo-positioning */}
+          {/* Sea Labels */}
           {SEA_LABELS.map((sea, idx) => (
             <Marker key={`sea-${idx}`} coordinates={sea.coords}>
               <text
                 textAnchor="middle"
                 style={{ 
                   fontFamily: 'Georgia, serif',
-                  fontSize: '7px', 
-                  fill: '#1976D2', 
-                  opacity: 0.6,
+                  fontSize: `${sea.size}px`, 
+                  fill: '#0284C7', 
+                  opacity: 0.75,
                   fontStyle: 'italic'
                 }}
               >
