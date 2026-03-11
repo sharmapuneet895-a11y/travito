@@ -47,7 +47,7 @@ const numericToISO3 = {
 
 // Ocean labels positioned like in the reference map
 const OCEAN_LABELS = [
-  { name: 'ARCTIC', name2: 'OCEAN', coords: [0, 82], size: 11 },
+  { name: 'ARCTIC', name2: 'OCEAN', coords: [0, 75], size: 11 },
   { name: 'NORTH', name2: 'PACIFIC', name3: 'OCEAN', coords: [-160, 30], size: 10 },
   { name: 'SOUTH', name2: 'PACIFIC', name3: 'OCEAN', coords: [-130, -40], size: 10 },
   { name: 'NORTH', name2: 'ATLANTIC', name3: 'OCEAN', coords: [-45, 35], size: 9 },
@@ -101,7 +101,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
   const [zoom, setZoom] = useState(1);
   
   // Fixed center - no dragging allowed
-  const fixedCenter = [0, 20];
+  const fixedCenter = [0, 15];
 
   const handleZoomIn = () => setZoom(prev => Math.min(prev * 1.4, 6));
   const handleZoomOut = () => setZoom(prev => Math.max(prev / 1.4, 1));
@@ -210,12 +210,12 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       <ComposableMap
         projection="geoMercator"
         projectionConfig={{ 
-          scale: 105,
-          center: [0, 20]
+          scale: 95,
+          center: [0, 15]
         }}
         width={900}
-        height={480}
-        style={{ width: '100%', height: 'auto', maxHeight: '55vh' }}
+        height={450}
+        style={{ width: '100%', height: 'auto' }}
       >
         {/* Light blue ocean background like reference image */}
         <rect x="-10" y="-10" width="920" height="520" fill="#87CEEB" />
@@ -296,7 +296,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       </ComposableMap>
 
       {/* Disclaimer */}
-      <div className="text-center mt-2 py-2 text-sm text-gray-600 italic">
+      <div className="text-center mt-3 py-3 text-sm text-gray-600 italic bg-gray-50">
         * Map boundaries are for illustrative purposes only and may not reflect the official position on international borders.
       </div>
 
