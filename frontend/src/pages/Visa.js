@@ -169,7 +169,9 @@ const Visa = () => {
                       className="w-3 h-3 rounded-full mt-1.5 flex-shrink-0"
                       style={{
                         backgroundColor:
-                          country.visa_type === 'visa_on_arrival'
+                          country.visa_type === 'visa_free'
+                            ? '#22C55E'
+                            : country.visa_type === 'visa_on_arrival'
                             ? '#E25A53'
                             : country.visa_type === 'e_visa'
                             ? '#4B89AC'
@@ -179,7 +181,7 @@ const Visa = () => {
                     <div>
                       <h4 className="font-semibold text-foreground">{country.country_name}</h4>
                       <p className="text-sm text-muted-foreground capitalize">
-                        {country.visa_type.replace('_', ' ')}
+                        {country.visa_type.replace(/_/g, ' ')}
                       </p>
                       {country.requirements && (
                         <p className="text-xs text-muted-foreground mt-1">

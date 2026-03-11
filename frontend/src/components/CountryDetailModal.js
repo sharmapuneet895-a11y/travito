@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2 } from 'lucide-react';
+import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2, Calculator } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
+import CostEstimator from './CostEstimator';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const CountryDetailModal = ({ country, onClose }) => {
   const [loading, setLoading] = useState(true);
+  const [showCostEstimator, setShowCostEstimator] = useState(false);
   const [countryData, setCountryData] = useState({
     seasons: null,
     visa: null,
@@ -292,16 +294,26 @@ const CountryDetailModal = ({ country, onClose }) => {
 
           {/* Footer */}
           <div className="sticky bottom-0 bg-white border-t border-border p-4 flex justify-between items-center">
-            <button
-              onClick={handleWishlistToggle}
-              className={`px-6 py-2 rounded-full font-medium transition-all ${
-                inWishlist 
-                  ? 'bg-red-100 text-red-600 hover:bg-red-200' 
-                  : 'bg-primary text-white hover:bg-primary/90'
-              }`}
-            >
-              {inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleWishlistToggle}
+                className={`px-4 py-2 rounded-full font-medium transition-all ${
+                  inWishlist 
+                    ? 'bg-red-100 text-red-600 hover:bg-red-200' 
+                    : 'bg-primary text-white hover:bg-primary/90'
+                }`}
+              >
+                {inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+              </button>
+              <button
+                onClick={() => setShowCostEstimator(true)}
+                className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-medium hover:opacity-90 transition-all flex items-center gap-2"
+                data-testid="open-cost-estimator"
+              >
+                <Calculator className="w-4 h-4" />
+                Cost Estimator
+              </button>
+            </div>
             <button
               onClick={onClose}
               className="px-6 py-2 bg-gray-100 text-gray-700 rounded-full font-medium hover:bg-gray-200 transition-all"
@@ -311,6 +323,12 @@ const CountryDetailModal = ({ country, onClose }) => {
           </div>
         </motion.div>
       </motion.div>
+
+      {/* Cost Estimator Modal */}
+      <CostEstimator 
+        isOpen={showCostEstimator} 
+        onClose={() => setShowCostEstimator(false)} 
+      />
     </AnimatePresence>
   );
 };

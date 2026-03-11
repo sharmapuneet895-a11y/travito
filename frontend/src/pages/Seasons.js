@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import WorldMap from '../components/WorldMap';
 import CountryDetailModal from '../components/CountryDetailModal';
 import BackToTop from '../components/BackToTop';
-import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart } from 'lucide-react';
+import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -13,6 +13,17 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const MONTH_ABBREV = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
+// Category definitions
+const CATEGORIES = [
+  { id: 'all', label: 'All Destinations', icon: Compass, color: 'gray' },
+  { id: 'beach', label: 'Beach', icon: Palmtree, color: 'cyan' },
+  { id: 'mountain', label: 'Mountain', icon: Mountain, color: 'emerald' },
+  { id: 'city', label: 'City', icon: Building2, color: 'violet' },
+  { id: 'culture', label: 'Culture', icon: Landmark, color: 'amber' },
+  { id: 'adventure', label: 'Adventure', icon: Compass, color: 'orange' },
+  { id: 'nature', label: 'Nature', icon: Trees, color: 'green' },
+];
+
 const Seasons = () => {
   const [seasonsData, setSeasonsData] = useState([]);
   const [processedData, setProcessedData] = useState([]);
@@ -20,6 +31,7 @@ const Seasons = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const { addToWishlist, isInWishlist } = useWishlist();
   
   // Date state - default to current month
@@ -76,14 +88,24 @@ const Seasons = () => {
     setProcessedData(processed);
   }, [seasonsData, selectedMonth, selectedMonthAbbrev]);
 
-  // Filter countries based on search
+  // Filter countries based on search and category
   const filteredCountries = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const query = searchQuery.toLowerCase();
-    return processedData.filter(c => 
+    let filtered = processedData.filter(c => 
       c.country_name?.toLowerCase().includes(query)
-    ).slice(0, 8);
-  }, [searchQuery, processedData]);
+    );
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(c => c.categories?.includes(selectedCategory));
+    }
+    return filtered.slice(0, 8);
+  }, [searchQuery, processedData, selectedCategory]);
+
+  // Filter data by category for display
+  const categoryFilteredData = useMemo(() => {
+    if (selectedCategory === 'all') return processedData;
+    return processedData.filter(c => c.categories?.includes(selectedCategory));
+  }, [processedData, selectedCategory]);
 
   const handleCountrySelect = (country) => {
     setSearchQuery(country.country_name);
@@ -103,10 +125,10 @@ const Seasons = () => {
     { color: '#D6D6D6', label: 'No Data', description: 'Information not available', icon: null }
   ];
 
-  // Separate countries by current season status
-  const peakCountries = processedData.filter(c => c.current_season === 'peak');
-  const shoulderCountries = processedData.filter(c => c.current_season === 'shoulder');
-  const offCountries = processedData.filter(c => c.current_season === 'off');
+  // Separate countries by current season status (using category filtered data)
+  const peakCountries = categoryFilteredData.filter(c => c.current_season === 'peak');
+  const shoulderCountries = categoryFilteredData.filter(c => c.current_season === 'shoulder');
+  const offCountries = categoryFilteredData.filter(c => c.current_season === 'off');
 
   return (
     <div className="min-h-screen py-12 px-6">
@@ -217,7 +239,48 @@ const Seasons = () => {
           <div className="bg-accent/10 rounded-xl p-4 mb-6 text-center">
             <span className="text-lg font-semibold text-primary">
               📅 Showing travel conditions for: <span className="text-accent">{selectedMonthName} {selectedYear}</span>
+              {selectedCategory !== 'all' && (
+                <span className="ml-2 text-muted-foreground">
+                  • Filtered by: <span className="text-accent capitalize">{selectedCategory}</span>
+                </span>
+              )}
             </span>
+          </div>
+
+          {/* Category Filter Tabs */}
+          <div className="bg-white rounded-xl p-4 mb-6 shadow-sm border border-border overflow-x-auto">
+            <div className="flex gap-2 min-w-max">
+              {CATEGORIES.map((cat) => {
+                const Icon = cat.icon;
+                const isActive = selectedCategory === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat.id)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all whitespace-nowrap ${
+                      isActive 
+                        ? `bg-${cat.color}-100 text-${cat.color}-700 border-2 border-${cat.color}-300` 
+                        : 'bg-gray-50 text-gray-600 hover:bg-gray-100 border-2 border-transparent'
+                    }`}
+                    style={isActive ? {
+                      backgroundColor: cat.color === 'gray' ? '#f3f4f6' : undefined,
+                      borderColor: cat.color === 'gray' ? '#9ca3af' : undefined,
+                    } : {}}
+                    data-testid={`category-tab-${cat.id}`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span>{cat.label}</span>
+                    {cat.id !== 'all' && (
+                      <span className="text-xs bg-white/50 px-1.5 py-0.5 rounded-full">
+                        {categoryFilteredData.filter(c => 
+                          cat.id === 'all' ? true : c.categories?.includes(cat.id)
+                        ).length || processedData.filter(c => c.categories?.includes(cat.id)).length}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Legend */}
