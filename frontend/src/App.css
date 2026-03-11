@@ -43,18 +43,20 @@
 
 .map-container {
   background: white;
-  border-radius: 1.5rem;
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
-  padding: 0;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem;
   position: relative;
   transition: all 0.3s ease;
   overflow: hidden;
   width: 100%;
+  max-height: 60vh;
 }
 
 .map-container svg {
   width: 100% !important;
   height: auto !important;
+  max-height: 55vh;
   display: block;
 }
 
