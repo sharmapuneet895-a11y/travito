@@ -100,8 +100,8 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   
-  // Fixed center - no dragging allowed
-  const fixedCenter = [0, 35];
+  // Fixed center - dragging enabled
+  const [center, setCenter] = useState([-10, 35]);
 
   const handleZoomIn = () => setZoom(prev => Math.min(prev * 1.4, 6));
   const handleZoomOut = () => setZoom(prev => Math.max(prev / 1.4, 1));
@@ -211,7 +211,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         projection="geoMercator"
         projectionConfig={{ 
           scale: 95,
-          center: [0, 35]
+          center: [-10, 35]
         }}
         width={900}
         height={450}
@@ -222,11 +222,10 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         
         <ZoomableGroup 
           zoom={zoom} 
-          center={fixedCenter}
+          center={center}
+          onMoveEnd={({ coordinates, zoom: z }) => { setCenter(coordinates); setZoom(z); }}
           minZoom={1} 
           maxZoom={6}
-          translateExtent={[[0, 0], [0, 0]]}
-          filterZoomEvent={(evt) => false}
         >
           <Geographies geography={geoUrl}>
             {({ geographies }) =>
@@ -295,9 +294,19 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         </ZoomableGroup>
       </ComposableMap>
 
-      {/* Disclaimer */}
-      <div style={{ textAlign: 'center', padding: '15px', backgroundColor: '#f5f5f5', marginTop: '10px', fontSize: '14px', color: '#555', fontStyle: 'italic', borderTop: '1px solid #ddd' }}>
-        * Map boundaries are for illustrative purposes only and may not reflect the official position on international borders.
+      {/* Disclaimer - bottom right of map */}
+      <div style={{ 
+        position: 'absolute', 
+        bottom: '15px', 
+        right: '20px', 
+        textAlign: 'right',
+        fontSize: '11px', 
+        color: '#666', 
+        fontStyle: 'italic',
+        lineHeight: '1.4'
+      }}>
+        * Map boundaries are for illustrative purposes only<br/>
+        and may not reflect official international borders.
       </div>
 
       {tooltipContent && (
