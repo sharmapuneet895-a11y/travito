@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ComposableMap, Geographies, Geography, ZoomableGroup, Marker } from 'react-simple-maps';
 import { motion } from 'framer-motion';
 
+// Using Natural Earth map data - standard international boundaries
 const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
 
 // Mapping from numeric IDs to ISO3 codes
@@ -45,29 +46,27 @@ const numericToISO3 = {
   "776": "TON", "882": "WSM", "296": "KIR", "798": "TUV"
 };
 
-// Ocean labels - positioned in deep ocean areas away from all landmasses
+// Ocean labels - positioned in open ocean areas
 const OCEAN_LABELS = [
-  { name: 'North Pacific Ocean', coords: [-170, 30], size: 11 },
-  { name: 'South Pacific Ocean', coords: [-130, -30], size: 11 },
-  { name: 'North Atlantic Ocean', coords: [-40, 30], size: 10 },
-  { name: 'South Atlantic Ocean', coords: [-15, -30], size: 10 },
-  { name: 'Indian Ocean', coords: [75, -25], size: 11 },
-  { name: 'Southern Ocean', coords: [0, -55], size: 9 },
-  { name: 'Arctic Ocean', coords: [-20, 75], size: 9 },
+  { name: 'North Pacific Ocean', coords: [-150, 25], size: 10 },
+  { name: 'South Pacific Ocean', coords: [-120, -30], size: 10 },
+  { name: 'North Atlantic Ocean', coords: [-40, 28], size: 9 },
+  { name: 'South Atlantic Ocean', coords: [-10, -28], size: 9 },
+  { name: 'Indian Ocean', coords: [75, -20], size: 10 },
+  { name: 'Southern Ocean', coords: [0, -58], size: 8 },
+  { name: 'Arctic Ocean', coords: [-60, 72], size: 8 },
 ];
 
-// Sea labels - positioned in CENTER of each sea body, away from ALL coastlines
+// Sea labels - positioned clearly in the water
 const SEA_LABELS = [
-  { name: 'Caribbean Sea', coords: [-68, 12], size: 7 },
-  { name: 'Gulf of Mexico', coords: [-90, 24], size: 7 },
-  { name: 'Mediterranean Sea', coords: [15, 35], size: 7 },
-  { name: 'Arabian Sea', coords: [60, 10], size: 7 },
-  { name: 'Bay of Bengal', coords: [87, 8], size: 7 },
-  { name: 'South China Sea', coords: [112, 6], size: 7 },
-  { name: 'Coral Sea', coords: [155, -22], size: 7 },
-  { name: 'Tasman Sea', coords: [165, -40], size: 7 },
-  { name: 'Sea of Japan', coords: [134, 40], size: 6 },
-  { name: 'Bering Sea', coords: [-178, 56], size: 6 },
+  { name: 'Caribbean Sea', coords: [-74, 16], size: 6 },
+  { name: 'Gulf of Mexico', coords: [-93, 26], size: 6 },
+  { name: 'Mediterranean', coords: [18, 37], size: 6 },
+  { name: 'Arabian Sea', coords: [63, 14], size: 6 },
+  { name: 'Bay of Bengal', coords: [90, 14], size: 6 },
+  { name: 'South China Sea', coords: [116, 12], size: 6 },
+  { name: 'Coral Sea', coords: [155, -18], size: 6 },
+  { name: 'Tasman Sea', coords: [162, -38], size: 6 },
 ];
 
 const WorldMap = ({ data, mode, onCountryClick }) => {
@@ -174,43 +173,42 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
   return (
     <div className="relative w-full" data-testid="world-map-container">
       {/* Zoom Controls */}
-      <div className="absolute top-4 right-4 z-20 flex flex-col gap-1 bg-white/95 rounded-lg p-1.5 shadow-lg border border-gray-200">
-        <button onClick={handleZoomIn} className="w-8 h-8 bg-primary text-white rounded flex items-center justify-center hover:bg-primary/80 text-lg font-bold" data-testid="zoom-in-btn">+</button>
-        <button onClick={handleZoomOut} className="w-8 h-8 bg-primary text-white rounded flex items-center justify-center hover:bg-primary/80 text-lg font-bold" data-testid="zoom-out-btn">-</button>
-        <button onClick={handleReset} className="w-8 h-8 bg-gray-500 text-white rounded flex items-center justify-center hover:bg-gray-400 text-xs font-bold" data-testid="zoom-reset-btn">R</button>
+      <div className="absolute top-3 right-3 z-20 flex flex-col gap-1 bg-white/95 rounded-lg p-1 shadow-lg border border-gray-200">
+        <button onClick={handleZoomIn} className="w-7 h-7 bg-primary text-white rounded flex items-center justify-center hover:bg-primary/80 text-base font-bold" data-testid="zoom-in-btn">+</button>
+        <button onClick={handleZoomOut} className="w-7 h-7 bg-primary text-white rounded flex items-center justify-center hover:bg-primary/80 text-base font-bold" data-testid="zoom-out-btn">-</button>
+        <button onClick={handleReset} className="w-7 h-7 bg-gray-500 text-white rounded flex items-center justify-center hover:bg-gray-400 text-xs font-bold" data-testid="zoom-reset-btn">R</button>
       </div>
       
       {/* Mobile Hint */}
-      <div className="absolute bottom-4 left-4 z-10 md:hidden bg-white/80 text-xs text-gray-600 px-2 py-1 rounded">
+      <div className="absolute bottom-3 left-3 z-10 md:hidden bg-white/80 text-xs text-gray-600 px-2 py-1 rounded">
         Pinch to zoom
       </div>
 
       <ComposableMap
-        projection="geoNaturalEarth1"
+        projection="geoEqualEarth"
         projectionConfig={{ 
-          scale: 170,
-          center: [0, 10]
+          scale: 155,
+          center: [0, 5]
         }}
-        width={960}
-        height={500}
+        width={900}
+        height={420}
         style={{ width: '100%', height: 'auto' }}
       >
-        {/* Ocean background with subtle wave pattern */}
+        {/* Ocean background with wave pattern */}
         <defs>
           <linearGradient id="oceanGrad" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#E0F2FE" />
             <stop offset="50%" stopColor="#BAE6FD" />
             <stop offset="100%" stopColor="#7DD3FC" />
           </linearGradient>
-          <pattern id="waves" x="0" y="0" width="100" height="20" patternUnits="userSpaceOnUse">
-            <path d="M0 10 Q25 5 50 10 T100 10" stroke="#0EA5E9" strokeWidth="0.3" fill="none" opacity="0.4"/>
-            <path d="M0 15 Q25 10 50 15 T100 15" stroke="#0EA5E9" strokeWidth="0.3" fill="none" opacity="0.3"/>
+          <pattern id="waves" x="0" y="0" width="80" height="15" patternUnits="userSpaceOnUse">
+            <path d="M0 8 Q20 4 40 8 T80 8" stroke="#0EA5E9" strokeWidth="0.25" fill="none" opacity="0.35"/>
+            <path d="M0 12 Q20 8 40 12 T80 12" stroke="#0EA5E9" strokeWidth="0.25" fill="none" opacity="0.25"/>
           </pattern>
         </defs>
         
-        {/* Ocean background */}
-        <rect x="-10" y="-10" width="1000" height="520" fill="url(#oceanGrad)" />
-        <rect x="-10" y="-10" width="1000" height="520" fill="url(#waves)" />
+        <rect x="-10" y="-10" width="920" height="440" fill="url(#oceanGrad)" />
+        <rect x="-10" y="-10" width="920" height="440" fill="url(#waves)" />
         
         <ZoomableGroup 
           zoom={zoom} 
@@ -227,7 +225,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
                   geography={geo}
                   fill={getColorByMode(geo)}
                   stroke="#FFFFFF"
-                  strokeWidth={0.4}
+                  strokeWidth={0.35}
                   style={{
                     default: { outline: 'none' },
                     hover: { fill: '#FBBF24', outline: 'none', cursor: 'pointer' },
@@ -253,9 +251,9 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
                   fontSize: `${ocean.size}px`, 
                   fontWeight: '600', 
                   fill: '#0369A1', 
-                  opacity: 0.8,
+                  opacity: 0.75,
                   fontStyle: 'italic',
-                  letterSpacing: '1px'
+                  letterSpacing: '0.5px'
                 }}
               >
                 {ocean.name}
@@ -272,7 +270,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
                   fontFamily: 'Georgia, serif',
                   fontSize: `${sea.size}px`, 
                   fill: '#0284C7', 
-                  opacity: 0.7,
+                  opacity: 0.65,
                   fontStyle: 'italic'
                 }}
               >
