@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
+import BackToTop from '../components/BackToTop';
 import { BookOpen, Clock, Tag, Calendar as CalendarIcon, ChevronDown, ChevronUp, X } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -304,6 +305,7 @@ const Blog = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      <BackToTop />
     </div>
   );
 };

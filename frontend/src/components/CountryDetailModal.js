@@ -1,0 +1,318 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2 } from 'lucide-react';
+import { useWishlist } from '../context/WishlistContext';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+const CountryDetailModal = ({ country, onClose }) => {
+  const [loading, setLoading] = useState(true);
+  const [countryData, setCountryData] = useState({
+    seasons: null,
+    visa: null,
+    weather: null,
+    plugs: null,
+    festivals: [],
+    dishes: [],
+    apps: []
+  });
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+
+  const inWishlist = isInWishlist(country.country_code);
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      setLoading(true);
+      try {
+        const [seasonsRes, visaRes, weatherRes, plugsRes, festivalsRes, dishesRes, appsRes] = await Promise.all([
+          axios.get(`${BACKEND_URL}/api/seasons`),
+          axios.get(`${BACKEND_URL}/api/visa`),
+          axios.get(`${BACKEND_URL}/api/weather/realtime`),
+          axios.get(`${BACKEND_URL}/api/plugs`),
+          axios.get(`${BACKEND_URL}/api/festivals`),
+          axios.get(`${BACKEND_URL}/api/dishes`),
+          axios.get(`${BACKEND_URL}/api/apps`)
+        ]);
+
+        const code = country.country_code;
+        const name = country.country_name;
+
+        setCountryData({
+          seasons: seasonsRes.data.data?.find(d => d.country_code === code || d.country_name === name),
+          visa: visaRes.data.data?.find(d => d.country_code === code || d.country_name === name),
+          weather: weatherRes.data.data?.find(d => d.country_code === code || d.country_name === name),
+          plugs: plugsRes.data.data?.find(d => d.country_code === code || d.country_name === name),
+          festivals: festivalsRes.data.data?.filter(d => d.country_code === code || d.country_name === name) || [],
+          dishes: dishesRes.data.data?.filter(d => d.country_code === code || d.country_name === name) || [],
+          apps: appsRes.data.data?.filter(d => d.country_code === code || d.country_name === name) || []
+        });
+      } catch (error) {
+        console.error('Error fetching country data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllData();
+  }, [country]);
+
+  const handleWishlistToggle = () => {
+    if (inWishlist) {
+      removeFromWishlist(country.country_code);
+    } else {
+      addToWishlist(country);
+    }
+  };
+
+  const getSeasonColor = (type) => {
+    switch (type) {
+      case 'peak': return 'bg-red-100 text-red-700';
+      case 'shoulder': return 'bg-blue-100 text-blue-700';
+      case 'off': return 'bg-yellow-100 text-yellow-700';
+      default: return 'bg-gray-100 text-gray-700';
+    }
+  };
+
+  const getWeatherColor = (type) => {
+    switch (type) {
+      case 'hot': return 'bg-red-100 text-red-700';
+      case 'snow': return 'bg-blue-100 text-blue-700';
+      case 'rainy': return 'bg-cyan-100 text-cyan-700';
+      case 'sandy': return 'bg-yellow-100 text-yellow-700';
+      default: return 'bg-gray-100 text-gray-700';
+    }
+  };
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 50 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 50 }}
+          className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+          onClick={(e) => e.stopPropagation()}
+          data-testid="country-detail-modal"
+        >
+          {/* Header */}
+          <div className="sticky top-0 bg-white border-b border-border p-6 flex items-center justify-between z-10">
+            <div className="flex items-center gap-4">
+              <img
+                src={`https://flagcdn.com/w80/${country.country_code?.toLowerCase().slice(0, 2) || 'un'}.png`}
+                alt={country.country_name}
+                className="w-12 h-8 object-cover rounded shadow"
+                onError={(e) => { e.target.style.display = 'none'; }}
+              />
+              <div>
+                <h2 className="text-2xl font-bold text-primary">{country.country_name}</h2>
+                <p className="text-sm text-muted-foreground">Country Code: {country.country_code}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleWishlistToggle}
+                className={`p-2 rounded-full transition-all ${inWishlist ? 'bg-red-100 text-red-500' : 'bg-gray-100 text-gray-500 hover:bg-red-50 hover:text-red-400'}`}
+                data-testid="wishlist-toggle-btn"
+              >
+                <Heart className={`w-6 h-6 ${inWishlist ? 'fill-current' : ''}`} />
+              </button>
+              <button
+                onClick={onClose}
+                className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-all"
+                data-testid="close-country-modal"
+              >
+                <X className="w-6 h-6 text-primary" />
+              </button>
+            </div>
+          </div>
+
+          {/* Content */}
+          {loading ? (
+            <div className="flex items-center justify-center h-64">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              <span className="ml-2 text-muted-foreground">Loading country information...</span>
+            </div>
+          ) : (
+            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Best Season */}
+              <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl p-5 border border-orange-100">
+                <div className="flex items-center gap-2 mb-3">
+                  <Calendar className="w-5 h-5 text-orange-500" />
+                  <h3 className="font-semibold text-primary">Best Season to Visit</h3>
+                </div>
+                {countryData.seasons ? (
+                  <div>
+                    <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getSeasonColor(countryData.seasons.season_type)}`}>
+                      {countryData.seasons.season_type?.toUpperCase()} Season
+                    </span>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Best months: {countryData.seasons.best_months?.join(', ') || 'N/A'}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No season data available</p>
+                )}
+              </div>
+
+              {/* Visa Info */}
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100">
+                <div className="flex items-center gap-2 mb-3">
+                  <FileText className="w-5 h-5 text-blue-500" />
+                  <h3 className="font-semibold text-primary">Visa Information</h3>
+                </div>
+                {countryData.visa ? (
+                  <div>
+                    <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                      countryData.visa.visa_type === 'visa_on_arrival' ? 'bg-green-100 text-green-700' :
+                      countryData.visa.visa_type === 'e_visa' ? 'bg-blue-100 text-blue-700' :
+                      'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {countryData.visa.visa_type?.replace(/_/g, ' ').toUpperCase()}
+                    </span>
+                    {countryData.visa.requirements && (
+                      <p className="mt-2 text-sm text-muted-foreground">{countryData.visa.requirements}</p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No visa data available</p>
+                )}
+              </div>
+
+              {/* Weather */}
+              <div className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-xl p-5 border border-cyan-100">
+                <div className="flex items-center gap-2 mb-3">
+                  <Cloud className="w-5 h-5 text-cyan-500" />
+                  <h3 className="font-semibold text-primary">Current Weather</h3>
+                </div>
+                {countryData.weather ? (
+                  <div>
+                    <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getWeatherColor(countryData.weather.weather_type)}`}>
+                      {countryData.weather.weather_type?.toUpperCase()}
+                    </span>
+                    <p className="mt-2 text-lg font-bold text-primary">{countryData.weather.avg_temp}</p>
+                    <p className="text-sm text-muted-foreground">{countryData.weather.description}</p>
+                    {countryData.weather.realtime && (
+                      <span className="inline-flex items-center gap-1 mt-2 text-xs text-green-600">
+                        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        Live Data
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No weather data available</p>
+                )}
+              </div>
+
+              {/* Power Plugs */}
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-5 border border-purple-100">
+                <div className="flex items-center gap-2 mb-3">
+                  <Zap className="w-5 h-5 text-purple-500" />
+                  <h3 className="font-semibold text-primary">Power Plugs</h3>
+                </div>
+                {countryData.plugs ? (
+                  <div>
+                    <span className="inline-block px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-700">
+                      Type {countryData.plugs.plug_type}
+                    </span>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      Voltage: {countryData.plugs.voltage}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No plug data available</p>
+                )}
+              </div>
+
+              {/* Festivals */}
+              <div className="bg-gradient-to-br from-pink-50 to-red-50 rounded-xl p-5 border border-pink-100">
+                <div className="flex items-center gap-2 mb-3">
+                  <PartyPopper className="w-5 h-5 text-pink-500" />
+                  <h3 className="font-semibold text-primary">Famous Festivals</h3>
+                </div>
+                {countryData.festivals.length > 0 ? (
+                  <div className="space-y-2">
+                    {countryData.festivals.slice(0, 3).map((festival, idx) => (
+                      <div key={idx} className="flex items-center justify-between text-sm">
+                        <span className="font-medium">{festival.name}</span>
+                        <span className="text-muted-foreground">{festival.month}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No festival data available</p>
+                )}
+              </div>
+
+              {/* Local Dishes */}
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 border border-green-100">
+                <div className="flex items-center gap-2 mb-3">
+                  <Utensils className="w-5 h-5 text-green-500" />
+                  <h3 className="font-semibold text-primary">Must-Try Dishes</h3>
+                </div>
+                {countryData.dishes.length > 0 ? (
+                  <div className="space-y-2">
+                    {countryData.dishes.slice(0, 4).map((dish, idx) => (
+                      <div key={idx} className="flex items-center gap-2 text-sm">
+                        <span className={`w-2 h-2 rounded-full ${dish.type === 'veg' ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                        <span>{dish.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No dish data available</p>
+                )}
+              </div>
+
+              {/* Top Apps */}
+              {countryData.apps.length > 0 && (
+                <div className="md:col-span-2 bg-gradient-to-br from-slate-50 to-gray-50 rounded-xl p-5 border border-slate-100">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Smartphone className="w-5 h-5 text-slate-500" />
+                    <h3 className="font-semibold text-primary">Recommended Apps</h3>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {countryData.apps.slice(0, 8).map((app, idx) => (
+                      <div key={idx} className="bg-white rounded-lg p-3 border border-border">
+                        <p className="font-medium text-sm">{app.app_name}</p>
+                        <p className="text-xs text-muted-foreground capitalize">{app.category}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Footer */}
+          <div className="sticky bottom-0 bg-white border-t border-border p-4 flex justify-between items-center">
+            <button
+              onClick={handleWishlistToggle}
+              className={`px-6 py-2 rounded-full font-medium transition-all ${
+                inWishlist 
+                  ? 'bg-red-100 text-red-600 hover:bg-red-200' 
+                  : 'bg-primary text-white hover:bg-primary/90'
+              }`}
+            >
+              {inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+            </button>
+            <button
+              onClick={onClose}
+              className="px-6 py-2 bg-gray-100 text-gray-700 rounded-full font-medium hover:bg-gray-200 transition-all"
+            >
+              Close
+            </button>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
+
+export default CountryDetailModal;

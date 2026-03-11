@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import BackToTop from '../components/BackToTop';
 import { DollarSign, RefreshCw, TrendingUp, ArrowRightLeft } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -285,6 +286,7 @@ const Forex = () => {
           </div>
         </motion.div>
       </div>
+      <BackToTop />
     </div>
   );
 };

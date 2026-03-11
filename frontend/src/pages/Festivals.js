@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import WorldMap from '../components/WorldMap';
+import BackToTop from '../components/BackToTop';
 import { PartyPopper, Calendar, MapPin, Filter, Utensils, Leaf, Drumstick } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -314,6 +315,7 @@ const Festivals = () => {
           )}
         </motion.div>
       </div>
+      <BackToTop />
     </div>
   );
 };

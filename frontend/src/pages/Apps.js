@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import BackToTop from '../components/BackToTop';
 import { Smartphone, Car, Package, Utensils, MapPin } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -206,6 +207,7 @@ const Apps = () => {
           </div>
         </motion.div>
       </div>
+      <BackToTop />
     </div>
   );
 };

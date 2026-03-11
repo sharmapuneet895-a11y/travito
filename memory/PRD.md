@@ -18,6 +18,10 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
 4. **Weather**: Real-time weather data with color-coded map
 5. **Blog**: Expandable articles with full content
 6. **UI/UX**: Professional look with light gold header, clear ocean labels
+7. **Back to Top**: Button on all pages for easy navigation
+8. **Scroll to Top on Navigation**: Pages start from top when clicking menu links
+9. **Country Search with Details**: Search shows comprehensive info from all data sources
+10. **Travel Wishlist**: Save favorite countries to a local wishlist
 
 ## What's Been Implemented (March 2026)
 
@@ -44,6 +48,24 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
 - [x] Country-to-map code matching improved (numeric ID to ISO3 mapping)
 - [x] Blog articles now expand with full content in modal
 
+### New Features (March 11, 2026) - COMPLETE
+- [x] **Back to Top Button**: Floating arrow button appears on all pages after scrolling 300px
+- [x] **Scroll to Top on Navigation**: All pages automatically scroll to top when navigating via menu
+- [x] **Country Search with Details Modal**: Search for any country to see:
+  - Best season to visit
+  - Visa requirements
+  - Current weather (live)
+  - Power plug type
+  - Famous festivals
+  - Must-try local dishes
+  - Recommended apps
+- [x] **My Travel Wishlist**: 
+  - Save favorite countries by clicking heart icon
+  - View saved countries on dedicated wishlist page
+  - Click countries in wishlist to see detailed info
+  - Clear all or remove individual countries
+  - Persisted in localStorage
+
 ### Data Coverage - COMPLETE
 - [x] Comprehensive data for African countries
 - [x] Top Apps data for major countries
@@ -62,18 +84,23 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
 ```
 /app/frontend/src/
 ├── components/
-│   ├── Navigation.js     # Light gold header with hamburger menu
-│   └── WorldMap.js       # Map with ocean/sea labels, numeric-to-ISO3 mapping
+│   ├── Navigation.js           # Light gold header with hamburger menu
+│   ├── WorldMap.js             # Map with ocean/sea labels
+│   ├── BackToTop.js            # Floating back-to-top button
+│   └── CountryDetailModal.js   # Comprehensive country info modal
+├── context/
+│   └── WishlistContext.js      # Wishlist state management with localStorage
 ├── pages/
-│   ├── Seasons.js        # Landing page
-│   ├── Visa.js           # Visa information
-│   ├── Forex.js          # Live FOREX with flags
-│   ├── Apps.js           # Top apps
-│   ├── Blog.js           # Expandable articles
-│   ├── Weather.js        # Live weather data
-│   ├── PowerPlug.js      # Power plugs
-│   └── Festivals.js      # Festivals & dishes
-└── App.js                # Routes
+│   ├── Seasons.js              # Landing page with country search
+│   ├── Visa.js                 # Visa information
+│   ├── Forex.js                # Live FOREX with flags
+│   ├── Apps.js                 # Top apps
+│   ├── Blog.js                 # Expandable articles
+│   ├── Weather.js              # Live weather data
+│   ├── PowerPlug.js            # Power plugs
+│   ├── Festivals.js            # Festivals & dishes
+│   └── Wishlist.js             # Travel wishlist page
+└── App.js                      # Routes with ScrollToTop component
 ```
 
 ### Key API Endpoints
@@ -88,11 +115,12 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
 - `GET /api/dishes` - Local dishes
 
 ## Future Enhancements (Backlog)
-- [ ] User authentication for saving favorites
+- [ ] User authentication for cloud-synced wishlist
 - [ ] Trip planner feature
 - [ ] More country data coverage for weather map
 - [ ] Currency converter calculator
 - [ ] Offline mode for travelers
+- [ ] Share wishlist with friends
 
 ## Live Preview
 https://visa-forex-explorer.preview.emergentagent.com

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import WorldMap from '../components/WorldMap';
+import BackToTop from '../components/BackToTop';
 import { FileText } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -125,6 +126,7 @@ const Visa = () => {
           </div>
         </motion.div>
       </div>
+      <BackToTop />
     </div>
   );
 };

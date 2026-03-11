@@ -2,7 +2,10 @@ import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import WorldMap from '../components/WorldMap';
-import { Calendar, Sun, CloudSun, Cloud, Search, MapPin } from 'lucide-react';
+import CountryDetailModal from '../components/CountryDetailModal';
+import BackToTop from '../components/BackToTop';
+import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart } from 'lucide-react';
+import { useWishlist } from '../context/WishlistContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -16,6 +19,8 @@ const Seasons = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const { addToWishlist, isInWishlist } = useWishlist();
   
   // Date state - default to current month
   const today = new Date();
@@ -83,13 +88,12 @@ const Seasons = () => {
   const handleCountrySelect = (country) => {
     setSearchQuery(country.country_name);
     setShowDropdown(false);
-    // Scroll to the country card section
-    const element = document.querySelector(`[data-testid="country-card-${country.country_code}"]`);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      element.classList.add('ring-2', 'ring-accent');
-      setTimeout(() => element.classList.remove('ring-2', 'ring-accent'), 2000);
-    }
+    // Open the country detail modal
+    setSelectedCountry(country);
+  };
+
+  const handleCountryCardClick = (country) => {
+    setSelectedCountry(country);
   };
 
   const legends = [
@@ -271,17 +275,34 @@ const Seasons = () => {
                   {peakCountries.map((country) => (
                     <div
                       key={country.country_code}
-                      className="bg-red-50 rounded-lg p-4 border border-red-200 hover:shadow-md transition-all"
+                      className="bg-red-50 rounded-lg p-4 border border-red-200 hover:shadow-md transition-all cursor-pointer group"
                       data-testid={`country-card-${country.country_code}`}
+                      onClick={() => handleCountryCardClick(country)}
                     >
                       <div className="flex items-start gap-3">
                         <div className="w-3 h-3 rounded-full mt-1.5 flex-shrink-0 bg-red-500" />
-                        <div>
-                          <h4 className="font-semibold text-foreground">{country.country_name}</h4>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-semibold text-foreground">{country.country_name}</h4>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                addToWishlist(country);
+                              }}
+                              className={`p-1 rounded-full transition-all ${
+                                isInWishlist(country.country_code) 
+                                  ? 'text-red-500' 
+                                  : 'text-gray-300 hover:text-red-400 opacity-0 group-hover:opacity-100'
+                              }`}
+                            >
+                              <Heart className={`w-4 h-4 ${isInWishlist(country.country_code) ? 'fill-current' : ''}`} />
+                            </button>
+                          </div>
                           <p className="text-sm text-green-700 font-medium">✓ Ideal in {selectedMonthAbbrev}</p>
                           <p className="text-xs text-muted-foreground mt-1">
                             Best months: {country.best_months?.join(', ')}
                           </p>
+                          <p className="text-xs text-primary mt-2 group-hover:underline">View details →</p>
                         </div>
                       </div>
                     </div>
@@ -301,17 +322,34 @@ const Seasons = () => {
                   {shoulderCountries.map((country) => (
                     <div
                       key={country.country_code}
-                      className="bg-blue-50 rounded-lg p-4 border border-blue-200 hover:shadow-md transition-all"
+                      className="bg-blue-50 rounded-lg p-4 border border-blue-200 hover:shadow-md transition-all cursor-pointer group"
                       data-testid={`country-card-${country.country_code}`}
+                      onClick={() => handleCountryCardClick(country)}
                     >
                       <div className="flex items-start gap-3">
                         <div className="w-3 h-3 rounded-full mt-1.5 flex-shrink-0 bg-blue-500" />
-                        <div>
-                          <h4 className="font-semibold text-foreground">{country.country_name}</h4>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-semibold text-foreground">{country.country_name}</h4>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                addToWishlist(country);
+                              }}
+                              className={`p-1 rounded-full transition-all ${
+                                isInWishlist(country.country_code) 
+                                  ? 'text-red-500' 
+                                  : 'text-gray-300 hover:text-red-400 opacity-0 group-hover:opacity-100'
+                              }`}
+                            >
+                              <Heart className={`w-4 h-4 ${isInWishlist(country.country_code) ? 'fill-current' : ''}`} />
+                            </button>
+                          </div>
                           <p className="text-sm text-blue-700 font-medium">○ Near peak season</p>
                           <p className="text-xs text-muted-foreground mt-1">
                             Best months: {country.best_months?.join(', ')}
                           </p>
+                          <p className="text-xs text-primary mt-2 group-hover:underline">View details →</p>
                         </div>
                       </div>
                     </div>
@@ -331,17 +369,34 @@ const Seasons = () => {
                   {offCountries.slice(0, 12).map((country) => (
                     <div
                       key={country.country_code}
-                      className="bg-amber-50 rounded-lg p-4 border border-amber-200 hover:shadow-md transition-all"
+                      className="bg-amber-50 rounded-lg p-4 border border-amber-200 hover:shadow-md transition-all cursor-pointer group"
                       data-testid={`country-card-${country.country_code}`}
+                      onClick={() => handleCountryCardClick(country)}
                     >
                       <div className="flex items-start gap-3">
                         <div className="w-3 h-3 rounded-full mt-1.5 flex-shrink-0 bg-amber-500" />
-                        <div>
-                          <h4 className="font-semibold text-foreground">{country.country_name}</h4>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-semibold text-foreground">{country.country_name}</h4>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                addToWishlist(country);
+                              }}
+                              className={`p-1 rounded-full transition-all ${
+                                isInWishlist(country.country_code) 
+                                  ? 'text-red-500' 
+                                  : 'text-gray-300 hover:text-red-400 opacity-0 group-hover:opacity-100'
+                              }`}
+                            >
+                              <Heart className={`w-4 h-4 ${isInWishlist(country.country_code) ? 'fill-current' : ''}`} />
+                            </button>
+                          </div>
                           <p className="text-sm text-amber-700 font-medium">△ Not ideal in {selectedMonthAbbrev}</p>
                           <p className="text-xs text-muted-foreground mt-1">
                             Best months: {country.best_months?.join(', ')}
                           </p>
+                          <p className="text-xs text-primary mt-2 group-hover:underline">View details →</p>
                         </div>
                       </div>
                     </div>
@@ -359,6 +414,16 @@ const Seasons = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Country Detail Modal */}
+      {selectedCountry && (
+        <CountryDetailModal
+          country={selectedCountry}
+          onClose={() => setSelectedCountry(null)}
+        />
+      )}
+
+      <BackToTop />
     </div>
   );
 };
