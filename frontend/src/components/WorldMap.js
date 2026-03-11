@@ -4,24 +4,55 @@ import { motion } from 'framer-motion';
 
 const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
 
+// Mapping from numeric IDs to ISO3 codes (world-atlas uses numeric IDs)
+const numericToISO3 = {
+  "840": "USA", "124": "CAN", "826": "GBR", "250": "FRA", "276": "DEU",
+  "380": "ITA", "724": "ESP", "36": "AUS", "392": "JPN", "156": "CHN",
+  "356": "IND", "76": "BRA", "643": "RUS", "484": "MEX", "764": "THA",
+  "702": "SGP", "784": "ARE", "818": "EGY", "710": "ZAF", "32": "ARG",
+  "554": "NZL", "410": "KOR", "528": "NLD", "752": "SWE", "578": "NOR",
+  "756": "CHE", "792": "TUR", "300": "GRC", "620": "PRT", "360": "IDN",
+  "458": "MYS", "608": "PHL", "704": "VNM", "616": "POL", "40": "AUT",
+  "246": "FIN", "208": "DNK", "372": "IRL", "203": "CZE", "376": "ISR",
+  "682": "SAU", "348": "HUN", "152": "CHL", "170": "COL", "604": "PER",
+  "586": "PAK", "50": "BGD", "404": "KEN", "566": "NGA", "504": "MAR",
+  "458": "MYS", "524": "NPL", "144": "LKA", "104": "MMR", "116": "KHM",
+  "418": "LAO", "100": "BGR", "642": "ROU", "804": "UKR", "112": "BLR",
+  "268": "GEO", "51": "ARM", "31": "AZE", "398": "KAZ", "860": "UZB",
+  "12": "DZA", "788": "TUN", "434": "LBY", "818": "EGY", "736": "SDN",
+  "288": "GHA", "384": "CIV", "686": "SEN", "180": "COD", "800": "UGA",
+  "834": "TZA", "508": "MOZ", "24": "AGO", "894": "ZMB", "716": "ZWE",
+  "72": "BWA", "516": "NAM", "480": "MUS", "450": "MDG"
+};
+
 const WorldMap = ({ data, mode, onCountryClick }) => {
   const [tooltipContent, setTooltipContent] = useState('');
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 
   const getColorByMode = (geo) => {
-    // Try multiple ways to match country code
-    const isoCode = geo.id || geo.properties?.ISO_A3 || geo.properties?.ADM0_A3;
+    // Get all possible identifiers
+    const numericId = String(geo.id);
+    const iso3FromNumeric = numericToISO3[numericId];
+    const isoCode = geo.properties?.ISO_A3 || geo.properties?.ADM0_A3;
     const countryName = geo.properties?.name || geo.properties?.NAME;
     
-    // Find country data by code or name
-    const countryData = data.find(d => 
-      d.country_code === isoCode || 
-      d.country_code === geo.properties?.ISO_A3 ||
-      d.country_code === geo.properties?.ADM0_A3 ||
-      d.country_name === countryName ||
-      (isoCode === '840' && (d.country_code === 'USA' || d.country_code === 'US')) || // USA numeric code
-      (isoCode === '-99' && d.country_name === 'United States')
-    );
+    // Find country data by various matching strategies
+    const countryData = data.find(d => {
+      // Match by ISO3 code from numeric mapping
+      if (iso3FromNumeric && d.country_code === iso3FromNumeric) return true;
+      // Match by direct ISO code
+      if (d.country_code === isoCode) return true;
+      // Match by property codes
+      if (d.country_code === geo.properties?.ISO_A3) return true;
+      if (d.country_code === geo.properties?.ADM0_A3) return true;
+      // Match by country name
+      if (d.country_name === countryName) return true;
+      // Fuzzy name match
+      if (countryName && d.country_name && 
+          (d.country_name.toLowerCase().includes(countryName.toLowerCase()) ||
+           countryName.toLowerCase().includes(d.country_name.toLowerCase()))) return true;
+      return false;
+    });
 
     if (!countryData) return '#E8E8E6'; // Light grey for no data
 
@@ -92,17 +123,24 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
   };
 
   const handleMouseEnter = (geo, evt) => {
-    // Try multiple ways to match country code
-    const isoCode = geo.id || geo.properties?.ISO_A3 || geo.properties?.ADM0_A3;
+    // Get all possible identifiers
+    const numericId = String(geo.id);
+    const iso3FromNumeric = numericToISO3[numericId];
+    const isoCode = geo.properties?.ISO_A3 || geo.properties?.ADM0_A3;
     const countryName = geo.properties?.name || geo.properties?.NAME;
     
-    const countryData = data.find(d => 
-      d.country_code === isoCode || 
-      d.country_code === geo.properties?.ISO_A3 ||
-      d.country_code === geo.properties?.ADM0_A3 ||
-      d.country_name === countryName ||
-      (isoCode === '840' && (d.country_code === 'USA' || d.country_code === 'US'))
-    );
+    // Find country data by various matching strategies
+    const countryData = data.find(d => {
+      if (iso3FromNumeric && d.country_code === iso3FromNumeric) return true;
+      if (d.country_code === isoCode) return true;
+      if (d.country_code === geo.properties?.ISO_A3) return true;
+      if (d.country_code === geo.properties?.ADM0_A3) return true;
+      if (d.country_name === countryName) return true;
+      if (countryName && d.country_name && 
+          (d.country_name.toLowerCase().includes(countryName.toLowerCase()) ||
+           countryName.toLowerCase().includes(d.country_name.toLowerCase()))) return true;
+      return false;
+    });
 
     if (countryData) {
       let info = '';
@@ -119,7 +157,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       }
       setTooltipContent(info);
     } else {
-      setTooltipContent(countryName || geo.properties.name);
+      setTooltipContent(countryName || geo.properties?.name || 'Unknown');
     }
 
     setTooltipPosition({ x: evt.clientX, y: evt.clientY });
@@ -134,12 +172,12 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       <ComposableMap
         projection="geoNaturalEarth1"
         projectionConfig={{
-          scale: 185,
-          center: [0, 5]
+          scale: 210,
+          center: [10, 0]
         }}
         style={{ width: '100%', height: 'auto' }}
-        width={980}
-        height={580}
+        width={1100}
+        height={650}
       >
         <defs>
           {/* Enhanced wavy water pattern with animation */}
@@ -206,368 +244,115 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         </defs>
         
         {/* Ocean background with enhanced blue color */}
-        <rect x="-50" y="-50" width="1100" height="700" fill="#A8D8F0" />
-        <rect x="-50" y="-50" width="1100" height="700" fill="url(#waves)" opacity="0.9" />
+        <rect x="-50" y="-50" width="1200" height="750" fill="#A8D8F0" />
+        <rect x="-50" y="-50" width="1200" height="750" fill="url(#waves)" opacity="0.9" />
         
-        {/* ===== OCEAN LABELS ===== */}
+        {/* ===== OCEAN LABELS - Positioned in clear water areas ===== */}
         
-        {/* North Atlantic Ocean - between North America and Europe */}
-        <text 
-          x="365" 
-          y="145" 
-          fill="#1565A0" 
-          fontSize="11" 
-          fontWeight="bold" 
-          opacity="0.95" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="1"
-          textAnchor="middle"
-        >
+        {/* Arctic Ocean - top center */}
+        <text x="550" y="35" fill="#0D47A1" fontSize="13" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="3" textAnchor="middle">
+          ARCTIC OCEAN
+        </text>
+        
+        {/* North Atlantic Ocean - between Americas and Europe */}
+        <text x="380" y="175" fill="#0D47A1" fontSize="11" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="2" textAnchor="middle">
           NORTH ATLANTIC
         </text>
-        <text 
-          x="365" 
-          y="158" 
-          fill="#1565A0" 
-          fontSize="11" 
-          fontWeight="bold" 
-          opacity="0.95" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="1"
-          textAnchor="middle"
-        >
+        <text x="380" y="190" fill="#0D47A1" fontSize="11" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="2" textAnchor="middle">
           OCEAN
         </text>
         
-        {/* South Atlantic Ocean - between South America and Africa */}
-        <text 
-          x="385" 
-          y="365" 
-          fill="#1565A0" 
-          fontSize="11" 
-          fontWeight="bold" 
-          opacity="0.95" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="1"
-          textAnchor="middle"
-        >
+        {/* South Atlantic Ocean - between S.America and Africa */}
+        <text x="400" y="400" fill="#0D47A1" fontSize="11" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="2" textAnchor="middle">
           SOUTH ATLANTIC
         </text>
-        <text 
-          x="385" 
-          y="378" 
-          fill="#1565A0" 
-          fontSize="11" 
-          fontWeight="bold" 
-          opacity="0.95" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="1"
-          textAnchor="middle"
-        >
+        <text x="400" y="415" fill="#0D47A1" fontSize="11" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="2" textAnchor="middle">
           OCEAN
         </text>
         
-        {/* North Pacific Ocean - left of North America */}
-        <text 
-          x="95" 
-          y="175" 
-          fill="#1565A0" 
-          fontSize="11" 
-          fontWeight="bold" 
-          opacity="0.95" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="1"
-          textAnchor="middle"
-        >
+        {/* North Pacific Ocean - left of Americas */}
+        <text x="100" y="195" fill="#0D47A1" fontSize="11" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="2" textAnchor="middle">
           NORTH PACIFIC
         </text>
-        <text 
-          x="95" 
-          y="188" 
-          fill="#1565A0" 
-          fontSize="11" 
-          fontWeight="bold" 
-          opacity="0.95" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="1"
-          textAnchor="middle"
-        >
+        <text x="100" y="210" fill="#0D47A1" fontSize="11" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="2" textAnchor="middle">
           OCEAN
         </text>
         
         {/* South Pacific Ocean - bottom left */}
-        <text 
-          x="95" 
-          y="395" 
-          fill="#1565A0" 
-          fontSize="11" 
-          fontWeight="bold" 
-          opacity="0.95" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="1"
-          textAnchor="middle"
-        >
+        <text x="110" y="440" fill="#0D47A1" fontSize="11" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="2" textAnchor="middle">
           SOUTH PACIFIC
         </text>
-        <text 
-          x="95" 
-          y="408" 
-          fill="#1565A0" 
-          fontSize="11" 
-          fontWeight="bold" 
-          opacity="0.95" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="1"
-          textAnchor="middle"
-        >
+        <text x="110" y="455" fill="#0D47A1" fontSize="11" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="2" textAnchor="middle">
           OCEAN
         </text>
         
         {/* Indian Ocean - between Africa and Australia */}
-        <text 
-          x="680" 
-          y="330" 
-          fill="#1565A0" 
-          fontSize="12" 
-          fontWeight="bold" 
-          opacity="0.95" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="2"
-          textAnchor="middle"
-        >
+        <text x="740" y="370" fill="#0D47A1" fontSize="13" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="3" textAnchor="middle">
           INDIAN OCEAN
         </text>
         
-        {/* Southern Ocean - at the bottom */}
-        <text 
-          x="490" 
-          y="520" 
-          fill="#1565A0" 
-          fontSize="11" 
-          fontWeight="bold" 
-          opacity="0.9" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="2"
-          textAnchor="middle"
-        >
-          SOUTHERN OCEAN
-        </text>
-        
-        {/* West Pacific Ocean - between Asia and Australia */}
-        <text 
-          x="870" 
-          y="255" 
-          fill="#1565A0" 
-          fontSize="10" 
-          fontWeight="bold" 
-          opacity="0.95" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="1"
-          textAnchor="middle"
-        >
+        {/* West Pacific Ocean - near Asia/Australia */}
+        <text x="970" y="280" fill="#0D47A1" fontSize="10" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="1" textAnchor="middle">
           WEST PACIFIC
         </text>
-        <text 
-          x="870" 
-          y="267" 
-          fill="#1565A0" 
-          fontSize="10" 
-          fontWeight="bold" 
-          opacity="0.95" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="1"
-          textAnchor="middle"
-        >
+        <text x="970" y="293" fill="#0D47A1" fontSize="10" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="1" textAnchor="middle">
           OCEAN
         </text>
         
-        {/* Arctic Ocean - at the top */}
-        <text 
-          x="490" 
-          y="35" 
-          fill="#1565A0" 
-          fontSize="11" 
-          fontWeight="bold" 
-          opacity="0.9" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="2"
-          textAnchor="middle"
-        >
-          ARCTIC OCEAN
+        {/* Southern Ocean - bottom */}
+        <text x="550" y="580" fill="#0D47A1" fontSize="12" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="3" textAnchor="middle">
+          SOUTHERN OCEAN
         </text>
         
         {/* ===== SEA LABELS ===== */}
         
         {/* Mediterranean Sea */}
-        <text 
-          x="510" 
-          y="168" 
-          fill="#1976D2" 
-          fontSize="8" 
-          fontWeight="600" 
-          opacity="0.9" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="0.5"
-          textAnchor="middle"
-        >
+        <text x="560" y="188" fill="#1565C0" fontSize="9" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="1" textAnchor="middle">
           Mediterranean Sea
         </text>
         
         {/* Caribbean Sea */}
-        <text 
-          x="260" 
-          y="215" 
-          fill="#1976D2" 
-          fontSize="7" 
-          fontWeight="600" 
-          opacity="0.9" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="0.5"
-          textAnchor="middle"
-        >
+        <text x="280" y="255" fill="#1565C0" fontSize="9" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="1" textAnchor="middle">
           Caribbean Sea
         </text>
         
+        {/* Gulf of Mexico */}
+        <text x="245" y="220" fill="#1565C0" fontSize="8" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="0.5" textAnchor="middle">
+          Gulf of Mexico
+        </text>
+        
         {/* Arabian Sea */}
-        <text 
-          x="635" 
-          y="222" 
-          fill="#1976D2" 
-          fontSize="8" 
-          fontWeight="600" 
-          opacity="0.9" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="0.5"
-          textAnchor="middle"
-        >
+        <text x="690" y="255" fill="#1565C0" fontSize="9" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="1" textAnchor="middle">
           Arabian Sea
         </text>
         
         {/* Bay of Bengal */}
-        <text 
-          x="700" 
-          y="218" 
-          fill="#1976D2" 
-          fontSize="7" 
-          fontWeight="600" 
-          opacity="0.9" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="0.5"
-          textAnchor="middle"
-        >
+        <text x="765" y="250" fill="#1565C0" fontSize="8" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="0.5" textAnchor="middle">
           Bay of Bengal
         </text>
         
         {/* South China Sea */}
-        <text 
-          x="775" 
-          y="220" 
-          fill="#1976D2" 
-          fontSize="7" 
-          fontWeight="600" 
-          opacity="0.9" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="0.5"
-          textAnchor="middle"
-        >
+        <text x="850" y="255" fill="#1565C0" fontSize="8" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="0.5" textAnchor="middle">
           South China Sea
         </text>
         
         {/* Coral Sea */}
-        <text 
-          x="885" 
-          y="325" 
-          fill="#1976D2" 
-          fontSize="7" 
-          fontWeight="600" 
-          opacity="0.9" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="0.5"
-          textAnchor="middle"
-        >
+        <text x="985" y="380" fill="#1565C0" fontSize="8" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="0.5" textAnchor="middle">
           Coral Sea
         </text>
         
-        {/* Gulf of Mexico */}
-        <text 
-          x="232" 
-          y="190" 
-          fill="#1976D2" 
-          fontSize="6" 
-          fontWeight="600" 
-          opacity="0.85" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="0.3"
-          textAnchor="middle"
-        >
-          Gulf of Mexico
-        </text>
-        
         {/* Red Sea */}
-        <text 
-          x="575" 
-          y="215" 
-          fill="#1976D2" 
-          fontSize="6" 
-          fontWeight="600" 
-          opacity="0.85" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="0.3"
-          textAnchor="middle"
-        >
+        <text x="625" y="245" fill="#1565C0" fontSize="7" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="0.3" textAnchor="middle">
           Red Sea
         </text>
         
         {/* Sea of Japan */}
-        <text 
-          x="805" 
-          y="155" 
-          fill="#1976D2" 
-          fontSize="6" 
-          fontWeight="600" 
-          opacity="0.85" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="0.3"
-          textAnchor="middle"
-        >
+        <text x="900" y="170" fill="#1565C0" fontSize="7" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="0.3" textAnchor="middle">
           Sea of Japan
         </text>
         
         {/* Bering Sea */}
-        <text 
-          x="52" 
-          y="95" 
-          fill="#1976D2" 
-          fontSize="6" 
-          fontWeight="600" 
-          opacity="0.85" 
-          fontStyle="italic"
-          filter="url(#textGlow)"
-          letterSpacing="0.3"
-          textAnchor="middle"
-        >
+        <text x="55" y="95" fill="#1565C0" fontSize="8" fontWeight="bold" opacity="1" fontStyle="italic" filter="url(#textGlow)" letterSpacing="0.5" textAnchor="middle">
           Bering Sea
         </text>
         

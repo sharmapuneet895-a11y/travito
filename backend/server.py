@@ -27,9 +27,15 @@ api_router = APIRouter(prefix="/api")
 OPENWEATHER_API_KEY = os.environ.get('OPENWEATHER_API_KEY', '')
 OPENWEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
+# Open-Meteo API (free, no key required) - used as primary for weather
+OPEN_METEO_BASE_URL = "https://api.open-meteo.com/v1/forecast"
+
 # FOREX API configuration
 FOREX_API_KEY = "4c80c30afeadb2fb5bd13e82"
 FOREX_BASE_URL = "https://v6.exchangerate-api.com/v6"
+
+# Frankfurter API (free, no key required) - used as fallback for FOREX
+FRANKFURTER_BASE_URL = "https://api.frankfurter.app"
 
 # Country capital coordinates for weather lookup
 COUNTRY_CAPITALS = {
@@ -224,50 +230,73 @@ async def get_visa_info():
 
 @api_router.get("/forex/rates")
 async def get_forex_rates():
-    """Get live FOREX exchange rates for INR"""
-    try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
+    """Get live FOREX exchange rates for INR using multiple API sources"""
+    major_currencies = ["USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "SGD", "AED", "THB", "NZD"]
+    
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        # Try ExchangeRate-API first
+        try:
             url = f"{FOREX_BASE_URL}/{FOREX_API_KEY}/latest/INR"
             response = await client.get(url)
             response.raise_for_status()
             data = response.json()
             
-            if data.get("result") != "success":
-                raise HTTPException(status_code=503, detail="FOREX API error")
+            if data.get("result") == "success":
+                filtered_rates = {k: v for k, v in data["conversion_rates"].items() if k in major_currencies}
+                return {
+                    "base_currency": "INR",
+                    "rates": filtered_rates,
+                    "last_updated": data.get("time_last_update_utc", ""),
+                    "source": "exchangerate-api",
+                    "realtime": True
+                }
+        except Exception as e:
+            logging.warning(f"ExchangeRate-API error: {e}, trying Frankfurter API")
+        
+        # Try Frankfurter API as fallback (free, no key required)
+        try:
+            # Frankfurter API uses EUR as base, so we need to convert
+            url = f"{FRANKFURTER_BASE_URL}/latest?from=INR"
+            response = await client.get(url)
+            response.raise_for_status()
+            data = response.json()
             
-            # Filter to major currencies
-            major_currencies = ["USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "SGD", "AED", "THB", "NZD"]
-            filtered_rates = {k: v for k, v in data["conversion_rates"].items() if k in major_currencies}
-            
-            return {
-                "base_currency": "INR",
-                "rates": filtered_rates,
-                "last_updated": data.get("time_last_update_utc", "")
-            }
-    except Exception as e:
-        logging.warning(f"FOREX API error: {e}, returning sample data")
-        # Fallback sample data - Updated rates (March 2026)
-        # 1 USD = ₹91.85, 1 EUR = ₹99.50, 1 GBP = ₹116.20, etc.
-        sample_rates = {
-            "USD": 0.01089,   # 1 INR = 0.01089 USD (1 USD = ₹91.85)
-            "EUR": 0.01005,   # 1 INR = 0.01005 EUR (1 EUR = ₹99.50)
-            "GBP": 0.00861,   # 1 INR = 0.00861 GBP (1 GBP = ₹116.20)
-            "JPY": 1.6234,    # 1 INR = 1.6234 JPY (1 JPY = ₹0.62)
-            "AUD": 0.01678,   # 1 INR = 0.01678 AUD (1 AUD = ₹59.60)
-            "CAD": 0.01520,   # 1 INR = 0.01520 CAD (1 CAD = ₹65.80)
-            "CHF": 0.00958,   # 1 INR = 0.00958 CHF (1 CHF = ₹104.40)
-            "CNY": 0.07910,   # 1 INR = 0.07910 CNY (1 CNY = ₹12.64)
-            "SGD": 0.01468,   # 1 INR = 0.01468 SGD (1 SGD = ₹68.13)
-            "AED": 0.04000,   # 1 INR = 0.04000 AED (1 AED = ₹25.00)
-            "THB": 0.37415,   # 1 INR = 0.37415 THB (1 THB = ₹2.67)
-            "NZD": 0.01852    # 1 INR = 0.01852 NZD (1 NZD = ₹54.00)
-        }
-        return {
-            "base_currency": "INR",
-            "rates": sample_rates,
-            "last_updated": datetime.now(timezone.utc).isoformat(),
-            "note": "Sample data - Live API unavailable"
-        }
+            if "rates" in data:
+                # Frankfurter returns rates as "how many X per 1 INR"
+                filtered_rates = {k: v for k, v in data["rates"].items() if k in major_currencies}
+                return {
+                    "base_currency": "INR",
+                    "rates": filtered_rates,
+                    "last_updated": data.get("date", datetime.now(timezone.utc).strftime("%Y-%m-%d")),
+                    "source": "frankfurter",
+                    "realtime": True
+                }
+        except Exception as e:
+            logging.warning(f"Frankfurter API error: {e}, returning fallback data")
+    
+    # Fallback sample data - Updated rates (March 2026)
+    logging.warning("All FOREX APIs failed, returning sample data")
+    sample_rates = {
+        "USD": 0.01089,   # 1 INR = 0.01089 USD (1 USD = ₹91.85)
+        "EUR": 0.01005,   # 1 INR = 0.01005 EUR (1 EUR = ₹99.50)
+        "GBP": 0.00861,   # 1 INR = 0.00861 GBP (1 GBP = ₹116.20)
+        "JPY": 1.6234,    # 1 INR = 1.6234 JPY (1 JPY = ₹0.62)
+        "AUD": 0.01678,   # 1 INR = 0.01678 AUD (1 AUD = ₹59.60)
+        "CAD": 0.01520,   # 1 INR = 0.01520 CAD (1 CAD = ₹65.80)
+        "CHF": 0.00958,   # 1 INR = 0.00958 CHF (1 CHF = ₹104.40)
+        "CNY": 0.07910,   # 1 INR = 0.07910 CNY (1 CNY = ₹12.64)
+        "SGD": 0.01468,   # 1 INR = 0.01468 SGD (1 SGD = ₹68.13)
+        "AED": 0.04000,   # 1 INR = 0.04000 AED (1 AED = ₹25.00)
+        "THB": 0.37415,   # 1 INR = 0.37415 THB (1 THB = ₹2.67)
+        "NZD": 0.01852    # 1 INR = 0.01852 NZD (1 NZD = ₹54.00)
+    }
+    return {
+        "base_currency": "INR",
+        "rates": sample_rates,
+        "last_updated": datetime.now(timezone.utc).isoformat(),
+        "source": "fallback",
+        "note": "Live APIs unavailable - using fallback data"
+    }
 
 @api_router.get("/apps")
 async def get_apps(country_code: Optional[str] = None, category: Optional[str] = None):
@@ -334,14 +363,8 @@ async def get_weather():
 
 @api_router.get("/weather/realtime")
 async def get_realtime_weather(country_code: Optional[str] = None):
-    """Get real-time weather for countries using OpenWeatherMap API"""
-    if not OPENWEATHER_API_KEY:
-        # Fall back to database weather if no API key
-        weather_info = await db.weather.find({}, {"_id": 0}).to_list(1000)
-        return {"data": weather_info, "source": "database", "note": "Real-time API key not configured"}
-    
+    """Get real-time weather for countries using Open-Meteo API (free, no key required)"""
     results = []
-    current_month = datetime.now(timezone.utc).month
     
     # Define which countries to fetch
     countries_to_fetch = COUNTRY_CAPITALS
@@ -352,40 +375,63 @@ async def get_realtime_weather(country_code: Optional[str] = None):
         else:
             raise HTTPException(status_code=404, detail=f"Country {country_code} not found")
     
-    async with httpx.AsyncClient(timeout=10.0) as client:
+    async with httpx.AsyncClient(timeout=15.0) as client:
         for code, info in countries_to_fetch.items():
             try:
-                url = f"{OPENWEATHER_BASE_URL}?lat={info['lat']}&lon={info['lon']}&appid={OPENWEATHER_API_KEY}&units=metric"
+                # Use Open-Meteo API (free, no key required)
+                url = f"{OPEN_METEO_BASE_URL}?latitude={info['lat']}&longitude={info['lon']}&current=temperature_2m,relative_humidity_2m,weather_code,precipitation&timezone=auto"
                 response = await client.get(url)
                 
                 if response.status_code == 200:
                     data = response.json()
-                    temp = data["main"]["temp"]
-                    weather_main = data["weather"][0]["main"].lower()
-                    humidity = data["main"].get("humidity", 50)
+                    current = data.get("current", {})
+                    temp = current.get("temperature_2m", 20)
+                    humidity = current.get("relative_humidity_2m", 50)
+                    weather_code = current.get("weather_code", 0)
+                    precipitation = current.get("precipitation", 0)
                     
-                    # Classify weather type based on conditions and temperature
-                    if weather_main in ["snow", "blizzard"] or temp < 0:
+                    # WMO Weather interpretation codes
+                    # 0: Clear, 1-3: Partly cloudy, 45-48: Fog, 51-67: Drizzle/Rain, 71-77: Snow, 80-82: Rain showers, 95-99: Thunderstorm
+                    if weather_code >= 71 and weather_code <= 77:
                         weather_type = "snow"
-                    elif weather_main in ["rain", "drizzle", "thunderstorm", "mist"] or humidity > 80:
+                        description = "Snowy conditions"
+                    elif weather_code >= 95:
                         weather_type = "rainy"
-                    elif temp > 35 or (weather_main in ["clear", "sunny"] and temp > 30):
+                        description = "Thunderstorm"
+                    elif weather_code >= 51 or precipitation > 0.5:
+                        weather_type = "rainy"
+                        description = "Rainy conditions"
+                    elif weather_code >= 45 and weather_code <= 48:
+                        weather_type = "rainy"
+                        description = "Foggy conditions"
+                    elif temp > 35:
                         weather_type = "hot"
-                    elif weather_main in ["dust", "sand", "haze"] or (temp > 25 and humidity < 30):
+                        description = "Very hot weather"
+                    elif temp > 28 and humidity < 40:
                         weather_type = "sandy"
-                    elif temp > 20:
+                        description = "Hot and dry"
+                    elif temp > 25:
                         weather_type = "hot"
+                        description = "Warm weather"
                     elif temp < 5:
                         weather_type = "snow"
+                        description = "Cold conditions"
                     else:
                         weather_type = "rainy"
+                        description = "Mild conditions"
+                    
+                    # More descriptive weather based on code
+                    if weather_code == 0:
+                        description = "Clear sky"
+                    elif weather_code <= 3:
+                        description = "Partly cloudy"
                     
                     results.append({
                         "country_code": code,
                         "country_name": info["name"],
                         "weather_type": weather_type,
                         "avg_temp": f"{temp:.0f}°C",
-                        "description": f"{data['weather'][0]['description'].capitalize()}",
+                        "description": description,
                         "humidity": f"{humidity}%",
                         "realtime": True
                     })
@@ -398,7 +444,7 @@ async def get_realtime_weather(country_code: Optional[str] = None):
         weather_info = await db.weather.find({}, {"_id": 0}).to_list(1000)
         return {"data": weather_info, "source": "database", "note": "Real-time API unavailable"}
     
-    return {"data": results, "source": "realtime", "fetched_at": datetime.now(timezone.utc).isoformat()}
+    return {"data": results, "source": "open-meteo", "realtime": True}
 
 @api_router.get("/plugs")
 async def get_plugs():

@@ -2,28 +2,48 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import WorldMap from '../components/WorldMap';
-import { Cloud } from 'lucide-react';
+import { Cloud, RefreshCw } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Weather = () => {
   const [weatherData, setWeatherData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isRealtime, setIsRealtime] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchWeather = async (forceRefresh = false) => {
+    if (forceRefresh) setRefreshing(true);
+    try {
+      // Use realtime endpoint for live weather data
+      const response = await axios.get(`${BACKEND_URL}/api/weather/realtime`);
+      setWeatherData(response.data.data);
+      setIsRealtime(response.data.realtime || false);
+      setLastUpdated(new Date().toLocaleString());
+    } catch (error) {
+      console.error('Error fetching weather data:', error);
+      // Fallback to static weather endpoint
+      try {
+        const fallbackResponse = await axios.get(`${BACKEND_URL}/api/weather`);
+        setWeatherData(fallbackResponse.data.data);
+        setIsRealtime(false);
+      } catch (fallbackError) {
+        console.error('Error fetching fallback weather data:', fallbackError);
+      }
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchWeather = async () => {
-      try {
-        const response = await axios.get(`${BACKEND_URL}/api/weather`);
-        setWeatherData(response.data.data);
-      } catch (error) {
-        console.error('Error fetching weather data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchWeather();
   }, []);
+
+  const handleRefresh = () => {
+    fetchWeather(true);
+  };
 
   const legends = [
     { color: '#E25A53', label: 'Hot Weather', description: 'Tropical & hot climate' },
@@ -51,6 +71,28 @@ const Weather = () => {
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
               Understand the typical weather patterns of countries around the world. Plan your wardrobe and activities accordingly.
             </p>
+            {isRealtime && (
+              <div className="mt-4 flex items-center justify-center gap-4">
+                <span className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                  Live Weather Data
+                </span>
+                <button
+                  onClick={handleRefresh}
+                  disabled={refreshing}
+                  className="inline-flex items-center gap-2 px-3 py-1 bg-accent/20 text-primary rounded-full text-sm font-medium hover:bg-accent/30 transition-colors disabled:opacity-50"
+                  data-testid="refresh-weather-btn"
+                >
+                  <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+                  {refreshing ? 'Refreshing...' : 'Refresh'}
+                </button>
+                {lastUpdated && (
+                  <span className="text-xs text-muted-foreground">
+                    Last updated: {lastUpdated}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Legend */}

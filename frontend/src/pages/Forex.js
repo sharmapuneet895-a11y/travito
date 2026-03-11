@@ -10,6 +10,8 @@ const Forex = () => {
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState('');
   const [swappedCurrencies, setSwappedCurrencies] = useState({});
+  const [isRealtime, setIsRealtime] = useState(false);
+  const [dataSource, setDataSource] = useState('');
 
   const fetchForexRates = async () => {
     setLoading(true);
@@ -17,6 +19,8 @@ const Forex = () => {
       const response = await axios.get(`${BACKEND_URL}/api/forex/rates`);
       setForexData(response.data);
       setLastUpdated(new Date().toLocaleString());
+      setIsRealtime(response.data.realtime || false);
+      setDataSource(response.data.source || 'unknown');
     } catch (error) {
       console.error('Error fetching forex rates:', error);
     } finally {
@@ -164,9 +168,17 @@ const Forex = () => {
               Click <ArrowRightLeft className="w-4 h-4 inline" /> to swap conversion direction
             </p>
             {lastUpdated && (
-              <p className="text-xs text-muted-foreground mt-2">
-                Last updated: {lastUpdated}
-              </p>
+              <div className="flex items-center gap-4 mt-2">
+                {isRealtime && (
+                  <span className="inline-flex items-center gap-2 px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    Live Rates ({dataSource})
+                  </span>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Last updated: {lastUpdated}
+                </p>
+              </div>
             )}
           </div>
 
