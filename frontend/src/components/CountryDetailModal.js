@@ -496,7 +496,7 @@ const CountryDetailModal = ({ country, onClose }) => {
                       </div>
                       <ArrowRightLeft className="w-5 h-5 text-emerald-500" />
                       <div className="text-center">
-                        <p className="text-lg font-bold text-emerald-700">₹{countryData.forex.rate?.toFixed(2)}</p>
+                        <p className="text-lg font-bold text-emerald-700">₹{(1 / countryData.forex.rate).toFixed(2)}</p>
                         <p className="text-xs text-muted-foreground">Indian Rupee</p>
                       </div>
                     </div>

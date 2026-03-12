@@ -14,7 +14,15 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
 
 ## What's Been Implemented
 
-### Latest Updates (March 12, 2026)
+### Latest Updates (March 12, 2026) - Session 2
+- [x] **Snowy Experience Filter**: Added new category filter in Seasons page with snowflake icon, positioned after Mountain
+- [x] **Weather Page Month Selector**: Added 12-month selector to forecast anticipated weather for any month
+- [x] **Weather Map Color Coding**: Map now shows colors based on anticipated weather - Red=Hot, White=Snow/Cold, Blue=Rainy, Light Blue=Mild
+- [x] **Anticipated Weather Data**: Added weather patterns for 100+ countries with monthly hot/cold/snow/rainy/mild classification
+- [x] **Exchange Rate Fix**: Fixed inverted rate display in Country Detail Modal (now shows "1 USD = ₹84" correctly)
+- [x] **Expanded Currency Mappings**: Added 85+ country-currency pairs for better FOREX coverage
+
+### Previous Updates (March 12, 2026) - Session 1
 - [x] **Top 5 Destinations**: New recommendation section on Seasons page showing top 5 destinations for the selected month with ratings, highlights, and categories
 - [x] **Cost Estimator Month Selector Fix**: All 12 months now visible in wrapped flex layout (no scroll needed)
 - [x] **Visa Tools Direct Access**: "Check Eligibility" and "Document Checklist" buttons now open modals directly without navigating away from Country Detail Modal
