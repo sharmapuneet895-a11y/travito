@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calculator, Plane, Hotel, Utensils, Camera, ShoppingBag, Loader2, IndianRupee, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Calculator, Plane, Hotel, Utensils, Camera, ShoppingBag, Loader2, IndianRupee, Calendar } from 'lucide-react';
 
 // Month data for scrollable selector
 const MONTHS = [
@@ -271,15 +271,6 @@ const CostEstimator = ({ isOpen, onClose }) => {
     });
   };
 
-  const scrollMonth = (direction) => {
-    setFormData(prev => {
-      let newMonth = prev.travel_month + direction;
-      if (newMonth > 12) newMonth = 1;
-      if (newMonth < 1) newMonth = 12;
-      return { ...prev, travel_month: newMonth };
-    });
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -342,17 +333,8 @@ const CostEstimator = ({ isOpen, onClose }) => {
                       <Calendar className="w-4 h-4 inline mr-1" />
                       Travel Month
                     </label>
-                    <div className="flex items-center justify-center gap-2 bg-gray-50 rounded-xl p-3">
-                      <button
-                        type="button"
-                        onClick={() => scrollMonth(-1)}
-                        className="p-2 rounded-full hover:bg-gray-200 transition-all"
-                        data-testid="month-prev-btn"
-                      >
-                        <ChevronLeft className="w-5 h-5 text-gray-600" />
-                      </button>
-                      
-                      <div className="flex gap-1 overflow-hidden">
+                    <div className="bg-gray-50 rounded-xl p-3">
+                      <div className="flex flex-wrap justify-center gap-2">
                         {MONTHS.map((month) => (
                           <button
                             key={month.value}
@@ -369,15 +351,6 @@ const CostEstimator = ({ isOpen, onClose }) => {
                           </button>
                         ))}
                       </div>
-                      
-                      <button
-                        type="button"
-                        onClick={() => scrollMonth(1)}
-                        className="p-2 rounded-full hover:bg-gray-200 transition-all"
-                        data-testid="month-next-btn"
-                      >
-                        <ChevronRight className="w-5 h-5 text-gray-600" />
-                      </button>
                     </div>
                     {formData.country && seasonalMultipliers[formData.country] && (
                       <div className="mt-2 text-center">

@@ -52,6 +52,94 @@ const getFlag = (countryCode) => {
   return `https://flagcdn.com/w40/${iso2}.png`;
 };
 
+// Top destinations with ratings and highlights for each month
+const topDestinationsData = {
+  'Jan': [
+    { code: 'THA', name: 'Thailand', highlight: 'Perfect beach weather, festivals', rating: 4.9, category: 'beach' },
+    { code: 'MDV', name: 'Maldives', highlight: 'Dry season, clear waters', rating: 4.8, category: 'beach' },
+    { code: 'LKA', name: 'Sri Lanka', highlight: 'Cultural festivals, wildlife', rating: 4.7, category: 'culture' },
+    { code: 'UAE', name: 'UAE', highlight: 'Dubai Shopping Festival', rating: 4.6, category: 'city' },
+    { code: 'AUS', name: 'Australia', highlight: 'Summer, beaches', rating: 4.5, category: 'adventure' },
+  ],
+  'Feb': [
+    { code: 'BRA', name: 'Brazil', highlight: 'Rio Carnival', rating: 4.9, category: 'culture' },
+    { code: 'THA', name: 'Thailand', highlight: 'Ideal weather continues', rating: 4.8, category: 'beach' },
+    { code: 'ITA', name: 'Italy', highlight: 'Venice Carnival', rating: 4.7, category: 'culture' },
+    { code: 'VNM', name: 'Vietnam', highlight: 'Tet celebrations', rating: 4.6, category: 'culture' },
+    { code: 'NZL', name: 'New Zealand', highlight: 'Summer hiking', rating: 4.5, category: 'adventure' },
+  ],
+  'Mar': [
+    { code: 'JPN', name: 'Japan', highlight: 'Cherry blossom season', rating: 4.9, category: 'nature' },
+    { code: 'IND', name: 'India', highlight: 'Holi festival', rating: 4.8, category: 'culture' },
+    { code: 'EGY', name: 'Egypt', highlight: 'Perfect weather', rating: 4.7, category: 'culture' },
+    { code: 'MAR', name: 'Morocco', highlight: 'Spring bloom', rating: 4.6, category: 'adventure' },
+    { code: 'PER', name: 'Peru', highlight: 'Machu Picchu ideal', rating: 4.5, category: 'adventure' },
+  ],
+  'Apr': [
+    { code: 'JPN', name: 'Japan', highlight: 'Peak cherry blossoms', rating: 4.9, category: 'nature' },
+    { code: 'NLD', name: 'Netherlands', highlight: 'Tulip season', rating: 4.8, category: 'nature' },
+    { code: 'THA', name: 'Thailand', highlight: 'Songkran festival', rating: 4.7, category: 'culture' },
+    { code: 'GRC', name: 'Greece', highlight: 'Easter celebrations', rating: 4.6, category: 'culture' },
+    { code: 'TUR', name: 'Turkey', highlight: 'Spring weather', rating: 4.5, category: 'culture' },
+  ],
+  'May': [
+    { code: 'FRA', name: 'France', highlight: 'Cannes Film Festival', rating: 4.9, category: 'culture' },
+    { code: 'ITA', name: 'Italy', highlight: 'Perfect weather', rating: 4.8, category: 'culture' },
+    { code: 'ESP', name: 'Spain', highlight: 'Spring festivals', rating: 4.7, category: 'culture' },
+    { code: 'PRT', name: 'Portugal', highlight: 'Beach season starts', rating: 4.6, category: 'beach' },
+    { code: 'KOR', name: 'South Korea', highlight: 'Buddha\'s birthday', rating: 4.5, category: 'culture' },
+  ],
+  'Jun': [
+    { code: 'GRC', name: 'Greece', highlight: 'Island hopping', rating: 4.9, category: 'beach' },
+    { code: 'HRV', name: 'Croatia', highlight: 'Adriatic beaches', rating: 4.8, category: 'beach' },
+    { code: 'ISL', name: 'Iceland', highlight: 'Midnight sun', rating: 4.7, category: 'nature' },
+    { code: 'NOR', name: 'Norway', highlight: 'Fjords, midnight sun', rating: 4.6, category: 'nature' },
+    { code: 'KEN', name: 'Kenya', highlight: 'Great Migration starts', rating: 4.5, category: 'adventure' },
+  ],
+  'Jul': [
+    { code: 'KEN', name: 'Kenya', highlight: 'Great Migration peak', rating: 4.9, category: 'adventure' },
+    { code: 'TZA', name: 'Tanzania', highlight: 'Serengeti migration', rating: 4.8, category: 'adventure' },
+    { code: 'FRA', name: 'France', highlight: 'Lavender fields', rating: 4.7, category: 'nature' },
+    { code: 'CHE', name: 'Switzerland', highlight: 'Alpine hiking', rating: 4.6, category: 'mountain' },
+    { code: 'CAN', name: 'Canada', highlight: 'Summer festivals', rating: 4.5, category: 'nature' },
+  ],
+  'Aug': [
+    { code: 'ESP', name: 'Spain', highlight: 'La Tomatina', rating: 4.9, category: 'culture' },
+    { code: 'IDN', name: 'Indonesia', highlight: 'Bali dry season', rating: 4.8, category: 'beach' },
+    { code: 'SWE', name: 'Sweden', highlight: 'Crayfish parties', rating: 4.7, category: 'culture' },
+    { code: 'MNG', name: 'Mongolia', highlight: 'Naadam festival', rating: 4.6, category: 'adventure' },
+    { code: 'AUT', name: 'Austria', highlight: 'Salzburg Festival', rating: 4.5, category: 'culture' },
+  ],
+  'Sep': [
+    { code: 'DEU', name: 'Germany', highlight: 'Oktoberfest starts', rating: 4.9, category: 'culture' },
+    { code: 'FRA', name: 'France', highlight: 'Wine harvest', rating: 4.8, category: 'culture' },
+    { code: 'CHN', name: 'China', highlight: 'Mid-Autumn Festival', rating: 4.7, category: 'culture' },
+    { code: 'TUR', name: 'Turkey', highlight: 'Perfect weather', rating: 4.6, category: 'culture' },
+    { code: 'PRT', name: 'Portugal', highlight: 'Wine season', rating: 4.5, category: 'culture' },
+  ],
+  'Oct': [
+    { code: 'JPN', name: 'Japan', highlight: 'Autumn colors', rating: 4.9, category: 'nature' },
+    { code: 'DEU', name: 'Germany', highlight: 'Oktoberfest', rating: 4.8, category: 'culture' },
+    { code: 'NPL', name: 'Nepal', highlight: 'Dashain, trekking', rating: 4.7, category: 'adventure' },
+    { code: 'MEX', name: 'Mexico', highlight: 'Day of the Dead', rating: 4.6, category: 'culture' },
+    { code: 'USA', name: 'United States', highlight: 'Fall foliage', rating: 4.5, category: 'nature' },
+  ],
+  'Nov': [
+    { code: 'IND', name: 'India', highlight: 'Diwali celebrations', rating: 4.9, category: 'culture' },
+    { code: 'THA', name: 'Thailand', highlight: 'Loi Krathong', rating: 4.8, category: 'culture' },
+    { code: 'NPL', name: 'Nepal', highlight: 'Tihar festival', rating: 4.7, category: 'culture' },
+    { code: 'UAE', name: 'UAE', highlight: 'Pleasant weather', rating: 4.6, category: 'city' },
+    { code: 'VNM', name: 'Vietnam', highlight: 'Cool season starts', rating: 4.5, category: 'culture' },
+  ],
+  'Dec': [
+    { code: 'DEU', name: 'Germany', highlight: 'Christmas markets', rating: 4.9, category: 'culture' },
+    { code: 'AUT', name: 'Austria', highlight: 'Winter wonderland', rating: 4.8, category: 'culture' },
+    { code: 'MDV', name: 'Maldives', highlight: 'Peak season', rating: 4.7, category: 'beach' },
+    { code: 'AUS', name: 'Australia', highlight: 'Summer, NYE', rating: 4.6, category: 'city' },
+    { code: 'ZAF', name: 'South Africa', highlight: 'Safari season', rating: 4.5, category: 'adventure' },
+  ],
+};
+
 const Seasons = () => {
   const [seasonsData, setSeasonsData] = useState([]);
   const [processedData, setProcessedData] = useState([]);
@@ -296,6 +384,55 @@ const Seasons = () => {
               <Calculator className="w-5 h-5" />
               Trip Cost Estimator
             </button>
+          </div>
+
+          {/* Top 5 Destinations This Month */}
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 mb-6 border border-amber-200" data-testid="top-destinations-section">
+            <div className="flex items-center gap-2 mb-4">
+              <Sun className="w-6 h-6 text-amber-500" />
+              <h3 className="text-xl font-bold text-primary">Top 5 Destinations for {selectedMonthName}</h3>
+              <span className="px-2 py-0.5 bg-amber-200 text-amber-800 text-xs font-bold rounded-full">RECOMMENDED</span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              {topDestinationsData[selectedMonthAbbrev]?.map((dest, idx) => {
+                const categoryData = CATEGORIES.find(c => c.id === dest.category);
+                return (
+                  <motion.div
+                    key={dest.code}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                    onClick={() => {
+                      const country = processedData.find(c => c.country_code === dest.code);
+                      if (country) setSelectedCountry(country);
+                    }}
+                    className="bg-white rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all border border-amber-100 group"
+                    data-testid={`top-dest-${dest.code}`}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-2xl font-bold text-amber-500">#{idx + 1}</span>
+                      <img
+                        src={getFlag(dest.code)}
+                        alt={dest.name}
+                        className="w-8 h-6 object-cover rounded shadow-sm"
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                      />
+                    </div>
+                    <h4 className="font-bold text-primary group-hover:text-amber-600 transition-colors">{dest.name}</h4>
+                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{dest.highlight}</p>
+                    <div className="flex items-center justify-between mt-3">
+                      <div className="flex items-center gap-1">
+                        <span className="text-amber-500 text-sm">★</span>
+                        <span className="text-sm font-semibold text-amber-700">{dest.rating}</span>
+                      </div>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${categoryData?.bgColor || 'bg-gray-100'} ${categoryData?.textColor || 'text-gray-600'}`}>
+                        {dest.category}
+                      </span>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
 
           {/* Category Filter Tabs - Shows only PEAK SEASON destinations */}

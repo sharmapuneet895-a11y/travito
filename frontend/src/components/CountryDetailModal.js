@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2, Shield, Phone, DollarSign, ArrowRightLeft, Users, TrendingUp, TrendingDown, CheckCircle, ClipboardList, ExternalLink } from 'lucide-react';
+import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2, Shield, Phone, DollarSign, ArrowRightLeft, Users, TrendingUp, TrendingDown, CheckCircle, ClipboardList } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
+import VisaEligibilityChecker from './VisaEligibilityChecker';
+import DocumentChecklistGenerator from './DocumentChecklistGenerator';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -104,6 +106,8 @@ const getFlag = (countryCode) => {
 
 const CountryDetailModal = ({ country, onClose }) => {
   const [loading, setLoading] = useState(true);
+  const [showEligibilityChecker, setShowEligibilityChecker] = useState(false);
+  const [showDocumentChecklist, setShowDocumentChecklist] = useState(false);
   const [countryData, setCountryData] = useState({
     seasons: null,
     visa: null,
@@ -396,22 +400,22 @@ const CountryDetailModal = ({ country, onClose }) => {
                     )}
                     {/* Visa Tool Links */}
                     <div className="mt-3 pt-3 border-t border-blue-100 flex flex-wrap gap-2">
-                      <a 
-                        href="/visa#eligibility-checker" 
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); setShowEligibilityChecker(true); }}
                         className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium hover:bg-blue-200 transition-all"
                         data-testid="visa-eligibility-link"
                       >
                         <CheckCircle className="w-3 h-3" />
                         Check Eligibility
-                      </a>
-                      <a 
-                        href="/visa#document-checklist" 
+                      </button>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); setShowDocumentChecklist(true); }}
                         className="inline-flex items-center gap-1 px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium hover:bg-indigo-200 transition-all"
                         data-testid="document-checklist-link"
                       >
                         <ClipboardList className="w-3 h-3" />
                         Document Checklist
-                      </a>
+                      </button>
                     </div>
                   </div>
                 ) : (
@@ -621,6 +625,16 @@ const CountryDetailModal = ({ country, onClose }) => {
           </div>
         </motion.div>
       </motion.div>
+      
+      {/* Visa Tools Modals */}
+      <VisaEligibilityChecker 
+        isOpen={showEligibilityChecker} 
+        onClose={() => setShowEligibilityChecker(false)} 
+      />
+      <DocumentChecklistGenerator 
+        isOpen={showDocumentChecklist} 
+        onClose={() => setShowDocumentChecklist(false)} 
+      />
     </AnimatePresence>
   );
 };
