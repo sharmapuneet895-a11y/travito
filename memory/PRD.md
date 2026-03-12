@@ -26,6 +26,7 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
   - Mild & Pleasant: Perfect sightseeing weather destinations
   - Monsoon Adventures: Off-peak travel with fewer crowds and budget deals
   - Includes Pro Tips for each weather type
+- [x] **Snowy Experience Filter Fix**: Fixed filter showing 0 results - added 'snow' category to 24 countries and updated best_months to include winter months (Dec, Jan, Feb, Mar). Now shows 14-24 countries depending on month.
 
 ### Updates (March 12, 2026) - Session 2
 - [x] **Snowy Experience Filter**: Added new category filter in Seasons page with snowflake icon, positioned after Mountain
