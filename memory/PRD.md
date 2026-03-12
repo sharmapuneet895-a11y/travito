@@ -14,7 +14,14 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
 
 ## What's Been Implemented
 
-### Latest Updates (March 12, 2026) - Session 2
+### Latest Updates (March 12, 2026) - Session 3
+- [x] **Forex Page Expanded**: Now shows 66 currencies (vs ~11 before) with search input and region filters (All, Asia, Europe, Americas, Middle East, Africa, Oceania)
+- [x] **Live/Estimated Badges**: Forex cards show "Live Rate" (12 currencies) or "Estimated" badges for transparency
+- [x] **Weather Temperature Fix**: Fixed contradiction where live temperature was shown for future months - now only displays for current month
+- [x] **Festival Dates**: Festival cards now display exact dates (e.g., "January 1", "Late January - February", "April 13-15")
+- [x] **Festival Date Data**: Added dates to 78 festivals in MongoDB with specific dates or "(varies by year)" fallback
+
+### Updates (March 12, 2026) - Session 2
 - [x] **Snowy Experience Filter**: Added new category filter in Seasons page with snowflake icon, positioned after Mountain
 - [x] **Weather Page Month Selector**: Added 12-month selector to forecast anticipated weather for any month
 - [x] **Weather Map Color Coding**: Map now shows colors based on anticipated weather - Red=Hot, White=Snow/Cold, Blue=Rainy, Light Blue=Mild
@@ -79,11 +86,15 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
 Countries use ISO3 codes (THA, JPN, USA) but flagcdn.com uses ISO2 (th, jp, us). Added mapping for 80+ countries.
 
 ## Future Enhancements (Backlog)
+- [ ] Seasonal Travel Guide - Auto-suggest destinations based on month and weather preference (P1 - approved)
 - [ ] Compare Countries feature (P1)
 - [ ] Trip Planner feature (P2)
 - [ ] India-specific map data source (P2)
 - [ ] Travel Budget Tracker
 - [ ] User authentication
+
+## Known Issues
+- Weather page may intermittently show "Loading weather data..." even when API returns data (frontend rendering issue)
 
 ## Live Preview
 https://visa-forex-explorer.preview.emergentagent.com
