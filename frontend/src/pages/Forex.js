@@ -42,78 +42,52 @@ const Forex = () => {
 
   // Currency data with country info and flag image URLs
   const currencyData = {
-    USD: { 
-      name: 'US Dollar', 
-      country: 'United States', 
-      countryCode: 'us',
-      symbol: '$' 
-    },
-    EUR: { 
-      name: 'Euro', 
-      country: 'European Union', 
-      countryCode: 'eu',
-      symbol: '€' 
-    },
-    GBP: { 
-      name: 'British Pound', 
-      country: 'United Kingdom', 
-      countryCode: 'gb',
-      symbol: '£' 
-    },
-    JPY: { 
-      name: 'Japanese Yen', 
-      country: 'Japan', 
-      countryCode: 'jp',
-      symbol: '¥' 
-    },
-    AUD: { 
-      name: 'Australian Dollar', 
-      country: 'Australia', 
-      countryCode: 'au',
-      symbol: 'A$' 
-    },
-    CAD: { 
-      name: 'Canadian Dollar', 
-      country: 'Canada', 
-      countryCode: 'ca',
-      symbol: 'C$' 
-    },
-    CHF: { 
-      name: 'Swiss Franc', 
-      country: 'Switzerland', 
-      countryCode: 'ch',
-      symbol: 'CHF' 
-    },
-    CNY: { 
-      name: 'Chinese Yuan', 
-      country: 'China', 
-      countryCode: 'cn',
-      symbol: '¥' 
-    },
-    SGD: { 
-      name: 'Singapore Dollar', 
-      country: 'Singapore', 
-      countryCode: 'sg',
-      symbol: 'S$' 
-    },
-    AED: { 
-      name: 'UAE Dirham', 
-      country: 'United Arab Emirates', 
-      countryCode: 'ae',
-      symbol: 'د.إ' 
-    },
-    THB: { 
-      name: 'Thai Baht', 
-      country: 'Thailand', 
-      countryCode: 'th',
-      symbol: '฿' 
-    },
-    NZD: { 
-      name: 'New Zealand Dollar', 
-      country: 'New Zealand', 
-      countryCode: 'nz',
-      symbol: 'NZ$' 
-    }
+    USD: { name: 'US Dollar', country: 'United States', countryCode: 'us', symbol: '$' },
+    EUR: { name: 'Euro', country: 'European Union', countryCode: 'eu', symbol: '€' },
+    GBP: { name: 'British Pound', country: 'United Kingdom', countryCode: 'gb', symbol: '£' },
+    JPY: { name: 'Japanese Yen', country: 'Japan', countryCode: 'jp', symbol: '¥' },
+    AUD: { name: 'Australian Dollar', country: 'Australia', countryCode: 'au', symbol: 'A$' },
+    CAD: { name: 'Canadian Dollar', country: 'Canada', countryCode: 'ca', symbol: 'C$' },
+    CHF: { name: 'Swiss Franc', country: 'Switzerland', countryCode: 'ch', symbol: 'CHF' },
+    CNY: { name: 'Chinese Yuan', country: 'China', countryCode: 'cn', symbol: '¥' },
+    SGD: { name: 'Singapore Dollar', country: 'Singapore', countryCode: 'sg', symbol: 'S$' },
+    AED: { name: 'UAE Dirham', country: 'United Arab Emirates', countryCode: 'ae', symbol: 'د.إ' },
+    THB: { name: 'Thai Baht', country: 'Thailand', countryCode: 'th', symbol: '฿' },
+    NZD: { name: 'New Zealand Dollar', country: 'New Zealand', countryCode: 'nz', symbol: 'NZ$' },
+    MYR: { name: 'Malaysian Ringgit', country: 'Malaysia', countryCode: 'my', symbol: 'RM' },
+    IDR: { name: 'Indonesian Rupiah', country: 'Indonesia', countryCode: 'id', symbol: 'Rp' },
+    PHP: { name: 'Philippine Peso', country: 'Philippines', countryCode: 'ph', symbol: '₱' },
+    VND: { name: 'Vietnamese Dong', country: 'Vietnam', countryCode: 'vn', symbol: '₫' },
+    KRW: { name: 'South Korean Won', country: 'South Korea', countryCode: 'kr', symbol: '₩' },
+    HKD: { name: 'Hong Kong Dollar', country: 'Hong Kong', countryCode: 'hk', symbol: 'HK$' },
+    TWD: { name: 'Taiwan Dollar', country: 'Taiwan', countryCode: 'tw', symbol: 'NT$' },
+    SAR: { name: 'Saudi Riyal', country: 'Saudi Arabia', countryCode: 'sa', symbol: 'ر.س' },
+    QAR: { name: 'Qatari Riyal', country: 'Qatar', countryCode: 'qa', symbol: 'ر.ق' },
+    KWD: { name: 'Kuwaiti Dinar', country: 'Kuwait', countryCode: 'kw', symbol: 'د.ك' },
+    BHD: { name: 'Bahraini Dinar', country: 'Bahrain', countryCode: 'bh', symbol: '.د.ب' },
+    OMR: { name: 'Omani Rial', country: 'Oman', countryCode: 'om', symbol: 'ر.ع.' },
+    EGP: { name: 'Egyptian Pound', country: 'Egypt', countryCode: 'eg', symbol: 'E£' },
+    ZAR: { name: 'South African Rand', country: 'South Africa', countryCode: 'za', symbol: 'R' },
+    TRY: { name: 'Turkish Lira', country: 'Turkey', countryCode: 'tr', symbol: '₺' },
+    RUB: { name: 'Russian Ruble', country: 'Russia', countryCode: 'ru', symbol: '₽' },
+    BRL: { name: 'Brazilian Real', country: 'Brazil', countryCode: 'br', symbol: 'R$' },
+    MXN: { name: 'Mexican Peso', country: 'Mexico', countryCode: 'mx', symbol: 'MX$' },
+    SEK: { name: 'Swedish Krona', country: 'Sweden', countryCode: 'se', symbol: 'kr' },
+    NOK: { name: 'Norwegian Krone', country: 'Norway', countryCode: 'no', symbol: 'kr' },
+    DKK: { name: 'Danish Krone', country: 'Denmark', countryCode: 'dk', symbol: 'kr' },
+    PLN: { name: 'Polish Zloty', country: 'Poland', countryCode: 'pl', symbol: 'zł' },
+    CZK: { name: 'Czech Koruna', country: 'Czech Republic', countryCode: 'cz', symbol: 'Kč' },
+    HUF: { name: 'Hungarian Forint', country: 'Hungary', countryCode: 'hu', symbol: 'Ft' },
+    NPR: { name: 'Nepalese Rupee', country: 'Nepal', countryCode: 'np', symbol: 'रू' },
+    LKR: { name: 'Sri Lankan Rupee', country: 'Sri Lanka', countryCode: 'lk', symbol: 'Rs' },
+    PKR: { name: 'Pakistani Rupee', country: 'Pakistan', countryCode: 'pk', symbol: 'Rs' },
+    BDT: { name: 'Bangladeshi Taka', country: 'Bangladesh', countryCode: 'bd', symbol: '৳' },
+    MVR: { name: 'Maldivian Rufiyaa', country: 'Maldives', countryCode: 'mv', symbol: 'Rf' },
+    KES: { name: 'Kenyan Shilling', country: 'Kenya', countryCode: 'ke', symbol: 'KSh' },
+    NGN: { name: 'Nigerian Naira', country: 'Nigeria', countryCode: 'ng', symbol: '₦' },
+    MAD: { name: 'Moroccan Dirham', country: 'Morocco', countryCode: 'ma', symbol: 'د.م.' },
+    MUR: { name: 'Mauritian Rupee', country: 'Mauritius', countryCode: 'mu', symbol: '₨' },
+    FJD: { name: 'Fijian Dollar', country: 'Fiji', countryCode: 'fj', symbol: 'FJ$' },
   };
 
   // Get flag image URL from flagcdn.com

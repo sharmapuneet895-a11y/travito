@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { motion } from 'framer-motion';
-import WorldMap from '../components/WorldMap';
+import { motion, AnimatePresence } from 'framer-motion';
 import BackToTop from '../components/BackToTop';
-import { PartyPopper, Calendar, MapPin, Filter, Utensils, Leaf, Drumstick } from 'lucide-react';
+import { PartyPopper, Calendar, MapPin, Filter, Utensils, Leaf, Drumstick, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -60,7 +59,7 @@ const Festivals = () => {
   const [dishes, setDishes] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(0);
-  const [mapData, setMapData] = useState([]);
+  const [expandedFestival, setExpandedFestival] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -79,22 +78,6 @@ const Festivals = () => {
           dishesLookup[d.country_code] = d.dishes;
         });
         setDishes(dishesLookup);
-        
-        // Create map data
-        const countryFestivals = {};
-        festivalsRes.data.data.forEach(f => {
-          if (!countryFestivals[f.country_code]) {
-            countryFestivals[f.country_code] = {
-              country_code: f.country_code,
-              country_name: f.country_name,
-              festival_count: 0,
-              festivals: []
-            };
-          }
-          countryFestivals[f.country_code].festival_count++;
-          countryFestivals[f.country_code].festivals.push(f.festival_name);
-        });
-        setMapData(Object.values(countryFestivals));
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -169,48 +152,11 @@ const Festivals = () => {
             </div>
           </div>
 
-          {/* Map */}
-          <div className="map-container mb-12" data-testid="festivals-map-container">
-            {loading ? (
-              <div className="flex items-center justify-center h-96" data-testid="loading-festivals">
-                <div className="text-center">
-                  <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                  <p className="text-muted-foreground">Loading festivals...</p>
-                </div>
-              </div>
-            ) : (
-              <WorldMap 
-                data={mapData.map(d => ({
-                  ...d,
-                  festival_type: d.festival_count > 2 ? 'many' : d.festival_count > 1 ? 'some' : 'few'
-                }))} 
-                mode="festivals" 
-              />
-            )}
-          </div>
-
-          {/* Legend */}
+          {/* Dish Indicators Legend */}
           <div className="bg-white rounded-xl p-6 mb-8 shadow-sm">
-            <div className="flex flex-wrap gap-8 items-center justify-between">
+            <div className="flex flex-wrap gap-8 items-center">
               <div>
-                <h3 className="text-lg font-semibold text-primary mb-4">Festival Destinations</h3>
-                <div className="flex flex-wrap gap-4">
-                  <div className="legend-item">
-                    <div className="legend-color" style={{ backgroundColor: '#E25A53' }} />
-                    <span className="text-sm">Many (3+)</span>
-                  </div>
-                  <div className="legend-item">
-                    <div className="legend-color" style={{ backgroundColor: '#F2A900' }} />
-                    <span className="text-sm">Some (2)</span>
-                  </div>
-                  <div className="legend-item">
-                    <div className="legend-color" style={{ backgroundColor: '#4B89AC' }} />
-                    <span className="text-sm">Few (1)</span>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-primary mb-4">Dish Indicators</h3>
+                <h3 className="text-lg font-semibold text-primary mb-3">Dish Indicators</h3>
                 <div className="flex gap-4">
                   <div className="flex items-center gap-2">
                     <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-600">
@@ -225,6 +171,10 @@ const Festivals = () => {
                     <span className="text-sm">Non-Veg</span>
                   </div>
                 </div>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                <Sparkles className="w-4 h-4 inline mr-1" />
+                Click on any festival card to see more details
               </div>
             </div>
           </div>
@@ -253,69 +203,115 @@ const Festivals = () => {
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {monthFestivals.map((festival, idx) => {
                       const countryDishes = dishes[festival.country_code] || [];
+                      const festivalKey = `${festival.country_code}-${festival.festival_name}`;
+                      const isExpanded = expandedFestival === festivalKey;
                       
                       return (
                         <motion.div
-                          key={`${festival.country_code}-${festival.festival_name}`}
+                          key={festivalKey}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: idx * 0.05 }}
-                          className="bg-white rounded-xl p-5 border border-border hover:shadow-lg transition-all"
+                          className="bg-white rounded-xl border border-border hover:shadow-lg transition-all cursor-pointer"
                           data-testid={`festival-card-${festival.country_code}`}
+                          onClick={() => setExpandedFestival(isExpanded ? null : festivalKey)}
                         >
-                          <div className="flex items-start gap-4">
-                            <div 
-                              className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-                              style={{ backgroundColor: `${MONTH_COLORS[festival.month]}20` }}
-                            >
-                              <PartyPopper 
-                                className="w-6 h-6" 
-                                style={{ color: MONTH_COLORS[festival.month] }}
-                              />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h4 className="font-semibold text-foreground text-lg mb-1">
-                                {festival.festival_name}
-                              </h4>
-                              <div className="flex items-center gap-1 text-sm text-muted-foreground mb-2">
-                                <MapPin className="w-4 h-4" />
-                                <span>{festival.country_name} • {festival.highlight}</span>
+                          <div className="p-5">
+                            <div className="flex items-start gap-4">
+                              <div 
+                                className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
+                                style={{ backgroundColor: `${MONTH_COLORS[festival.month]}20` }}
+                              >
+                                <PartyPopper 
+                                  className="w-6 h-6" 
+                                  style={{ color: MONTH_COLORS[festival.month] }}
+                                />
                               </div>
-                              <p className="text-sm text-muted-foreground mb-3">
-                                {festival.description}
-                              </p>
-                              
-                              {/* Must-Try Local Dishes */}
-                              {countryDishes.length > 0 && (
-                                <div className="mt-3 pt-3 border-t border-border">
-                                  <div className="flex items-center gap-2 mb-2">
-                                    <Utensils className="w-4 h-4 text-accent" />
-                                    <span className="text-sm font-semibold text-primary">Must-Try Dishes</span>
-                                  </div>
-                                  <div className="flex flex-wrap gap-2">
-                                    {countryDishes.slice(0, 4).map((dish, i) => (
-                                      <span 
-                                        key={i}
-                                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-                                          dish.veg 
-                                            ? 'bg-green-50 text-green-700 border border-green-200' 
-                                            : 'bg-red-50 text-red-700 border border-red-200'
-                                        }`}
-                                        title={dish.description}
-                                      >
-                                        {dish.veg ? (
-                                          <Leaf className="w-3 h-3" />
-                                        ) : (
-                                          <Drumstick className="w-3 h-3" />
-                                        )}
-                                        {dish.name}
-                                      </span>
-                                    ))}
-                                  </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between">
+                                  <h4 className="font-semibold text-foreground text-lg mb-1">
+                                    {festival.festival_name}
+                                  </h4>
+                                  {isExpanded ? (
+                                    <ChevronUp className="w-5 h-5 text-muted-foreground" />
+                                  ) : (
+                                    <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                                  )}
                                 </div>
-                              )}
+                                <div className="flex items-center gap-1 text-sm text-muted-foreground mb-2">
+                                  <MapPin className="w-4 h-4" />
+                                  <span>{festival.country_name}</span>
+                                </div>
+                              </div>
                             </div>
                           </div>
+                          
+                          {/* Expanded Details */}
+                          <AnimatePresence>
+                            {isExpanded && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className="overflow-hidden"
+                              >
+                                <div className="px-5 pb-5 pt-0 border-t border-border">
+                                  {/* Location & Highlights */}
+                                  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="bg-blue-50 rounded-lg p-3">
+                                      <h5 className="font-semibold text-blue-700 text-sm mb-1">Location</h5>
+                                      <p className="text-sm text-blue-600">{festival.highlight || festival.country_name}</p>
+                                    </div>
+                                    <div className="bg-amber-50 rounded-lg p-3">
+                                      <h5 className="font-semibold text-amber-700 text-sm mb-1">Highlights</h5>
+                                      <p className="text-sm text-amber-600">
+                                        {festival.description || 'A vibrant celebration of culture and tradition'}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Festival Description */}
+                                  <div className="mt-4 bg-gray-50 rounded-lg p-3">
+                                    <h5 className="font-semibold text-gray-700 text-sm mb-2">About the Festival</h5>
+                                    <p className="text-sm text-gray-600">
+                                      {festival.description || `${festival.festival_name} is one of the most celebrated festivals in ${festival.country_name}. Join locals and tourists alike in experiencing this unique cultural celebration.`}
+                                    </p>
+                                  </div>
+                                  
+                                  {/* Must-Try Local Dishes */}
+                                  {countryDishes.length > 0 && (
+                                    <div className="mt-4 pt-3 border-t border-border">
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <Utensils className="w-4 h-4 text-accent" />
+                                        <span className="text-sm font-semibold text-primary">Must-Try Dishes in {festival.country_name}</span>
+                                      </div>
+                                      <div className="flex flex-wrap gap-2">
+                                        {countryDishes.slice(0, 6).map((dish, i) => (
+                                          <span 
+                                            key={i}
+                                            className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                                              dish.veg 
+                                                ? 'bg-green-50 text-green-700 border border-green-200' 
+                                                : 'bg-red-50 text-red-700 border border-red-200'
+                                            }`}
+                                            title={dish.description}
+                                          >
+                                            {dish.veg ? (
+                                              <Leaf className="w-3 h-3" />
+                                            ) : (
+                                              <Drumstick className="w-3 h-3" />
+                                            )}
+                                            {dish.name}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </motion.div>
                       );
                     })}
