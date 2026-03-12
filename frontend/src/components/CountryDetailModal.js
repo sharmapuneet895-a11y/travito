@@ -156,27 +156,37 @@ const CountryDetailModal = ({ country, onClose }) => {
 
         // Find forex rate for this country
         const forexRates = forexRes.data?.rates || {};
-        // Currency to country code mapping (expanded)
+        // Currency to country code mapping (expanded - comprehensive)
         const currencyToCountry = {
+          // Asia
           'THB': 'THA', 'JPY': 'JPN', 'SGD': 'SGP', 'MYR': 'MYS', 'IDR': 'IDN', 'VND': 'VNM', 'PHP': 'PHL',
-          'AUD': 'AUS', 'NZD': 'NZL', 'USD': 'USA', 'EUR': 'FRA', 'GBP': 'GBR', 'CHF': 'CHE', 'CAD': 'CAN',
-          'AED': 'ARE', 'SAR': 'SAU', 'EGP': 'EGY', 'ZAR': 'ZAF', 'KRW': 'KOR', 'CNY': 'CHN', 'HKD': 'HKG',
-          'BRL': 'BRA', 'MXN': 'MEX', 'TRY': 'TUR', 'RUB': 'RUS', 'NPR': 'NPL', 'LKR': 'LKA', 'MVR': 'MDV',
-          'TWD': 'TWN', 'PKR': 'PAK', 'BDT': 'BGD', 'MMK': 'MMR', 'KHR': 'KHM', 'LAK': 'LAO', 'BTN': 'BTN',
-          'AFN': 'AFG', 'IRR': 'IRN', 'IQD': 'IRQ', 'SYP': 'SYR', 'LBP': 'LBN', 'JOD': 'JOR', 'ILS': 'ISR',
-          'QAR': 'QAT', 'BHD': 'BHR', 'OMR': 'OMN', 'KWD': 'KWT', 'YER': 'YEM', 'CUP': 'CUB', 'JMD': 'JAM',
-          'DOP': 'DOM', 'CRC': 'CRI', 'PAB': 'PAN', 'GTQ': 'GTM', 'VES': 'VEN', 'UYU': 'URY', 'PYG': 'PRY',
-          'BOB': 'BOL', 'ARS': 'ARG', 'CLP': 'CHL', 'PEN': 'PER', 'COP': 'COL', 'HRK': 'HRV', 'CZK': 'CZE',
-          'HUF': 'HUN', 'PLN': 'POL', 'SEK': 'SWE', 'NOK': 'NOR', 'DKK': 'DNK', 'ISK': 'ISL', 'RON': 'ROU',
-          'BGN': 'BGR', 'UAH': 'UKR', 'BYN': 'BLR', 'RSD': 'SRB', 'MKD': 'MKD', 'BAM': 'BIH', 'GEL': 'GEO',
-          'AMD': 'ARM', 'AZN': 'AZE', 'KZT': 'KAZ', 'UZS': 'UZB', 'TJS': 'TJK', 'KGS': 'KGZ', 'MNT': 'MNG',
-          'MAD': 'MAR', 'TND': 'TUN', 'DZD': 'DZA', 'LYD': 'LBY', 'SDG': 'SDN', 'KES': 'KEN', 'TZS': 'TZA',
-          'UGX': 'UGA', 'ETB': 'ETH', 'NGN': 'NGA', 'GHS': 'GHA', 'XOF': 'SEN', 'XAF': 'CMR', 'MUR': 'MUS',
-          'MGA': 'MDG', 'ZWL': 'ZWE', 'ZMW': 'ZMB', 'BWP': 'BWA', 'NAD': 'NAM', 'MZN': 'MOZ', 'AOA': 'AGO',
-          'FJD': 'FJI', 'PGK': 'PNG'
+          'KRW': 'KOR', 'CNY': 'CHN', 'HKD': 'HKG', 'TWD': 'TWN', 'NPR': 'NPL', 'LKR': 'LKA', 'MVR': 'MDV',
+          'PKR': 'PAK', 'BDT': 'BGD', 'MMK': 'MMR', 'KHR': 'KHM', 'LAK': 'LAO', 'BTN': 'BTN', 'MNT': 'MNG',
+          'KZT': 'KAZ', 'UZS': 'UZB', 'TJS': 'TJK', 'KGS': 'KGZ', 'AFN': 'AFG',
+          // Middle East
+          'AED': 'UAE', 'SAR': 'SAU', 'QAR': 'QAT', 'BHD': 'BHR', 'OMR': 'OMN', 'KWD': 'KWT', 'JOD': 'JOR',
+          'ILS': 'ISR', 'LBP': 'LBN', 'SYP': 'SYR', 'IQD': 'IRQ', 'IRR': 'IRN', 'YER': 'YEM', 'TRY': 'TUR',
+          // Africa
+          'EGP': 'EGY', 'ZAR': 'ZAF', 'MAD': 'MAR', 'TND': 'TUN', 'DZD': 'DZA', 'LYD': 'LBY', 'SDG': 'SDN',
+          'KES': 'KEN', 'TZS': 'TZA', 'UGX': 'UGA', 'ETB': 'ETH', 'NGN': 'NGA', 'GHS': 'GHA', 'XOF': 'SEN',
+          'XAF': 'CMR', 'MUR': 'MUS', 'MGA': 'MDG', 'ZMW': 'ZMB', 'BWP': 'BWA', 'NAD': 'NAM', 'MZN': 'MOZ',
+          'AOA': 'AGO', 'RWF': 'RWA', 'ZWL': 'ZWE',
+          // Europe
+          'EUR': 'FRA', 'GBP': 'GBR', 'CHF': 'CHE', 'RUB': 'RUS', 'SEK': 'SWE', 'NOK': 'NOR', 'DKK': 'DNK',
+          'PLN': 'POL', 'CZK': 'CZE', 'HUF': 'HUN', 'HRK': 'HRV', 'RON': 'ROU', 'BGN': 'BGR', 'UAH': 'UKR',
+          'BYN': 'BLR', 'RSD': 'SRB', 'MKD': 'MKD', 'BAM': 'BIH', 'GEL': 'GEO', 'AMD': 'ARM', 'AZN': 'AZE',
+          'ISK': 'ISL', 'ALL': 'ALB', 'MDL': 'MDA',
+          // Oceania
+          'AUD': 'AUS', 'NZD': 'NZL', 'FJD': 'FJI', 'PGK': 'PNG',
+          // Americas
+          'USD': 'USA', 'CAD': 'CAN', 'MXN': 'MEX', 'BRL': 'BRA', 'ARS': 'ARG', 'CLP': 'CHL', 'PEN': 'PER',
+          'COP': 'COL', 'VES': 'VEN', 'UYU': 'URY', 'PYG': 'PRY', 'BOB': 'BOL', 'CRC': 'CRI', 'PAB': 'PAN',
+          'GTQ': 'GTM', 'HNL': 'HND', 'NIO': 'NIC', 'DOP': 'DOM', 'JMD': 'JAM', 'TTD': 'TTO', 'BBD': 'BRB',
+          'CUP': 'CUB', 'HTG': 'HTI', 'BSD': 'BHS', 'BZD': 'BLZ', 'SVC': 'SLV', 'AWG': 'ABW', 'ANG': 'CUW',
+          'GYD': 'GUY', 'SRD': 'SUR',
         };
-        // Also create reverse mapping for UAE
-        currencyToCountry['AED'] = 'UAE';
+        // Also map ARE to UAE
+        currencyToCountry['AED'] = 'ARE';
         
         let countryForex = null;
         for (const [currency, rate] of Object.entries(forexRates)) {

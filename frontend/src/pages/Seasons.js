@@ -5,7 +5,7 @@ import WorldMap from '../components/WorldMap';
 import CountryDetailModal from '../components/CountryDetailModal';
 import CostEstimator from '../components/CostEstimator';
 import BackToTop from '../components/BackToTop';
-import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Calculator } from 'lucide-react';
+import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Calculator, Snowflake } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -19,6 +19,7 @@ const CATEGORIES = [
   { id: 'all', label: 'All Peak Destinations', icon: Compass, color: 'gray', bgColor: 'bg-gray-100', textColor: 'text-gray-700', activeColor: 'bg-gray-700 text-white' },
   { id: 'beach', label: 'Beach', icon: Palmtree, color: 'cyan', bgColor: 'bg-cyan-100', textColor: 'text-cyan-700', activeColor: 'bg-cyan-500 text-white' },
   { id: 'mountain', label: 'Mountain', icon: Mountain, color: 'green', bgColor: 'bg-green-100', textColor: 'text-green-800', activeColor: 'bg-green-700 text-white' },
+  { id: 'snow', label: 'Snowy Experience', icon: Snowflake, color: 'sky', bgColor: 'bg-sky-100', textColor: 'text-sky-700', activeColor: 'bg-sky-500 text-white' },
   { id: 'city', label: 'City', icon: Building2, color: 'slate', bgColor: 'bg-slate-100', textColor: 'text-slate-700', activeColor: 'bg-slate-600 text-white' },
   { id: 'culture', label: 'Culture', icon: Landmark, color: 'purple', bgColor: 'bg-purple-100', textColor: 'text-purple-700', activeColor: 'bg-purple-600 text-white' },
   { id: 'adventure', label: 'Adventure', icon: Compass, color: 'orange', bgColor: 'bg-orange-100', textColor: 'text-orange-700', activeColor: 'bg-orange-500 text-white' },

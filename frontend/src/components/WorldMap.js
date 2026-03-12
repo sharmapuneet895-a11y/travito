@@ -135,12 +135,13 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       }
     } else if (mode === 'weather') {
       switch (countryData.weather_type) {
-        case 'hot': return '#DC2626';
+        case 'hot': return '#E25A53';
         case 'warm': return '#F59E0B';
-        case 'mild': return '#2563EB';
-        case 'cold': return '#67B7D1';
-        case 'snow': return '#F3F4F6';
-        default: return '#E5E5E5';
+        case 'rainy': return '#4B89AC';
+        case 'mild': return '#87CEEB';
+        case 'cold': return '#FFFFFF';
+        case 'snow': return '#FFFFFF';
+        default: return '#E8E8E6';
       }
     } else if (mode === 'plug') {
       const plugColors = {
@@ -183,8 +184,10 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         info += ` - Best: ${countryData.best_months.join(', ')}`;
       } else if (mode === 'visa') {
         info += ` - ${countryData.visa_type?.replace(/_/g, ' ').toUpperCase()}`;
-      } else if (mode === 'weather' && countryData.avg_temp) {
-        info += ` - ${countryData.avg_temp}`;
+      } else if (mode === 'weather') {
+        const weatherLabels = {'hot': 'Hot', 'cold': 'Cold', 'snow': 'Cold/Snowy', 'rainy': 'Rainy', 'mild': 'Mild/Pleasant', 'warm': 'Warm'};
+        const label = weatherLabels[countryData.weather_type] || countryData.weather_type || '';
+        info += ` - ${label}${countryData.avg_temp ? ` (${countryData.avg_temp})` : ''}`;
       } else if (mode === 'safety') {
         const labels = {'very_safe':'Very Safe','safe':'Safe','moderate':'Caution','caution':'High Caution','high_risk':'High Risk'};
         info += ` - ${labels[countryData.safety_level] || ''}`;

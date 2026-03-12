@@ -40,54 +40,124 @@ const Forex = () => {
     }));
   };
 
-  // Currency data with country info and flag image URLs
+  // Currency data with country info and flag image URLs (expanded list)
   const currencyData = {
+    // Major World Currencies
     USD: { name: 'US Dollar', country: 'United States', countryCode: 'us', symbol: '$' },
     EUR: { name: 'Euro', country: 'European Union', countryCode: 'eu', symbol: '€' },
     GBP: { name: 'British Pound', country: 'United Kingdom', countryCode: 'gb', symbol: '£' },
     JPY: { name: 'Japanese Yen', country: 'Japan', countryCode: 'jp', symbol: '¥' },
+    CHF: { name: 'Swiss Franc', country: 'Switzerland', countryCode: 'ch', symbol: 'CHF' },
     AUD: { name: 'Australian Dollar', country: 'Australia', countryCode: 'au', symbol: 'A$' },
     CAD: { name: 'Canadian Dollar', country: 'Canada', countryCode: 'ca', symbol: 'C$' },
-    CHF: { name: 'Swiss Franc', country: 'Switzerland', countryCode: 'ch', symbol: 'CHF' },
     CNY: { name: 'Chinese Yuan', country: 'China', countryCode: 'cn', symbol: '¥' },
+    
+    // Southeast Asia
     SGD: { name: 'Singapore Dollar', country: 'Singapore', countryCode: 'sg', symbol: 'S$' },
-    AED: { name: 'UAE Dirham', country: 'United Arab Emirates', countryCode: 'ae', symbol: 'د.إ' },
     THB: { name: 'Thai Baht', country: 'Thailand', countryCode: 'th', symbol: '฿' },
-    NZD: { name: 'New Zealand Dollar', country: 'New Zealand', countryCode: 'nz', symbol: 'NZ$' },
     MYR: { name: 'Malaysian Ringgit', country: 'Malaysia', countryCode: 'my', symbol: 'RM' },
     IDR: { name: 'Indonesian Rupiah', country: 'Indonesia', countryCode: 'id', symbol: 'Rp' },
     PHP: { name: 'Philippine Peso', country: 'Philippines', countryCode: 'ph', symbol: '₱' },
     VND: { name: 'Vietnamese Dong', country: 'Vietnam', countryCode: 'vn', symbol: '₫' },
+    KHR: { name: 'Cambodian Riel', country: 'Cambodia', countryCode: 'kh', symbol: '៛' },
+    LAK: { name: 'Lao Kip', country: 'Laos', countryCode: 'la', symbol: '₭' },
+    MMK: { name: 'Myanmar Kyat', country: 'Myanmar', countryCode: 'mm', symbol: 'K' },
+    BND: { name: 'Brunei Dollar', country: 'Brunei', countryCode: 'bn', symbol: 'B$' },
+    
+    // East Asia
     KRW: { name: 'South Korean Won', country: 'South Korea', countryCode: 'kr', symbol: '₩' },
     HKD: { name: 'Hong Kong Dollar', country: 'Hong Kong', countryCode: 'hk', symbol: 'HK$' },
     TWD: { name: 'Taiwan Dollar', country: 'Taiwan', countryCode: 'tw', symbol: 'NT$' },
+    MOP: { name: 'Macanese Pataca', country: 'Macau', countryCode: 'mo', symbol: 'MOP$' },
+    MNT: { name: 'Mongolian Tugrik', country: 'Mongolia', countryCode: 'mn', symbol: '₮' },
+    
+    // South Asia
+    NPR: { name: 'Nepalese Rupee', country: 'Nepal', countryCode: 'np', symbol: 'रू' },
+    LKR: { name: 'Sri Lankan Rupee', country: 'Sri Lanka', countryCode: 'lk', symbol: 'Rs' },
+    PKR: { name: 'Pakistani Rupee', country: 'Pakistan', countryCode: 'pk', symbol: 'Rs' },
+    BDT: { name: 'Bangladeshi Taka', country: 'Bangladesh', countryCode: 'bd', symbol: '৳' },
+    MVR: { name: 'Maldivian Rufiyaa', country: 'Maldives', countryCode: 'mv', symbol: 'Rf' },
+    BTN: { name: 'Bhutanese Ngultrum', country: 'Bhutan', countryCode: 'bt', symbol: 'Nu.' },
+    
+    // Middle East
+    AED: { name: 'UAE Dirham', country: 'United Arab Emirates', countryCode: 'ae', symbol: 'د.إ' },
     SAR: { name: 'Saudi Riyal', country: 'Saudi Arabia', countryCode: 'sa', symbol: 'ر.س' },
     QAR: { name: 'Qatari Riyal', country: 'Qatar', countryCode: 'qa', symbol: 'ر.ق' },
     KWD: { name: 'Kuwaiti Dinar', country: 'Kuwait', countryCode: 'kw', symbol: 'د.ك' },
     BHD: { name: 'Bahraini Dinar', country: 'Bahrain', countryCode: 'bh', symbol: '.د.ب' },
     OMR: { name: 'Omani Rial', country: 'Oman', countryCode: 'om', symbol: 'ر.ع.' },
-    EGP: { name: 'Egyptian Pound', country: 'Egypt', countryCode: 'eg', symbol: 'E£' },
-    ZAR: { name: 'South African Rand', country: 'South Africa', countryCode: 'za', symbol: 'R' },
+    JOD: { name: 'Jordanian Dinar', country: 'Jordan', countryCode: 'jo', symbol: 'د.أ' },
+    ILS: { name: 'Israeli Shekel', country: 'Israel', countryCode: 'il', symbol: '₪' },
+    LBP: { name: 'Lebanese Pound', country: 'Lebanon', countryCode: 'lb', symbol: 'ل.ل' },
     TRY: { name: 'Turkish Lira', country: 'Turkey', countryCode: 'tr', symbol: '₺' },
+    
+    // Europe
     RUB: { name: 'Russian Ruble', country: 'Russia', countryCode: 'ru', symbol: '₽' },
-    BRL: { name: 'Brazilian Real', country: 'Brazil', countryCode: 'br', symbol: 'R$' },
-    MXN: { name: 'Mexican Peso', country: 'Mexico', countryCode: 'mx', symbol: 'MX$' },
     SEK: { name: 'Swedish Krona', country: 'Sweden', countryCode: 'se', symbol: 'kr' },
     NOK: { name: 'Norwegian Krone', country: 'Norway', countryCode: 'no', symbol: 'kr' },
     DKK: { name: 'Danish Krone', country: 'Denmark', countryCode: 'dk', symbol: 'kr' },
     PLN: { name: 'Polish Zloty', country: 'Poland', countryCode: 'pl', symbol: 'zł' },
     CZK: { name: 'Czech Koruna', country: 'Czech Republic', countryCode: 'cz', symbol: 'Kč' },
     HUF: { name: 'Hungarian Forint', country: 'Hungary', countryCode: 'hu', symbol: 'Ft' },
-    NPR: { name: 'Nepalese Rupee', country: 'Nepal', countryCode: 'np', symbol: 'रू' },
-    LKR: { name: 'Sri Lankan Rupee', country: 'Sri Lanka', countryCode: 'lk', symbol: 'Rs' },
-    PKR: { name: 'Pakistani Rupee', country: 'Pakistan', countryCode: 'pk', symbol: 'Rs' },
-    BDT: { name: 'Bangladeshi Taka', country: 'Bangladesh', countryCode: 'bd', symbol: '৳' },
-    MVR: { name: 'Maldivian Rufiyaa', country: 'Maldives', countryCode: 'mv', symbol: 'Rf' },
+    RON: { name: 'Romanian Leu', country: 'Romania', countryCode: 'ro', symbol: 'lei' },
+    BGN: { name: 'Bulgarian Lev', country: 'Bulgaria', countryCode: 'bg', symbol: 'лв' },
+    HRK: { name: 'Croatian Kuna', country: 'Croatia', countryCode: 'hr', symbol: 'kn' },
+    ISK: { name: 'Icelandic Króna', country: 'Iceland', countryCode: 'is', symbol: 'kr' },
+    UAH: { name: 'Ukrainian Hryvnia', country: 'Ukraine', countryCode: 'ua', symbol: '₴' },
+    GEL: { name: 'Georgian Lari', country: 'Georgia', countryCode: 'ge', symbol: '₾' },
+    
+    // Central Asia
+    KZT: { name: 'Kazakhstani Tenge', country: 'Kazakhstan', countryCode: 'kz', symbol: '₸' },
+    UZS: { name: 'Uzbek Som', country: 'Uzbekistan', countryCode: 'uz', symbol: 'сўм' },
+    KGS: { name: 'Kyrgyz Som', country: 'Kyrgyzstan', countryCode: 'kg', symbol: 'сом' },
+    TJS: { name: 'Tajik Somoni', country: 'Tajikistan', countryCode: 'tj', symbol: 'ЅМ' },
+    
+    // Africa
+    EGP: { name: 'Egyptian Pound', country: 'Egypt', countryCode: 'eg', symbol: 'E£' },
+    ZAR: { name: 'South African Rand', country: 'South Africa', countryCode: 'za', symbol: 'R' },
+    MAD: { name: 'Moroccan Dirham', country: 'Morocco', countryCode: 'ma', symbol: 'د.م.' },
     KES: { name: 'Kenyan Shilling', country: 'Kenya', countryCode: 'ke', symbol: 'KSh' },
     NGN: { name: 'Nigerian Naira', country: 'Nigeria', countryCode: 'ng', symbol: '₦' },
-    MAD: { name: 'Moroccan Dirham', country: 'Morocco', countryCode: 'ma', symbol: 'د.م.' },
+    GHS: { name: 'Ghanaian Cedi', country: 'Ghana', countryCode: 'gh', symbol: '₵' },
+    TZS: { name: 'Tanzanian Shilling', country: 'Tanzania', countryCode: 'tz', symbol: 'TSh' },
+    UGX: { name: 'Ugandan Shilling', country: 'Uganda', countryCode: 'ug', symbol: 'USh' },
+    ETB: { name: 'Ethiopian Birr', country: 'Ethiopia', countryCode: 'et', symbol: 'Br' },
     MUR: { name: 'Mauritian Rupee', country: 'Mauritius', countryCode: 'mu', symbol: '₨' },
+    TND: { name: 'Tunisian Dinar', country: 'Tunisia', countryCode: 'tn', symbol: 'د.ت' },
+    ZMW: { name: 'Zambian Kwacha', country: 'Zambia', countryCode: 'zm', symbol: 'ZK' },
+    BWP: { name: 'Botswana Pula', country: 'Botswana', countryCode: 'bw', symbol: 'P' },
+    NAD: { name: 'Namibian Dollar', country: 'Namibia', countryCode: 'na', symbol: 'N$' },
+    RWF: { name: 'Rwandan Franc', country: 'Rwanda', countryCode: 'rw', symbol: 'FRw' },
+    
+    // Americas
+    BRL: { name: 'Brazilian Real', country: 'Brazil', countryCode: 'br', symbol: 'R$' },
+    MXN: { name: 'Mexican Peso', country: 'Mexico', countryCode: 'mx', symbol: 'MX$' },
+    ARS: { name: 'Argentine Peso', country: 'Argentina', countryCode: 'ar', symbol: 'AR$' },
+    CLP: { name: 'Chilean Peso', country: 'Chile', countryCode: 'cl', symbol: 'CLP$' },
+    COP: { name: 'Colombian Peso', country: 'Colombia', countryCode: 'co', symbol: 'COL$' },
+    PEN: { name: 'Peruvian Sol', country: 'Peru', countryCode: 'pe', symbol: 'S/' },
+    CRC: { name: 'Costa Rican Colón', country: 'Costa Rica', countryCode: 'cr', symbol: '₡' },
+    DOP: { name: 'Dominican Peso', country: 'Dominican Republic', countryCode: 'do', symbol: 'RD$' },
+    JMD: { name: 'Jamaican Dollar', country: 'Jamaica', countryCode: 'jm', symbol: 'J$' },
+    TTD: { name: 'Trinidad & Tobago Dollar', country: 'Trinidad & Tobago', countryCode: 'tt', symbol: 'TT$' },
+    BBD: { name: 'Barbadian Dollar', country: 'Barbados', countryCode: 'bb', symbol: 'Bds$' },
+    UYU: { name: 'Uruguayan Peso', country: 'Uruguay', countryCode: 'uy', symbol: '$U' },
+    BOB: { name: 'Bolivian Boliviano', country: 'Bolivia', countryCode: 'bo', symbol: 'Bs' },
+    PYG: { name: 'Paraguayan Guarani', country: 'Paraguay', countryCode: 'py', symbol: '₲' },
+    GTQ: { name: 'Guatemalan Quetzal', country: 'Guatemala', countryCode: 'gt', symbol: 'Q' },
+    HNL: { name: 'Honduran Lempira', country: 'Honduras', countryCode: 'hn', symbol: 'L' },
+    NIO: { name: 'Nicaraguan Córdoba', country: 'Nicaragua', countryCode: 'ni', symbol: 'C$' },
+    PAB: { name: 'Panamanian Balboa', country: 'Panama', countryCode: 'pa', symbol: 'B/.' },
+    BSD: { name: 'Bahamian Dollar', country: 'Bahamas', countryCode: 'bs', symbol: 'B$' },
+    BZD: { name: 'Belize Dollar', country: 'Belize', countryCode: 'bz', symbol: 'BZ$' },
+    
+    // Oceania
+    NZD: { name: 'New Zealand Dollar', country: 'New Zealand', countryCode: 'nz', symbol: 'NZ$' },
     FJD: { name: 'Fijian Dollar', country: 'Fiji', countryCode: 'fj', symbol: 'FJ$' },
+    PGK: { name: 'Papua New Guinea Kina', country: 'Papua New Guinea', countryCode: 'pg', symbol: 'K' },
+    WST: { name: 'Samoan Tala', country: 'Samoa', countryCode: 'ws', symbol: 'WS$' },
+    TOP: { name: 'Tongan Paʻanga', country: 'Tonga', countryCode: 'to', symbol: 'T$' },
+    VUV: { name: 'Vanuatu Vatu', country: 'Vanuatu', countryCode: 'vu', symbol: 'VT' },
   };
 
   // Get flag image URL from flagcdn.com
