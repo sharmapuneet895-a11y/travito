@@ -1,13 +1,79 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2, Shield, Phone, DollarSign } from 'lucide-react';
+import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2, Shield, Phone, DollarSign, ArrowRightLeft, Users, TrendingUp, TrendingDown, CheckCircle, ClipboardList, ExternalLink } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Month abbreviations
 const MONTH_ABBREV = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+// Travel timing data - busiest/least busy months and expensive/cheap months
+const travelTimingData = {
+  'USA': { busiest: ['Jun', 'Jul', 'Dec'], leastBusy: ['Feb', 'Sep', 'Nov'], expensive: ['Jun', 'Jul', 'Dec'], cheap: ['Jan', 'Feb', 'Nov'] },
+  'GBR': { busiest: ['Jun', 'Jul', 'Aug'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Jul', 'Aug', 'Dec'], cheap: ['Jan', 'Feb', 'Mar'] },
+  'FRA': { busiest: ['Jul', 'Aug', 'Dec'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Jul', 'Aug', 'Dec'], cheap: ['Jan', 'Feb', 'Mar'] },
+  'DEU': { busiest: ['Jun', 'Jul', 'Dec'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Jun', 'Jul', 'Dec'], cheap: ['Jan', 'Feb', 'Mar'] },
+  'ITA': { busiest: ['Jun', 'Jul', 'Aug'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Jun', 'Jul', 'Aug'], cheap: ['Jan', 'Feb', 'Nov'] },
+  'ESP': { busiest: ['Jun', 'Jul', 'Aug'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Jul', 'Aug'], cheap: ['Jan', 'Feb', 'Nov'] },
+  'JPN': { busiest: ['Mar', 'Apr', 'Oct'], leastBusy: ['Jan', 'Feb', 'Jun'], expensive: ['Mar', 'Apr', 'Oct', 'Nov'], cheap: ['Jan', 'Feb', 'Jun'] },
+  'CHN': { busiest: ['Jan', 'Feb', 'Oct'], leastBusy: ['Mar', 'Nov', 'Dec'], expensive: ['Jan', 'Feb', 'Oct'], cheap: ['Mar', 'Apr', 'Nov'] },
+  'THA': { busiest: ['Nov', 'Dec', 'Jan', 'Feb'], leastBusy: ['May', 'Jun', 'Sep'], expensive: ['Dec', 'Jan', 'Feb'], cheap: ['May', 'Jun', 'Sep', 'Oct'] },
+  'AUS': { busiest: ['Dec', 'Jan', 'Jul'], leastBusy: ['Feb', 'Mar', 'May'], expensive: ['Dec', 'Jan', 'Jul'], cheap: ['Feb', 'May', 'Jun'] },
+  'NZL': { busiest: ['Dec', 'Jan', 'Feb'], leastBusy: ['May', 'Jun', 'Aug'], expensive: ['Dec', 'Jan', 'Feb'], cheap: ['May', 'Jun', 'Aug'] },
+  'IND': { busiest: ['Oct', 'Nov', 'Dec'], leastBusy: ['Apr', 'May', 'Jun'], expensive: ['Oct', 'Nov', 'Dec'], cheap: ['Apr', 'May', 'Sep'] },
+  'UAE': { busiest: ['Nov', 'Dec', 'Jan'], leastBusy: ['Jun', 'Jul', 'Aug'], expensive: ['Nov', 'Dec', 'Jan'], cheap: ['Jun', 'Jul', 'Aug'] },
+  'SGP': { busiest: ['Dec', 'Jan', 'Jun'], leastBusy: ['Feb', 'Mar', 'Sep'], expensive: ['Dec', 'Jan'], cheap: ['Feb', 'Mar', 'Sep'] },
+  'MYS': { busiest: ['Dec', 'Jan', 'Jul'], leastBusy: ['Feb', 'Mar', 'Sep'], expensive: ['Dec', 'Jul'], cheap: ['Feb', 'Mar', 'Sep'] },
+  'IDN': { busiest: ['Jun', 'Jul', 'Dec'], leastBusy: ['Feb', 'Mar', 'Oct'], expensive: ['Jun', 'Jul', 'Dec'], cheap: ['Feb', 'Mar', 'Oct'] },
+  'VNM': { busiest: ['Dec', 'Jan', 'Feb'], leastBusy: ['May', 'Jun', 'Sep'], expensive: ['Dec', 'Jan', 'Feb'], cheap: ['May', 'Jun', 'Sep'] },
+  'PHL': { busiest: ['Dec', 'Jan', 'Apr'], leastBusy: ['Jun', 'Jul', 'Sep'], expensive: ['Dec', 'Apr'], cheap: ['Jun', 'Jul', 'Sep'] },
+  'KOR': { busiest: ['Apr', 'May', 'Oct'], leastBusy: ['Jan', 'Feb', 'Aug'], expensive: ['Apr', 'Oct'], cheap: ['Jan', 'Feb', 'Jun'] },
+  'TWN': { busiest: ['Oct', 'Nov', 'Feb'], leastBusy: ['May', 'Jun', 'Sep'], expensive: ['Feb', 'Oct'], cheap: ['May', 'Jun', 'Sep'] },
+  'HKG': { busiest: ['Oct', 'Nov', 'Dec'], leastBusy: ['May', 'Jun', 'Sep'], expensive: ['Oct', 'Dec'], cheap: ['May', 'Jun', 'Sep'] },
+  'TUR': { busiest: ['Jun', 'Jul', 'Aug'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Jun', 'Jul', 'Aug'], cheap: ['Jan', 'Feb', 'Nov'] },
+  'EGY': { busiest: ['Oct', 'Nov', 'Dec'], leastBusy: ['Jun', 'Jul', 'Aug'], expensive: ['Oct', 'Nov', 'Dec'], cheap: ['Jun', 'Jul', 'Aug'] },
+  'ZAF': { busiest: ['Dec', 'Jan', 'Jul'], leastBusy: ['Feb', 'May', 'Sep'], expensive: ['Dec', 'Jan'], cheap: ['Feb', 'May', 'Sep'] },
+  'BRA': { busiest: ['Dec', 'Jan', 'Feb'], leastBusy: ['Apr', 'May', 'Sep'], expensive: ['Dec', 'Jan', 'Feb'], cheap: ['Apr', 'May', 'Sep'] },
+  'ARG': { busiest: ['Dec', 'Jan', 'Jul'], leastBusy: ['Apr', 'May', 'Sep'], expensive: ['Dec', 'Jan'], cheap: ['Apr', 'May', 'Sep'] },
+  'MEX': { busiest: ['Dec', 'Jan', 'Mar'], leastBusy: ['May', 'Sep', 'Oct'], expensive: ['Dec', 'Mar'], cheap: ['May', 'Sep', 'Oct'] },
+  'CAN': { busiest: ['Jun', 'Jul', 'Aug'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Jul', 'Aug'], cheap: ['Jan', 'Feb', 'Nov'] },
+  'GRC': { busiest: ['Jun', 'Jul', 'Aug'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Jul', 'Aug'], cheap: ['Jan', 'Feb', 'Nov'] },
+  'PRT': { busiest: ['Jun', 'Jul', 'Aug'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Jul', 'Aug'], cheap: ['Jan', 'Feb', 'Nov'] },
+  'NLD': { busiest: ['Apr', 'May', 'Jul'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Apr', 'Jul'], cheap: ['Jan', 'Feb', 'Nov'] },
+  'CHE': { busiest: ['Jul', 'Aug', 'Dec'], leastBusy: ['Jan', 'Apr', 'Nov'], expensive: ['Jul', 'Aug', 'Dec'], cheap: ['Apr', 'May', 'Nov'] },
+  'AUT': { busiest: ['Jul', 'Aug', 'Dec'], leastBusy: ['Jan', 'Apr', 'Nov'], expensive: ['Jul', 'Aug', 'Dec'], cheap: ['Apr', 'May', 'Nov'] },
+  'NPL': { busiest: ['Oct', 'Nov', 'Mar'], leastBusy: ['Jun', 'Jul', 'Aug'], expensive: ['Oct', 'Nov'], cheap: ['Jun', 'Jul', 'Aug'] },
+  'LKA': { busiest: ['Dec', 'Jan', 'Feb'], leastBusy: ['May', 'Jun', 'Sep'], expensive: ['Dec', 'Jan', 'Feb'], cheap: ['May', 'Jun', 'Sep'] },
+  'MDV': { busiest: ['Dec', 'Jan', 'Feb'], leastBusy: ['May', 'Jun', 'Sep'], expensive: ['Dec', 'Jan', 'Feb', 'Mar'], cheap: ['May', 'Jun', 'Sep'] },
+  'RUS': { busiest: ['Jun', 'Jul', 'Aug'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Jun', 'Jul'], cheap: ['Jan', 'Nov', 'Mar'] },
+  'NOR': { busiest: ['Jun', 'Jul', 'Dec'], leastBusy: ['Feb', 'Mar', 'Oct'], expensive: ['Jun', 'Jul'], cheap: ['Feb', 'Mar', 'Oct'] },
+  'SWE': { busiest: ['Jun', 'Jul', 'Dec'], leastBusy: ['Feb', 'Mar', 'Oct'], expensive: ['Jun', 'Jul'], cheap: ['Feb', 'Mar', 'Oct'] },
+  'DNK': { busiest: ['Jun', 'Jul', 'Aug'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Jun', 'Jul'], cheap: ['Jan', 'Feb', 'Nov'] },
+  'FIN': { busiest: ['Jun', 'Jul', 'Dec'], leastBusy: ['Feb', 'Mar', 'Oct'], expensive: ['Jun', 'Jul', 'Dec'], cheap: ['Feb', 'Mar', 'Oct'] },
+  'ISL': { busiest: ['Jun', 'Jul', 'Aug'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Jun', 'Jul', 'Aug'], cheap: ['Jan', 'Feb', 'Nov'] },
+  'IRL': { busiest: ['Jun', 'Jul', 'Aug'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Jun', 'Jul'], cheap: ['Jan', 'Feb', 'Nov'] },
+  'POL': { busiest: ['Jun', 'Jul', 'Aug'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Jul', 'Aug'], cheap: ['Jan', 'Feb', 'Nov'] },
+  'CZE': { busiest: ['Jun', 'Jul', 'Dec'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Jul', 'Dec'], cheap: ['Jan', 'Feb', 'Nov'] },
+  'HUN': { busiest: ['Jun', 'Jul', 'Aug'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Jul', 'Aug'], cheap: ['Jan', 'Feb', 'Nov'] },
+  'HRV': { busiest: ['Jun', 'Jul', 'Aug'], leastBusy: ['Jan', 'Feb', 'Nov'], expensive: ['Jul', 'Aug'], cheap: ['Jan', 'Feb', 'Nov'] },
+  'MAR': { busiest: ['Mar', 'Apr', 'Oct'], leastBusy: ['Jun', 'Jul', 'Aug'], expensive: ['Mar', 'Apr', 'Oct'], cheap: ['Jun', 'Jul', 'Aug'] },
+  'KEN': { busiest: ['Jul', 'Aug', 'Sep'], leastBusy: ['Apr', 'May', 'Nov'], expensive: ['Jul', 'Aug', 'Sep'], cheap: ['Apr', 'May', 'Nov'] },
+  'TZA': { busiest: ['Jun', 'Jul', 'Oct'], leastBusy: ['Mar', 'Apr', 'Nov'], expensive: ['Jul', 'Aug'], cheap: ['Mar', 'Apr', 'Nov'] },
+  'JOR': { busiest: ['Mar', 'Apr', 'Oct'], leastBusy: ['Jun', 'Jul', 'Aug'], expensive: ['Mar', 'Apr', 'Oct'], cheap: ['Jun', 'Jul', 'Aug'] },
+  'ISR': { busiest: ['Mar', 'Apr', 'Sep'], leastBusy: ['Jan', 'Feb', 'Jul'], expensive: ['Mar', 'Apr', 'Sep'], cheap: ['Jan', 'Feb', 'Jul'] },
+  'OMN': { busiest: ['Oct', 'Nov', 'Feb'], leastBusy: ['May', 'Jun', 'Aug'], expensive: ['Oct', 'Nov', 'Feb'], cheap: ['May', 'Jun', 'Aug'] },
+  'QAT': { busiest: ['Nov', 'Dec', 'Jan'], leastBusy: ['Jun', 'Jul', 'Aug'], expensive: ['Nov', 'Dec'], cheap: ['Jun', 'Jul', 'Aug'] },
+  'SAU': { busiest: ['Oct', 'Nov', 'Jan'], leastBusy: ['Jun', 'Jul', 'Aug'], expensive: ['Oct', 'Nov'], cheap: ['Jun', 'Jul', 'Aug'] },
+  'PER': { busiest: ['Jun', 'Jul', 'Aug'], leastBusy: ['Feb', 'Mar', 'Nov'], expensive: ['Jun', 'Jul', 'Aug'], cheap: ['Feb', 'Mar', 'Nov'] },
+  'CHL': { busiest: ['Dec', 'Jan', 'Feb'], leastBusy: ['May', 'Jun', 'Sep'], expensive: ['Dec', 'Jan', 'Feb'], cheap: ['May', 'Jun', 'Sep'] },
+  'COL': { busiest: ['Dec', 'Jan', 'Jun'], leastBusy: ['Feb', 'Sep', 'Oct'], expensive: ['Dec', 'Jan'], cheap: ['Sep', 'Oct', 'Nov'] },
+  'CRI': { busiest: ['Dec', 'Jan', 'Mar'], leastBusy: ['May', 'Sep', 'Oct'], expensive: ['Dec', 'Jan', 'Mar'], cheap: ['May', 'Sep', 'Oct'] },
+  'CUB': { busiest: ['Dec', 'Jan', 'Feb'], leastBusy: ['May', 'Sep', 'Oct'], expensive: ['Dec', 'Jan', 'Feb'], cheap: ['May', 'Sep', 'Oct'] },
+  'FJI': { busiest: ['Jul', 'Aug', 'Sep'], leastBusy: ['Jan', 'Feb', 'Mar'], expensive: ['Jul', 'Aug', 'Sep'], cheap: ['Jan', 'Feb', 'Mar'] },
+  'MUS': { busiest: ['Dec', 'Jan', 'Jul'], leastBusy: ['Feb', 'May', 'Sep'], expensive: ['Dec', 'Jan'], cheap: ['May', 'Sep', 'Oct'] },
+};
 
 // ISO3 to ISO2 country code mapping for flags
 const iso3ToIso2 = {
@@ -116,6 +182,12 @@ const CountryDetailModal = ({ country, onClose }) => {
           }
         }
 
+        // Deduplicate apps by app_name
+        const rawApps = appsRes.data.data?.filter(d => d.country_code === code || d.country_name === name) || [];
+        const uniqueApps = rawApps.filter((app, index, self) => 
+          index === self.findIndex(a => a.app_name === app.app_name)
+        );
+
         setCountryData({
           seasons: seasonsRes.data.data?.find(d => d.country_code === code || d.country_name === name),
           visa: visaRes.data.data?.find(d => d.country_code === code || d.country_name === name),
@@ -123,7 +195,7 @@ const CountryDetailModal = ({ country, onClose }) => {
           plugs: plugsRes.data.data?.find(d => d.country_code === code || d.country_name === name),
           festivals: festivalsRes.data.data?.filter(d => d.country_code === code || d.country_name === name) || [],
           dishes: allDishes,
-          apps: appsRes.data.data?.filter(d => d.country_code === code || d.country_name === name) || [],
+          apps: uniqueApps,
           safety: safetyRes.data.data?.find(d => d.country_code === code || d.country_name === name),
           forex: countryForex
         });
@@ -260,6 +332,50 @@ const CountryDetailModal = ({ country, onClose }) => {
                 )}
               </div>
 
+              {/* Travel Timing Info */}
+              {travelTimingData[country.country_code] && (
+                <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-xl p-5 border border-violet-100">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Users className="w-5 h-5 text-violet-500" />
+                    <h3 className="font-semibold text-primary">Crowd & Cost Insights</h3>
+                  </div>
+                  <div className="space-y-3">
+                    {/* Busiest/Least Busy */}
+                    <div className="flex items-start gap-2">
+                      <TrendingUp className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <span className="text-xs font-medium text-red-600">Busiest:</span>
+                        <span className="text-xs text-muted-foreground ml-1">{travelTimingData[country.country_code].busiest.join(', ')}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <TrendingDown className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <span className="text-xs font-medium text-green-600">Least Busy:</span>
+                        <span className="text-xs text-muted-foreground ml-1">{travelTimingData[country.country_code].leastBusy.join(', ')}</span>
+                      </div>
+                    </div>
+                    {/* Most/Least Expensive */}
+                    <div className="pt-2 border-t border-violet-100">
+                      <div className="flex items-start gap-2">
+                        <DollarSign className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <span className="text-xs font-medium text-red-600">Expensive:</span>
+                          <span className="text-xs text-muted-foreground ml-1">{travelTimingData[country.country_code].expensive.join(', ')}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2 mt-2">
+                        <DollarSign className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <span className="text-xs font-medium text-green-600">Budget-Friendly:</span>
+                          <span className="text-xs text-muted-foreground ml-1">{travelTimingData[country.country_code].cheap.join(', ')}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Visa Info */}
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100">
                 <div className="flex items-center gap-2 mb-3">
@@ -278,6 +394,25 @@ const CountryDetailModal = ({ country, onClose }) => {
                     {countryData.visa.requirements && (
                       <p className="mt-2 text-sm text-muted-foreground">{countryData.visa.requirements}</p>
                     )}
+                    {/* Visa Tool Links */}
+                    <div className="mt-3 pt-3 border-t border-blue-100 flex flex-wrap gap-2">
+                      <a 
+                        href="/visa#eligibility-checker" 
+                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium hover:bg-blue-200 transition-all"
+                        data-testid="visa-eligibility-link"
+                      >
+                        <CheckCircle className="w-3 h-3" />
+                        Check Eligibility
+                      </a>
+                      <a 
+                        href="/visa#document-checklist" 
+                        className="inline-flex items-center gap-1 px-3 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium hover:bg-indigo-200 transition-all"
+                        data-testid="document-checklist-link"
+                      >
+                        <ClipboardList className="w-3 h-3" />
+                        Document Checklist
+                      </a>
+                    </div>
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">No visa data available</p>
@@ -336,17 +471,23 @@ const CountryDetailModal = ({ country, onClose }) => {
               <div className="md:col-span-2 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-5 border border-emerald-100">
                 <div className="flex items-center gap-2 mb-3">
                   <DollarSign className="w-5 h-5 text-emerald-500" />
-                  <h3 className="font-semibold text-primary">Exchange Rate (INR)</h3>
+                  <h3 className="font-semibold text-primary">Exchange Rate</h3>
                 </div>
                 {countryData.forex ? (
-                  <div className="flex items-center gap-4">
-                    <div className="text-center">
-                      <p className="text-2xl font-bold text-emerald-700">₹{countryData.forex.rate?.toFixed(2)}</p>
-                      <p className="text-sm text-muted-foreground">= 1 {countryData.forex.currency}</p>
+                  <div className="flex items-center gap-4 flex-wrap">
+                    <div className="flex items-center gap-3 bg-white rounded-lg px-4 py-3 shadow-sm">
+                      <div className="text-center">
+                        <p className="text-lg font-bold text-emerald-700">1 {countryData.forex.currency}</p>
+                        <p className="text-xs text-muted-foreground">{countryData.forex.country_name}</p>
+                      </div>
+                      <ArrowRightLeft className="w-5 h-5 text-emerald-500" />
+                      <div className="text-center">
+                        <p className="text-lg font-bold text-emerald-700">₹{countryData.forex.rate?.toFixed(2)}</p>
+                        <p className="text-xs text-muted-foreground">Indian Rupee</p>
+                      </div>
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      <p>{countryData.forex.country_name}</p>
-                      <p className="text-xs">Currency: {countryData.forex.currency}</p>
+                    <div className="text-xs text-muted-foreground italic">
+                      Live exchange rates
                     </div>
                   </div>
                 ) : (

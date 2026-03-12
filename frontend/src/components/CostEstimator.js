@@ -1,15 +1,107 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calculator, Plane, Hotel, Utensils, Camera, ShoppingBag, Loader2, IndianRupee } from 'lucide-react';
+import { X, Calculator, Plane, Hotel, Utensils, Camera, ShoppingBag, Loader2, IndianRupee, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+
+// Month data for scrollable selector
+const MONTHS = [
+  { value: 1, label: 'Jan', full: 'January' },
+  { value: 2, label: 'Feb', full: 'February' },
+  { value: 3, label: 'Mar', full: 'March' },
+  { value: 4, label: 'Apr', full: 'April' },
+  { value: 5, label: 'May', full: 'May' },
+  { value: 6, label: 'Jun', full: 'June' },
+  { value: 7, label: 'Jul', full: 'July' },
+  { value: 8, label: 'Aug', full: 'August' },
+  { value: 9, label: 'Sep', full: 'September' },
+  { value: 10, label: 'Oct', full: 'October' },
+  { value: 11, label: 'Nov', full: 'November' },
+  { value: 12, label: 'Dec', full: 'December' }
+];
+
+// Seasonal multipliers (peak/shoulder/off-season)
+const seasonalMultipliers = {
+  'Thailand': { peak: [11, 12, 1, 2], shoulder: [3, 4, 10], off: [5, 6, 7, 8, 9] },
+  'Indonesia': { peak: [6, 7, 8, 12], shoulder: [4, 5, 9, 10], off: [1, 2, 3, 11] },
+  'Malaysia': { peak: [12, 1, 7], shoulder: [2, 3, 6, 8], off: [4, 5, 9, 10, 11] },
+  'Singapore': { peak: [12, 1, 6], shoulder: [2, 3, 5, 7], off: [4, 8, 9, 10, 11] },
+  'Vietnam': { peak: [12, 1, 2], shoulder: [3, 4, 10, 11], off: [5, 6, 7, 8, 9] },
+  'Philippines': { peak: [12, 1, 4], shoulder: [2, 3, 11], off: [5, 6, 7, 8, 9, 10] },
+  'Cambodia': { peak: [11, 12, 1, 2], shoulder: [3, 10], off: [4, 5, 6, 7, 8, 9] },
+  'Laos': { peak: [11, 12, 1, 2], shoulder: [3, 10], off: [4, 5, 6, 7, 8, 9] },
+  'Myanmar': { peak: [11, 12, 1, 2], shoulder: [3, 10], off: [4, 5, 6, 7, 8, 9] },
+  'Japan': { peak: [3, 4, 10, 11], shoulder: [5, 9, 12], off: [1, 2, 6, 7, 8] },
+  'South Korea': { peak: [4, 5, 9, 10], shoulder: [3, 6, 11], off: [1, 2, 7, 8, 12] },
+  'China': { peak: [1, 2, 10], shoulder: [4, 5, 9], off: [3, 6, 7, 8, 11, 12] },
+  'Taiwan': { peak: [2, 10, 11], shoulder: [1, 3, 4, 12], off: [5, 6, 7, 8, 9] },
+  'Hong Kong': { peak: [10, 11, 12], shoulder: [1, 2, 3, 4], off: [5, 6, 7, 8, 9] },
+  'Maldives': { peak: [12, 1, 2, 3], shoulder: [4, 11], off: [5, 6, 7, 8, 9, 10] },
+  'Sri Lanka': { peak: [12, 1, 2], shoulder: [3, 7, 8], off: [4, 5, 6, 9, 10, 11] },
+  'Nepal': { peak: [10, 11, 3], shoulder: [2, 4, 9, 12], off: [1, 5, 6, 7, 8] },
+  'Bhutan': { peak: [3, 4, 9, 10, 11], shoulder: [2, 5, 12], off: [1, 6, 7, 8] },
+  'UAE': { peak: [11, 12, 1, 2], shoulder: [3, 4, 10], off: [5, 6, 7, 8, 9] },
+  'Turkey': { peak: [6, 7, 8], shoulder: [4, 5, 9, 10], off: [1, 2, 3, 11, 12] },
+  'Jordan': { peak: [3, 4, 10, 11], shoulder: [2, 5, 9], off: [1, 6, 7, 8, 12] },
+  'Israel': { peak: [3, 4, 9, 10], shoulder: [5, 11], off: [1, 2, 6, 7, 8, 12] },
+  'Oman': { peak: [10, 11, 2], shoulder: [1, 3, 12], off: [4, 5, 6, 7, 8, 9] },
+  'Qatar': { peak: [11, 12, 1], shoulder: [2, 3, 10], off: [4, 5, 6, 7, 8, 9] },
+  'Saudi Arabia': { peak: [10, 11, 1], shoulder: [2, 3, 12], off: [4, 5, 6, 7, 8, 9] },
+  'Egypt': { peak: [10, 11, 12], shoulder: [1, 2, 3, 4], off: [5, 6, 7, 8, 9] },
+  'Morocco': { peak: [3, 4, 10, 11], shoulder: [2, 5, 9], off: [1, 6, 7, 8, 12] },
+  'South Africa': { peak: [12, 1, 7], shoulder: [2, 6, 8, 11], off: [3, 4, 5, 9, 10] },
+  'Kenya': { peak: [7, 8, 9], shoulder: [1, 2, 6, 10], off: [3, 4, 5, 11, 12] },
+  'Tanzania': { peak: [6, 7, 8, 9, 10], shoulder: [1, 2, 11, 12], off: [3, 4, 5] },
+  'Mauritius': { peak: [12, 1, 7], shoulder: [2, 6, 8, 11], off: [3, 4, 5, 9, 10] },
+  'Greece': { peak: [6, 7, 8], shoulder: [4, 5, 9, 10], off: [1, 2, 3, 11, 12] },
+  'Italy': { peak: [6, 7, 8], shoulder: [4, 5, 9, 10], off: [1, 2, 3, 11, 12] },
+  'France': { peak: [6, 7, 8, 12], shoulder: [4, 5, 9, 10], off: [1, 2, 3, 11] },
+  'Spain': { peak: [6, 7, 8], shoulder: [4, 5, 9, 10], off: [1, 2, 3, 11, 12] },
+  'Portugal': { peak: [6, 7, 8], shoulder: [4, 5, 9, 10], off: [1, 2, 3, 11, 12] },
+  'Switzerland': { peak: [7, 8, 12], shoulder: [1, 2, 6, 9], off: [3, 4, 5, 10, 11] },
+  'Austria': { peak: [7, 8, 12], shoulder: [1, 2, 6, 9], off: [3, 4, 5, 10, 11] },
+  'Germany': { peak: [6, 7, 12], shoulder: [5, 8, 9], off: [1, 2, 3, 4, 10, 11] },
+  'United Kingdom': { peak: [6, 7, 8, 12], shoulder: [4, 5, 9], off: [1, 2, 3, 10, 11] },
+  'Netherlands': { peak: [4, 5, 7], shoulder: [6, 8, 9], off: [1, 2, 3, 10, 11, 12] },
+  'Belgium': { peak: [6, 7, 8], shoulder: [4, 5, 9], off: [1, 2, 3, 10, 11, 12] },
+  'Czech Republic': { peak: [6, 7, 12], shoulder: [4, 5, 8, 9], off: [1, 2, 3, 10, 11] },
+  'Hungary': { peak: [6, 7, 8], shoulder: [4, 5, 9], off: [1, 2, 3, 10, 11, 12] },
+  'Poland': { peak: [6, 7, 8], shoulder: [5, 9], off: [1, 2, 3, 4, 10, 11, 12] },
+  'Croatia': { peak: [6, 7, 8], shoulder: [5, 9], off: [1, 2, 3, 4, 10, 11, 12] },
+  'Iceland': { peak: [6, 7, 8], shoulder: [5, 9], off: [1, 2, 3, 4, 10, 11, 12] },
+  'Norway': { peak: [6, 7, 12], shoulder: [5, 8], off: [1, 2, 3, 4, 9, 10, 11] },
+  'Sweden': { peak: [6, 7, 12], shoulder: [5, 8], off: [1, 2, 3, 4, 9, 10, 11] },
+  'Finland': { peak: [6, 7, 12], shoulder: [8, 1, 2], off: [3, 4, 5, 9, 10, 11] },
+  'Denmark': { peak: [6, 7, 8], shoulder: [5, 9], off: [1, 2, 3, 4, 10, 11, 12] },
+  'Ireland': { peak: [6, 7, 8], shoulder: [5, 9], off: [1, 2, 3, 4, 10, 11, 12] },
+  'United States': { peak: [6, 7, 12], shoulder: [3, 4, 5, 8, 9, 10, 11], off: [1, 2] },
+  'Canada': { peak: [6, 7, 8], shoulder: [5, 9, 12], off: [1, 2, 3, 4, 10, 11] },
+  'Mexico': { peak: [12, 1, 3], shoulder: [2, 4, 7, 8, 11], off: [5, 6, 9, 10] },
+  'Brazil': { peak: [12, 1, 2], shoulder: [7, 11], off: [3, 4, 5, 6, 8, 9, 10] },
+  'Argentina': { peak: [12, 1, 7], shoulder: [2, 3, 11], off: [4, 5, 6, 8, 9, 10] },
+  'Peru': { peak: [6, 7, 8], shoulder: [4, 5, 9, 10], off: [1, 2, 3, 11, 12] },
+  'Chile': { peak: [12, 1, 2], shoulder: [3, 11], off: [4, 5, 6, 7, 8, 9, 10] },
+  'Colombia': { peak: [12, 1, 6], shoulder: [2, 3, 7, 8], off: [4, 5, 9, 10, 11] },
+  'Costa Rica': { peak: [12, 1, 3], shoulder: [2, 4, 7, 8, 11], off: [5, 6, 9, 10] },
+  'Cuba': { peak: [12, 1, 2], shoulder: [3, 4, 11], off: [5, 6, 7, 8, 9, 10] },
+  'Australia': { peak: [12, 1, 7], shoulder: [2, 6, 8], off: [3, 4, 5, 9, 10, 11] },
+  'New Zealand': { peak: [12, 1, 2], shoulder: [3, 11], off: [4, 5, 6, 7, 8, 9, 10] },
+  'Fiji': { peak: [7, 8, 9], shoulder: [6, 10], off: [1, 2, 3, 4, 5, 11, 12] },
+  'Mongolia': { peak: [6, 7, 8], shoulder: [5, 9], off: [1, 2, 3, 4, 10, 11, 12] },
+  'Uzbekistan': { peak: [4, 5, 9, 10], shoulder: [3, 6, 11], off: [1, 2, 7, 8, 12] },
+  'Kazakhstan': { peak: [5, 6, 9], shoulder: [4, 7, 8], off: [1, 2, 3, 10, 11, 12] },
+  'Greenland': { peak: [6, 7, 8], shoulder: [5, 9], off: [1, 2, 3, 4, 10, 11, 12] },
+  'Russia': { peak: [6, 7, 8], shoulder: [5, 9, 12], off: [1, 2, 3, 4, 10, 11] },
+};
 
 const CostEstimator = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
+  const currentMonth = new Date().getMonth() + 1; // 1-12
   const [formData, setFormData] = useState({
     country: '',
     duration: 7,
     travelers: 1,
-    budget_type: 'mid_range'
+    budget_type: 'mid_range',
+    travel_month: currentMonth
   });
 
   // Country cost data (per day in INR) - Expanded to 60+ countries
@@ -99,7 +191,16 @@ const CostEstimator = ({ isOpen, onClose }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: name === 'duration' || name === 'travelers' ? parseInt(value) : value }));
+    setFormData(prev => ({ ...prev, [name]: name === 'duration' || name === 'travelers' || name === 'travel_month' ? parseInt(value) : value }));
+  };
+
+  const getSeasonMultiplier = (country, month) => {
+    const seasons = seasonalMultipliers[country];
+    if (!seasons) return { multiplier: 1, season: 'regular' };
+    
+    if (seasons.peak.includes(month)) return { multiplier: 1.25, season: 'peak' };
+    if (seasons.off.includes(month)) return { multiplier: 0.8, season: 'off' };
+    return { multiplier: 1, season: 'shoulder' };
   };
 
   const calculateCost = () => {
@@ -112,9 +213,13 @@ const CostEstimator = ({ isOpen, onClose }) => {
       const dailyCosts = data[budgetKey];
       const flightCost = data.flight[budgetKey];
       
+      // Get seasonal multiplier
+      const { multiplier, season } = getSeasonMultiplier(formData.country, formData.travel_month);
+      
       const perDayTotal = Object.values(dailyCosts).reduce((a, b) => a + b, 0);
-      const totalDailyCost = perDayTotal * formData.duration * formData.travelers;
-      const totalFlightCost = flightCost * formData.travelers;
+      const adjustedPerDay = Math.round(perDayTotal * multiplier);
+      const totalDailyCost = adjustedPerDay * formData.duration * formData.travelers;
+      const totalFlightCost = Math.round(flightCost * multiplier * formData.travelers);
       const grandTotal = totalDailyCost + totalFlightCost;
       
       setResult({
@@ -122,15 +227,18 @@ const CostEstimator = ({ isOpen, onClose }) => {
         duration: formData.duration,
         travelers: formData.travelers,
         budget_type: formData.budget_type,
+        travel_month: formData.travel_month,
+        season: season,
+        seasonMultiplier: multiplier,
         breakdown: {
           flight: totalFlightCost,
-          hotel: dailyCosts.hotel * formData.duration * formData.travelers,
-          food: dailyCosts.food * formData.duration * formData.travelers,
-          transport: dailyCosts.transport * formData.duration * formData.travelers,
-          activities: dailyCosts.activities * formData.duration * formData.travelers,
-          misc: dailyCosts.misc * formData.duration * formData.travelers
+          hotel: Math.round(dailyCosts.hotel * multiplier * formData.duration * formData.travelers),
+          food: Math.round(dailyCosts.food * multiplier * formData.duration * formData.travelers),
+          transport: Math.round(dailyCosts.transport * multiplier * formData.duration * formData.travelers),
+          activities: Math.round(dailyCosts.activities * multiplier * formData.duration * formData.travelers),
+          misc: Math.round(dailyCosts.misc * multiplier * formData.duration * formData.travelers)
         },
-        perDayPerPerson: perDayTotal,
+        perDayPerPerson: adjustedPerDay,
         totalDailyCost,
         totalFlightCost,
         grandTotal
@@ -158,7 +266,17 @@ const CostEstimator = ({ isOpen, onClose }) => {
       country: '',
       duration: 7,
       travelers: 1,
-      budget_type: 'mid_range'
+      budget_type: 'mid_range',
+      travel_month: currentMonth
+    });
+  };
+
+  const scrollMonth = (direction) => {
+    setFormData(prev => {
+      let newMonth = prev.travel_month + direction;
+      if (newMonth > 12) newMonth = 1;
+      if (newMonth < 1) newMonth = 12;
+      return { ...prev, travel_month: newMonth };
     });
   };
 
@@ -216,6 +334,69 @@ const CostEstimator = ({ isOpen, onClose }) => {
                         <option key={c} value={c}>{c}</option>
                       ))}
                     </select>
+                  </div>
+                  
+                  {/* Month Selector */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <Calendar className="w-4 h-4 inline mr-1" />
+                      Travel Month
+                    </label>
+                    <div className="flex items-center justify-center gap-2 bg-gray-50 rounded-xl p-3">
+                      <button
+                        type="button"
+                        onClick={() => scrollMonth(-1)}
+                        className="p-2 rounded-full hover:bg-gray-200 transition-all"
+                        data-testid="month-prev-btn"
+                      >
+                        <ChevronLeft className="w-5 h-5 text-gray-600" />
+                      </button>
+                      
+                      <div className="flex gap-1 overflow-hidden">
+                        {MONTHS.map((month) => (
+                          <button
+                            key={month.value}
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, travel_month: month.value }))}
+                            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                              formData.travel_month === month.value
+                                ? 'bg-purple-600 text-white shadow-md'
+                                : 'bg-white text-gray-600 hover:bg-purple-50'
+                            }`}
+                            data-testid={`month-btn-${month.label.toLowerCase()}`}
+                          >
+                            {month.label}
+                          </button>
+                        ))}
+                      </div>
+                      
+                      <button
+                        type="button"
+                        onClick={() => scrollMonth(1)}
+                        className="p-2 rounded-full hover:bg-gray-200 transition-all"
+                        data-testid="month-next-btn"
+                      >
+                        <ChevronRight className="w-5 h-5 text-gray-600" />
+                      </button>
+                    </div>
+                    {formData.country && seasonalMultipliers[formData.country] && (
+                      <div className="mt-2 text-center">
+                        {(() => {
+                          const { season } = getSeasonMultiplier(formData.country, formData.travel_month);
+                          return (
+                            <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                              season === 'peak' ? 'bg-red-100 text-red-700' :
+                              season === 'off' ? 'bg-green-100 text-green-700' :
+                              'bg-yellow-100 text-yellow-700'
+                            }`}>
+                              {season === 'peak' ? '🔥 Peak Season (+25% costs)' :
+                               season === 'off' ? '💰 Off Season (-20% costs)' :
+                               '⚖️ Shoulder Season (Regular prices)'}
+                            </span>
+                          );
+                        })()}
+                      </div>
+                    )}
                   </div>
                   
                   <div>
@@ -297,8 +478,17 @@ const CostEstimator = ({ isOpen, onClose }) => {
                     {result.duration}-Day Trip to {result.country}
                   </h3>
                   <p className="text-sm text-gray-500">
-                    {result.travelers} traveler{result.travelers > 1 ? 's' : ''} • {getBudgetLabel(result.budget_type)} Budget
+                    {result.travelers} traveler{result.travelers > 1 ? 's' : ''} • {getBudgetLabel(result.budget_type)} Budget • {MONTHS.find(m => m.value === result.travel_month)?.full}
                   </p>
+                  <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium ${
+                    result.season === 'peak' ? 'bg-red-100 text-red-700' :
+                    result.season === 'off' ? 'bg-green-100 text-green-700' :
+                    'bg-yellow-100 text-yellow-700'
+                  }`}>
+                    {result.season === 'peak' ? '🔥 Peak Season' :
+                     result.season === 'off' ? '💰 Off Season (Best Value!)' :
+                     '⚖️ Shoulder Season'}
+                  </span>
                 </div>
 
                 {/* Grand Total */}

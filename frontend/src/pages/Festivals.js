@@ -203,7 +203,8 @@ const Festivals = () => {
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {monthFestivals.map((festival, idx) => {
                       const countryDishes = dishes[festival.country_code] || [];
-                      const festivalKey = `${festival.country_code}-${festival.festival_name}`;
+                      const festivalName = festival.festival_name || festival.name || 'Festival';
+                      const festivalKey = `${festival.country_code}-${festivalName}-${idx}`;
                       const isExpanded = expandedFestival === festivalKey;
                       
                       return (
@@ -230,7 +231,7 @@ const Festivals = () => {
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between">
                                   <h4 className="font-semibold text-foreground text-lg mb-1">
-                                    {festival.festival_name}
+                                    {festival.festival_name || festival.name || 'Festival'}
                                   </h4>
                                   {isExpanded ? (
                                     <ChevronUp className="w-5 h-5 text-muted-foreground" />
@@ -275,7 +276,7 @@ const Festivals = () => {
                                   <div className="mt-4 bg-gray-50 rounded-lg p-3">
                                     <h5 className="font-semibold text-gray-700 text-sm mb-2">About the Festival</h5>
                                     <p className="text-sm text-gray-600">
-                                      {festival.description || `${festival.festival_name} is one of the most celebrated festivals in ${festival.country_name}. Join locals and tourists alike in experiencing this unique cultural celebration.`}
+                                      {festival.description || `${festivalName} is one of the most celebrated festivals in ${festival.country_name}. Join locals and tourists alike in experiencing this unique cultural celebration.`}
                                     </p>
                                   </div>
                                   
