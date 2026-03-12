@@ -182,10 +182,10 @@ const CountryDetailModal = ({ country, onClose }) => {
           }
         }
 
-        // Deduplicate apps by app_name
+        // Deduplicate apps by app_name (case-insensitive)
         const rawApps = appsRes.data.data?.filter(d => d.country_code === code || d.country_name === name) || [];
         const uniqueApps = rawApps.filter((app, index, self) => 
-          index === self.findIndex(a => a.app_name === app.app_name)
+          index === self.findIndex(a => a.app_name.toLowerCase() === app.app_name.toLowerCase())
         );
 
         setCountryData({

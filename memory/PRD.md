@@ -12,16 +12,23 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
 - Travel Blog/Tips section
 - Safety & Emergency contact information
 
-## What's Been Implemented (March 11, 2026)
+## What's Been Implemented
 
-### Latest Updates (March 11, 2026 - Session 2)
+### Latest Updates (March 12, 2026)
+- [x] **Crowd & Cost Insights**: New section in Country Detail Modal showing busiest/least busy months and expensive/budget-friendly travel times (60+ countries)
+- [x] **FOREX Interchange Symbol**: Exchange rate display now shows "1 THB ↔ ₹0.34" with visual interchange icon
+- [x] **App Deduplication**: Fixed duplicate apps issue in modal with case-insensitive filtering
+- [x] **Visa Tool Links**: Added "Check Eligibility" and "Document Checklist" quick access buttons in Visa section
+- [x] **Festival Name Fix**: Cards now properly display festival names using `festival_name || name` fallback
+- [x] **Cost Estimator Month Selector**: Added 12-month selector with navigation arrows
+- [x] **Seasonal Pricing**: Cost Estimator shows season indicators (Peak +25%, Off -20%, Shoulder regular)
+
+### Previous Updates (March 11, 2026 - Session 2)
 - [x] **Map Improvements**: Larger map (scale=260, 1400x700), centered better with less white space
 - [x] **Zoom Controls**: Added +/- buttons and pinch-to-zoom (ZoomableGroup) for mobile
 - [x] **Festival Map Color Coding**: Red=Many(3+), Orange=Some(2), Blue=Few(1)
-- [x] **Festival Month Grouping**: normalizeMonth() properly groups by January, February, etc. (no more "Unknown")
-- [x] **Greenland Visa Fixed**: Shows orange (visa required) instead of grey
-- [x] **Country Flags**: Added iso3ToIso2 mapping for accurate flag display (Thailand=🇹🇭, Japan=🇯🇵, etc.)
-- [x] **Thailand Season Fix**: Modal shows "BEST TIME NOW" when current month is in best_months array
+- [x] **Festival Month Grouping**: normalizeMonth() properly groups by January, February, etc.
+- [x] **Country Flags**: Added iso3ToIso2 mapping for accurate flag display
 - [x] **Safety & Emergency in Modal**: Police/Ambulance/Fire numbers + Indian Embassy contact
 - [x] **Forex in Modal**: Exchange rate with currency code displayed
 
@@ -35,7 +42,7 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
 - [x] Festivals & Local Dishes page (117 festivals, 90 dishes)
 - [x] Travel Blog with expandable articles
 - [x] Safety & Emergency page with 63 countries
-- [x] Cost Estimator with 70 countries
+- [x] Cost Estimator with 70 countries + seasonal pricing
 
 ### Data Coverage
 - **Visa**: 194 countries (Greenland added with Danish/Schengen visa)
@@ -43,7 +50,8 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
 - **Festivals**: 117 festivals across many countries
 - **Dishes**: 90 dishes with veg/non-veg indicators
 - **Safety**: 63 countries with emergency numbers
-- **Cost Estimator**: 70 countries with Budget/Mid-Range/Luxury pricing
+- **Cost Estimator**: 70 countries with Budget/Mid-Range/Luxury pricing + seasonal multipliers
+- **Travel Timing Data**: 60+ countries with busiest/least busy/expensive/budget-friendly months
 
 ### Live API Integrations
 - **Weather**: Open-Meteo API (free, key-less) - LIVE
@@ -52,11 +60,10 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
 
 ## Technical Architecture
 
-### Key Components Updated
-- `/app/frontend/src/components/WorldMap.js` - ZoomableGroup, scale=260, 1400x700
-- `/app/frontend/src/components/CountryDetailModal.js` - Safety, Forex, fixed season logic
-- `/app/frontend/src/pages/Festivals.js` - normalizeMonth() for proper grouping
-- `/app/frontend/src/pages/Seasons.js` - iso3ToIso2 mapping for flags
+### Key Components Updated (March 12, 2026)
+- `/app/frontend/src/components/CountryDetailModal.js` - Added travelTimingData, Crowd & Cost Insights, FOREX interchange symbol, app deduplication, visa links
+- `/app/frontend/src/components/CostEstimator.js` - Added MONTHS array, seasonalMultipliers, month selector UI, getSeasonMultiplier()
+- `/app/frontend/src/pages/Festivals.js` - Fixed festival name display with fallback
 
 ### ISO3 to ISO2 Flag Mapping
 Countries use ISO3 codes (THA, JPN, USA) but flagcdn.com uses ISO2 (th, jp, us). Added mapping for 80+ countries.
@@ -64,6 +71,7 @@ Countries use ISO3 codes (THA, JPN, USA) but flagcdn.com uses ISO2 (th, jp, us).
 ## Future Enhancements (Backlog)
 - [ ] Compare Countries feature (P1)
 - [ ] Trip Planner feature (P2)
+- [ ] India-specific map data source (P2)
 - [ ] Travel Budget Tracker
 - [ ] User authentication
 
