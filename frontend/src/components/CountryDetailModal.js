@@ -3,6 +3,7 @@ import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2, Shield, Phone, DollarSign, ArrowRightLeft, Users, TrendingUp, TrendingDown, CheckCircle, ClipboardList } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
+import { useAuth } from '../context/AuthContext';
 import VisaEligibilityChecker from './VisaEligibilityChecker';
 import DocumentChecklistGenerator from './DocumentChecklistGenerator';
 
@@ -223,6 +224,7 @@ const CountryDetailModal = ({ country, onClose }) => {
     forex: null
   });
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const { requireAuth, user } = useAuth();
 
   const inWishlist = isInWishlist(country.country_code);
   const currentMonth = MONTH_ABBREV[new Date().getMonth()];
@@ -336,9 +338,11 @@ const CountryDetailModal = ({ country, onClose }) => {
 
   const handleWishlistToggle = () => {
     if (inWishlist) {
-      removeFromWishlist(country.country_code);
+      removeFromWishlist(country.country_code, user?.user_id);
     } else {
-      addToWishlist(country);
+      requireAuth(() => {
+        addToWishlist(country, user?.user_id);
+      });
     }
   };
 

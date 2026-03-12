@@ -2,7 +2,9 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import BackToTop from './components/BackToTop';
+import AuthModal from './components/AuthModal';
 import { WishlistProvider } from './context/WishlistContext';
+import { AuthProvider } from './context/AuthContext';
 import Seasons from './pages/Seasons';
 import Visa from './pages/Visa';
 import Forex from './pages/Forex';
@@ -14,6 +16,7 @@ import Safety from './pages/Safety';
 import CountryDetail from './pages/CountryDetail';
 import Blog from './pages/Blog';
 import Wishlist from './pages/Wishlist';
+import UserProfile from './pages/UserProfile';
 import '@/App.css';
 
 // Scroll to top on route change
@@ -30,27 +33,31 @@ const ScrollToTop = () => {
 function App() {
   return (
     <div className="App">
-      <WishlistProvider>
-        <BrowserRouter>
-          <ScrollToTop />
-          <Navigation />
-          <Routes>
-            <Route path="/" element={<Seasons />} />
-            <Route path="/seasons" element={<Seasons />} />
-            <Route path="/visa" element={<Visa />} />
-            <Route path="/forex" element={<Forex />} />
-            <Route path="/apps" element={<Apps />} />
-            <Route path="/weather" element={<Weather />} />
-            <Route path="/plugs" element={<PowerPlug />} />
-            <Route path="/festivals" element={<Festivals />} />
-            <Route path="/safety" element={<Safety />} />
-            <Route path="/country/:countryCode" element={<CountryDetail />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-          </Routes>
-          <BackToTop />
-        </BrowserRouter>
-      </WishlistProvider>
+      <AuthProvider>
+        <WishlistProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <Navigation />
+            <AuthModal />
+            <Routes>
+              <Route path="/" element={<Seasons />} />
+              <Route path="/seasons" element={<Seasons />} />
+              <Route path="/visa" element={<Visa />} />
+              <Route path="/forex" element={<Forex />} />
+              <Route path="/apps" element={<Apps />} />
+              <Route path="/weather" element={<Weather />} />
+              <Route path="/plugs" element={<PowerPlug />} />
+              <Route path="/festivals" element={<Festivals />} />
+              <Route path="/safety" element={<Safety />} />
+              <Route path="/country/:countryCode" element={<CountryDetail />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/profile" element={<UserProfile />} />
+            </Routes>
+            <BackToTop />
+          </BrowserRouter>
+        </WishlistProvider>
+      </AuthProvider>
     </div>
   );
 }

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Compass, Calendar, FileText, DollarSign, Smartphone, Menu, X, BookOpen, Cloud, Zap, Utensils, Heart, Shield } from 'lucide-react';
+import { Compass, Calendar, FileText, DollarSign, Smartphone, Menu, X, BookOpen, Cloud, Zap, Utensils, Heart, Shield, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 
 const Navigation = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, isLoggedIn, setShowAuthModal } = useAuth();
 
   const navItems = [
     { path: '/', label: 'Best Seasons', icon: Calendar },
@@ -47,8 +49,26 @@ const Navigation = () => {
               </span>
             </Link>
 
-            {/* Spacer for balance */}
-            <div className="w-10"></div>
+            {/* User Avatar / Login - Right */}
+            {isLoggedIn ? (
+              <Link
+                to="/profile"
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-bold hover:shadow-lg transition-all"
+                data-testid="user-avatar"
+                title={user.name}
+              >
+                {user.name.charAt(0).toUpperCase()}
+              </Link>
+            ) : (
+              <button
+                onClick={() => setShowAuthModal(true)}
+                className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-accent/20 transition-all"
+                data-testid="login-btn"
+                aria-label="Login"
+              >
+                <User className="w-6 h-6 text-primary" />
+              </button>
+            )}
           </div>
         </div>
       </nav>
@@ -115,6 +135,42 @@ const Navigation = () => {
                       </Link>
                     );
                   })}
+                  
+                  {/* Profile Link */}
+                  <div className="pt-4 border-t border-border mt-4">
+                    {isLoggedIn ? (
+                      <Link
+                        to="/profile"
+                        onClick={() => setIsMenuOpen(false)}
+                        className={`flex items-center gap-4 px-4 py-4 rounded-xl transition-all ${
+                          location.pathname === '/profile'
+                            ? 'bg-primary text-white'
+                            : 'text-foreground hover:bg-accent/20'
+                        }`}
+                        data-testid="menu-profile"
+                      >
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold">
+                          {user.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <span className="font-medium block">{user.name}</span>
+                          <span className="text-xs text-muted-foreground">View Profile</span>
+                        </div>
+                      </Link>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          setShowAuthModal(true);
+                        }}
+                        className="flex items-center gap-4 px-4 py-4 rounded-xl transition-all text-foreground hover:bg-accent/20 w-full"
+                        data-testid="menu-login"
+                      >
+                        <User className="w-5 h-5" />
+                        <span className="font-medium">Sign In</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 {/* Menu Footer */}

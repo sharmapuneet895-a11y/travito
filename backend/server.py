@@ -241,6 +241,40 @@ class DocumentChecklistResponse(BaseModel):
     supporting_documents: List[Dict[str, str]]
     tips: List[str]
 
+# ===== USER AUTHENTICATION MODELS =====
+class UserRegisterRequest(BaseModel):
+    name: str
+    email: str
+    phone: str
+
+class UserUpdateRequest(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+
+class UserResponse(BaseModel):
+    user_id: str
+    name: str
+    email: str
+    phone: str
+    created_at: str
+
+class WishlistItem(BaseModel):
+    country_code: str
+    country_name: str
+    added_at: Optional[str] = None
+
+class VisaCheckResult(BaseModel):
+    country: str
+    visa_type: str
+    approval_chance: int
+    checked_at: str
+
+class DocumentChecklistResult(BaseModel):
+    country: str
+    visa_type: str
+    generated_at: str
+
 # Initialize sample data on startup
 @app.on_event("startup")
 async def initialize_data():
@@ -822,6 +856,223 @@ async def generate_document_checklist(request: DocumentChecklistRequest):
     except Exception as e:
         logging.error(f"Document checklist error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ===== USER AUTHENTICATION ENDPOINTS =====
+
+@api_router.post("/auth/register")
+async def register_user(request: UserRegisterRequest):
+    """Register a new user or return existing user if email exists"""
+    email = request.email.lower().strip()
+    
+    # Check if user already exists
+    existing_user = await db.users.find_one({"email": email}, {"_id": 0})
+    if existing_user:
+        return existing_user
+    
+    # Create new user
+    user_id = f"user_{uuid.uuid4().hex[:12]}"
+    user_doc = {
+        "user_id": user_id,
+        "name": request.name.strip(),
+        "email": email,
+        "phone": request.phone.strip(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "wishlist": [],
+        "visa_checks": [],
+        "document_checklists": []
+    }
+    
+    await db.users.insert_one(user_doc)
+    
+    # Return without _id
+    return {
+        "user_id": user_id,
+        "name": user_doc["name"],
+        "email": user_doc["email"],
+        "phone": user_doc["phone"],
+        "created_at": user_doc["created_at"]
+    }
+
+
+@api_router.get("/auth/user/{user_id}")
+async def get_user(user_id: str):
+    """Get user by ID"""
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+
+@api_router.put("/auth/user/{user_id}")
+async def update_user(user_id: str, request: UserUpdateRequest):
+    """Update user details"""
+    user = await db.users.find_one({"user_id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    update_data = {}
+    if request.name:
+        update_data["name"] = request.name.strip()
+    if request.email:
+        update_data["email"] = request.email.lower().strip()
+    if request.phone:
+        update_data["phone"] = request.phone.strip()
+    
+    if update_data:
+        await db.users.update_one({"user_id": user_id}, {"$set": update_data})
+    
+    updated_user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    return updated_user
+
+
+@api_router.delete("/auth/user/{user_id}")
+async def delete_user(user_id: str):
+    """Delete user and all their data"""
+    result = await db.users.delete_one({"user_id": user_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"message": "User deleted successfully"}
+
+
+# ===== USER WISHLIST ENDPOINTS =====
+
+@api_router.get("/user/{user_id}/wishlist")
+async def get_user_wishlist(user_id: str):
+    """Get user's wishlist"""
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0, "wishlist": 1})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"data": user.get("wishlist", [])}
+
+
+@api_router.post("/user/{user_id}/wishlist")
+async def add_to_wishlist(user_id: str, item: WishlistItem):
+    """Add country to user's wishlist"""
+    user = await db.users.find_one({"user_id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    wishlist = user.get("wishlist", [])
+    
+    # Check if already in wishlist
+    if any(w["country_code"] == item.country_code for w in wishlist):
+        return {"message": "Already in wishlist", "wishlist": wishlist}
+    
+    new_item = {
+        "country_code": item.country_code,
+        "country_name": item.country_name,
+        "added_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.users.update_one(
+        {"user_id": user_id},
+        {"$push": {"wishlist": new_item}}
+    )
+    
+    updated_user = await db.users.find_one({"user_id": user_id}, {"_id": 0, "wishlist": 1})
+    return {"message": "Added to wishlist", "wishlist": updated_user.get("wishlist", [])}
+
+
+@api_router.delete("/user/{user_id}/wishlist/{country_code}")
+async def remove_from_wishlist(user_id: str, country_code: str):
+    """Remove country from user's wishlist"""
+    user = await db.users.find_one({"user_id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    await db.users.update_one(
+        {"user_id": user_id},
+        {"$pull": {"wishlist": {"country_code": country_code.upper()}}}
+    )
+    
+    updated_user = await db.users.find_one({"user_id": user_id}, {"_id": 0, "wishlist": 1})
+    return {"message": "Removed from wishlist", "wishlist": updated_user.get("wishlist", [])}
+
+
+# ===== USER VISA CHECKS HISTORY =====
+
+@api_router.get("/user/{user_id}/visa-checks")
+async def get_user_visa_checks(user_id: str):
+    """Get user's visa eligibility check history"""
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0, "visa_checks": 1})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"data": user.get("visa_checks", [])}
+
+
+@api_router.post("/user/{user_id}/visa-checks")
+async def save_visa_check(user_id: str, result: VisaCheckResult):
+    """Save a visa eligibility check result"""
+    user = await db.users.find_one({"user_id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    check_entry = {
+        "country": result.country,
+        "visa_type": result.visa_type,
+        "approval_chance": result.approval_chance,
+        "checked_at": result.checked_at or datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.users.update_one(
+        {"user_id": user_id},
+        {"$push": {"visa_checks": check_entry}}
+    )
+    
+    return {"message": "Visa check saved"}
+
+
+@api_router.delete("/user/{user_id}/visa-checks")
+async def clear_visa_checks(user_id: str):
+    """Clear user's visa check history"""
+    await db.users.update_one(
+        {"user_id": user_id},
+        {"$set": {"visa_checks": []}}
+    )
+    return {"message": "Visa check history cleared"}
+
+
+# ===== USER DOCUMENT CHECKLISTS HISTORY =====
+
+@api_router.get("/user/{user_id}/document-checklists")
+async def get_user_document_checklists(user_id: str):
+    """Get user's document checklist history"""
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0, "document_checklists": 1})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {"data": user.get("document_checklists", [])}
+
+
+@api_router.post("/user/{user_id}/document-checklists")
+async def save_document_checklist(user_id: str, result: DocumentChecklistResult):
+    """Save a document checklist result"""
+    user = await db.users.find_one({"user_id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    checklist_entry = {
+        "country": result.country,
+        "visa_type": result.visa_type,
+        "generated_at": result.generated_at or datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.users.update_one(
+        {"user_id": user_id},
+        {"$push": {"document_checklists": checklist_entry}}
+    )
+    
+    return {"message": "Document checklist saved"}
+
+
+@api_router.delete("/user/{user_id}/document-checklists")
+async def clear_document_checklists(user_id: str):
+    """Clear user's document checklist history"""
+    await db.users.update_one(
+        {"user_id": user_id},
+        {"$set": {"document_checklists": []}}
+    )
+    return {"message": "Document checklist history cleared"}
 
 
 # Include router

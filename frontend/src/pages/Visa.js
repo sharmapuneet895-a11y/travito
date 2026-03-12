@@ -6,6 +6,7 @@ import BackToTop from '../components/BackToTop';
 import VisaEligibilityChecker from '../components/VisaEligibilityChecker';
 import DocumentChecklistGenerator from '../components/DocumentChecklistGenerator';
 import { FileText, Shield, ClipboardList, Sparkles } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -14,6 +15,7 @@ const Visa = () => {
   const [loading, setLoading] = useState(true);
   const [showEligibilityChecker, setShowEligibilityChecker] = useState(false);
   const [showDocumentChecklist, setShowDocumentChecklist] = useState(false);
+  const { requireAuth } = useAuth();
 
   useEffect(() => {
     const fetchVisa = async () => {
@@ -83,7 +85,7 @@ const Visa = () => {
             <motion.div
               whileHover={{ scale: 1.02 }}
               className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white cursor-pointer shadow-lg"
-              onClick={() => setShowEligibilityChecker(true)}
+              onClick={() => requireAuth(() => setShowEligibilityChecker(true))}
               data-testid="visa-eligibility-cta"
             >
               <div className="flex items-start gap-4">
@@ -113,7 +115,7 @@ const Visa = () => {
             <motion.div
               whileHover={{ scale: 1.02 }}
               className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-2xl p-6 text-white cursor-pointer shadow-lg"
-              onClick={() => setShowDocumentChecklist(true)}
+              onClick={() => requireAuth(() => setShowDocumentChecklist(true))}
               data-testid="document-checklist-cta"
             >
               <div className="flex items-start gap-4">
