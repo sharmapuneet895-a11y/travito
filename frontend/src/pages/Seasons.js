@@ -927,11 +927,23 @@ const Seasons = () => {
                 </div>
                 
                 <div className="relative">
-                  {/* Left scroll indicator (hidden, scroll starts at left) */}
+                  {/* Left scroll arrow */}
+                  <button
+                    onClick={() => {
+                      const container = document.getElementById('weather-guide-scroll');
+                      if (container) container.scrollBy({ left: -220, behavior: 'smooth' });
+                    }}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all z-10 border border-gray-200"
+                    data-testid="scroll-left-btn"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
                   
                   {/* Scrollable container */}
                   <div 
-                    className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide scroll-smooth"
+                    className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide scroll-smooth px-12"
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     id="weather-guide-scroll"
                   >
