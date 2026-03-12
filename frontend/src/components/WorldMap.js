@@ -297,23 +297,28 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         </ZoomableGroup>
       </ComposableMap>
 
-      {/* Disclaimer - positioned clearly below map */}
+      {/* Disclaimer - positioned on map's bottom right ocean area */}
       <div 
         style={{ 
-          textAlign: 'center',
-          padding: '12px 20px',
-          fontSize: '12px', 
-          color: '#555', 
-          fontWeight: '500',
+          position: 'absolute',
+          bottom: '15px',
+          right: '15px',
+          textAlign: 'right',
+          padding: '8px 12px',
+          fontSize: '10px', 
+          color: '#fff', 
+          fontWeight: '600',
           fontStyle: 'italic',
-          lineHeight: '1.4',
-          backgroundColor: '#f8f9fa',
-          borderTop: '1px solid #e9ecef',
-          marginBottom: '20px'
+          lineHeight: '1.5',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          borderRadius: '6px',
+          maxWidth: '280px',
+          zIndex: 10
         }}
         data-testid="map-disclaimer"
       >
-        * Map boundaries are for illustrative purposes only and may not reflect official international borders.
+        * Map boundaries are for illustrative purposes only<br/>
+        and may not reflect official international borders.
       </div>
 
       {tooltipContent && (
