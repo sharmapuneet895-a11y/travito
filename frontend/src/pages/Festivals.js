@@ -239,10 +239,16 @@ const Festivals = () => {
                                     <ChevronDown className="w-5 h-5 text-muted-foreground" />
                                   )}
                                 </div>
-                                <div className="flex items-center gap-1 text-sm text-muted-foreground mb-2">
+                                <div className="flex items-center gap-1 text-sm text-muted-foreground mb-1">
                                   <MapPin className="w-4 h-4" />
                                   <span>{festival.country_name}</span>
                                 </div>
+                                {festival.date && (
+                                  <div className="flex items-center gap-1 text-sm text-primary font-medium">
+                                    <Calendar className="w-4 h-4" />
+                                    <span>{festival.date}</span>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </div>

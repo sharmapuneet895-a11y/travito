@@ -385,7 +385,8 @@ const Weather = () => {
                       <div>
                         <h4 className="font-semibold text-foreground">{country.country_name}</h4>
                         <p className="text-sm text-muted-foreground capitalize mb-1">
-                          {weatherType === 'snow' ? 'Cold/Snowy' : weatherType === 'cold' ? 'Cold' : weatherType} • {country.avg_temp || 'N/A'}
+                          {weatherType === 'snow' ? 'Cold/Snowy' : weatherType === 'cold' ? 'Cold' : weatherType}
+                          {selectedMonth === today.getMonth() && country.avg_temp ? ` • ${country.avg_temp}` : ''}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {country.description || `Typical ${weatherType} weather expected in ${selectedMonthName}`}
