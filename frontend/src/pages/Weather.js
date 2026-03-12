@@ -240,9 +240,9 @@ const Weather = () => {
 
   const legends = [
     { color: '#E25A53', label: 'Hot', description: `Hot weather in ${selectedMonthName}`, icon: Sun },
-    { color: '#FFFFFF', label: 'Snow/Cold', description: `Cold/snowy in ${selectedMonthName}`, border: true, icon: Snowflake },
+    { color: '#E8E8FF', label: 'Snow/Cold', description: `Cold/snowy in ${selectedMonthName}`, border: true, icon: Snowflake },
     { color: '#4B89AC', label: 'Rainy', description: `Monsoon/rainy season`, icon: CloudRain },
-    { color: '#87CEEB', label: 'Mild', description: 'Pleasant weather', icon: Wind },
+    { color: '#90EE90', label: 'Mild', description: 'Pleasant weather', icon: Wind },
     { color: '#E8E8E6', label: 'No Data', description: 'Information not available', icon: null }
   ];
 

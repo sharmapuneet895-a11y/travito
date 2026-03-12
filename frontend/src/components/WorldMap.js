@@ -138,9 +138,9 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         case 'hot': return '#E25A53';
         case 'warm': return '#F59E0B';
         case 'rainy': return '#4B89AC';
-        case 'mild': return '#87CEEB';
-        case 'cold': return '#FFFFFF';
-        case 'snow': return '#FFFFFF';
+        case 'mild': return '#90EE90';  // Light green - distinct from ocean
+        case 'cold': return '#E8E8FF';  // Light purple/lavender for cold
+        case 'snow': return '#E8E8FF';  // Light purple/lavender for snow
         default: return '#E8E8E6';
       }
     } else if (mode === 'plug') {

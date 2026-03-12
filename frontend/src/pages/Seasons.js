@@ -156,66 +156,110 @@ const weatherGuideData = {
         { code: 'MDV', name: 'Maldives', temp: '27-30°C', highlight: 'Crystal clear waters' },
         { code: 'AUS', name: 'Australia', temp: '25-35°C', highlight: 'Summer beaches' },
         { code: 'UAE', name: 'UAE', temp: '22-26°C', highlight: 'Desert warmth' },
+        { code: 'LKA', name: 'Sri Lanka', temp: '28-32°C', highlight: 'West coast beaches' },
+        { code: 'PHL', name: 'Philippines', temp: '26-31°C', highlight: 'Island hopping' },
+        { code: 'MYS', name: 'Malaysia', temp: '27-32°C', highlight: 'Langkawi beaches' },
+        { code: 'OMN', name: 'Oman', temp: '20-26°C', highlight: 'Desert & coast' },
       ],
       'Feb': [
         { code: 'THA', name: 'Thailand', temp: '28-33°C', highlight: 'Peak dry season' },
         { code: 'VNM', name: 'Vietnam', temp: '24-28°C', highlight: 'Central coast' },
         { code: 'LKA', name: 'Sri Lanka', temp: '28-32°C', highlight: 'West coast beaches' },
         { code: 'MEX', name: 'Mexico', temp: '25-30°C', highlight: 'Riviera Maya' },
+        { code: 'MDV', name: 'Maldives', temp: '28-31°C', highlight: 'Peak season' },
+        { code: 'CUB', name: 'Cuba', temp: '24-28°C', highlight: 'Dry season' },
+        { code: 'DOM', name: 'Dominican Rep', temp: '26-30°C', highlight: 'Caribbean sun' },
+        { code: 'BRB', name: 'Barbados', temp: '26-29°C', highlight: 'Perfect beach' },
       ],
       'Mar': [
         { code: 'EGY', name: 'Egypt', temp: '22-28°C', highlight: 'Perfect weather' },
         { code: 'MAR', name: 'Morocco', temp: '18-24°C', highlight: 'Spring warmth' },
         { code: 'IND', name: 'India (Goa)', temp: '28-34°C', highlight: 'Beach season end' },
         { code: 'CUB', name: 'Cuba', temp: '26-30°C', highlight: 'Dry season' },
+        { code: 'THA', name: 'Thailand', temp: '29-35°C', highlight: 'Hot but great' },
+        { code: 'JOR', name: 'Jordan', temp: '18-25°C', highlight: 'Spring bloom' },
+        { code: 'SEN', name: 'Senegal', temp: '24-30°C', highlight: 'Dry season' },
+        { code: 'CPV', name: 'Cape Verde', temp: '22-26°C', highlight: 'Pleasant breeze' },
       ],
       'Apr': [
         { code: 'GRC', name: 'Greece', temp: '18-24°C', highlight: 'Spring islands' },
         { code: 'TUR', name: 'Turkey', temp: '17-23°C', highlight: 'Coastal warmth' },
         { code: 'ESP', name: 'Spain', temp: '18-25°C', highlight: 'Andalusia sun' },
         { code: 'JOR', name: 'Jordan', temp: '22-28°C', highlight: 'Desert adventures' },
+        { code: 'CYP', name: 'Cyprus', temp: '20-25°C', highlight: 'Mediterranean spring' },
+        { code: 'MLT', name: 'Malta', temp: '18-22°C', highlight: 'Island charm' },
+        { code: 'ISR', name: 'Israel', temp: '20-27°C', highlight: 'Holy Land spring' },
+        { code: 'TUN', name: 'Tunisia', temp: '18-24°C', highlight: 'Coastal warmth' },
       ],
       'May': [
         { code: 'ITA', name: 'Italy', temp: '20-28°C', highlight: 'Mediterranean sun' },
         { code: 'GRC', name: 'Greece', temp: '22-28°C', highlight: 'Island hopping' },
         { code: 'PRT', name: 'Portugal', temp: '18-24°C', highlight: 'Algarve beaches' },
         { code: 'HRV', name: 'Croatia', temp: '20-26°C', highlight: 'Adriatic coast' },
+        { code: 'ESP', name: 'Spain', temp: '22-28°C', highlight: 'Costa del Sol' },
+        { code: 'FRA', name: 'France', temp: '18-25°C', highlight: 'Riviera awakens' },
+        { code: 'MNE', name: 'Montenegro', temp: '20-26°C', highlight: 'Hidden gem' },
+        { code: 'ALB', name: 'Albania', temp: '20-26°C', highlight: 'Albanian Riviera' },
       ],
       'Jun': [
         { code: 'GRC', name: 'Greece', temp: '26-32°C', highlight: 'Peak island season' },
         { code: 'HRV', name: 'Croatia', temp: '24-30°C', highlight: 'Dalmatian coast' },
         { code: 'ESP', name: 'Spain', temp: '26-34°C', highlight: 'Beach paradise' },
         { code: 'ITA', name: 'Italy', temp: '25-32°C', highlight: 'Amalfi Coast' },
+        { code: 'TUR', name: 'Turkey', temp: '26-32°C', highlight: 'Turquoise coast' },
+        { code: 'CYP', name: 'Cyprus', temp: '28-33°C', highlight: 'Peak season' },
+        { code: 'MNE', name: 'Montenegro', temp: '26-30°C', highlight: 'Kotor Bay' },
+        { code: 'MLT', name: 'Malta', temp: '26-30°C', highlight: 'Blue lagoons' },
       ],
       'Jul': [
         { code: 'GRC', name: 'Greece', temp: '28-35°C', highlight: 'Hot summers' },
         { code: 'HRV', name: 'Croatia', temp: '26-32°C', highlight: 'Beach festivals' },
         { code: 'FRA', name: 'France (Riviera)', temp: '26-32°C', highlight: 'Cote dAzur' },
         { code: 'CYP', name: 'Cyprus', temp: '28-34°C', highlight: 'Endless sun' },
+        { code: 'ESP', name: 'Spain', temp: '28-36°C', highlight: 'Ibiza & Mallorca' },
+        { code: 'ITA', name: 'Italy', temp: '28-34°C', highlight: 'Sardinia beaches' },
+        { code: 'PRT', name: 'Portugal', temp: '24-30°C', highlight: 'Algarve peak' },
+        { code: 'TUR', name: 'Turkey', temp: '30-36°C', highlight: 'Aegean coast' },
       ],
       'Aug': [
         { code: 'IDN', name: 'Indonesia', temp: '27-32°C', highlight: 'Bali dry season' },
         { code: 'GRC', name: 'Greece', temp: '28-35°C', highlight: 'Island life' },
         { code: 'ESP', name: 'Spain', temp: '28-38°C', highlight: 'Costa Brava' },
         { code: 'MLT', name: 'Malta', temp: '28-34°C', highlight: 'Mediterranean gem' },
+        { code: 'HRV', name: 'Croatia', temp: '28-33°C', highlight: 'Hvar parties' },
+        { code: 'ITA', name: 'Italy', temp: '28-35°C', highlight: 'Sicily beaches' },
+        { code: 'CYP', name: 'Cyprus', temp: '30-36°C', highlight: 'Hot summer' },
+        { code: 'MNE', name: 'Montenegro', temp: '28-32°C', highlight: 'Budva nights' },
       ],
       'Sep': [
         { code: 'TUR', name: 'Turkey', temp: '24-30°C', highlight: 'Perfect warmth' },
         { code: 'GRC', name: 'Greece', temp: '24-30°C', highlight: 'Less crowded' },
         { code: 'PRT', name: 'Portugal', temp: '22-28°C', highlight: 'Extended summer' },
         { code: 'HRV', name: 'Croatia', temp: '22-28°C', highlight: 'Late season' },
+        { code: 'ESP', name: 'Spain', temp: '24-30°C', highlight: 'Warm September' },
+        { code: 'ITA', name: 'Italy', temp: '24-30°C', highlight: 'Shoulder season' },
+        { code: 'CYP', name: 'Cyprus', temp: '26-32°C', highlight: 'Still hot' },
+        { code: 'MLT', name: 'Malta', temp: '26-30°C', highlight: 'Perfect temps' },
       ],
       'Oct': [
         { code: 'EGY', name: 'Egypt', temp: '26-32°C', highlight: 'Red Sea diving' },
         { code: 'MAR', name: 'Morocco', temp: '22-28°C', highlight: 'Desert trips' },
         { code: 'UAE', name: 'UAE', temp: '28-34°C', highlight: 'Cooling down' },
         { code: 'JOR', name: 'Jordan', temp: '24-30°C', highlight: 'Petra season' },
+        { code: 'OMN', name: 'Oman', temp: '28-34°C', highlight: 'Desert coast' },
+        { code: 'TUN', name: 'Tunisia', temp: '22-28°C', highlight: 'Autumn sun' },
+        { code: 'CYP', name: 'Cyprus', temp: '24-28°C', highlight: 'Late warmth' },
+        { code: 'GRC', name: 'Greece', temp: '20-26°C', highlight: 'Autumn islands' },
       ],
       'Nov': [
         { code: 'THA', name: 'Thailand', temp: '27-32°C', highlight: 'Season begins' },
         { code: 'UAE', name: 'UAE', temp: '24-30°C', highlight: 'Perfect weather' },
         { code: 'MDV', name: 'Maldives', temp: '28-31°C', highlight: 'Dry season' },
         { code: 'VNM', name: 'Vietnam', temp: '24-28°C', highlight: 'Beach time' },
+        { code: 'OMN', name: 'Oman', temp: '24-30°C', highlight: 'Pleasant coast' },
+        { code: 'EGY', name: 'Egypt', temp: '22-28°C', highlight: 'Perfect temps' },
+        { code: 'JOR', name: 'Jordan', temp: '18-24°C', highlight: 'Autumn beauty' },
+        { code: 'MUS', name: 'Mauritius', temp: '26-30°C', highlight: 'Summer starts' },
       ],
       'Dec': [
         { code: 'THA', name: 'Thailand', temp: '26-31°C', highlight: 'Peak season' },
@@ -238,72 +282,120 @@ const weatherGuideData = {
         { code: 'JPN', name: 'Japan', temp: '-5 to 3°C', highlight: 'Powder snow' },
         { code: 'CAN', name: 'Canada', temp: '-15 to -5°C', highlight: 'Whistler' },
         { code: 'AUT', name: 'Austria', temp: '-5 to 3°C', highlight: 'Ski resorts' },
+        { code: 'FRA', name: 'France', temp: '-3 to 5°C', highlight: 'French Alps' },
+        { code: 'ITA', name: 'Italy', temp: '-4 to 4°C', highlight: 'Dolomites' },
+        { code: 'USA', name: 'Colorado', temp: '-8 to 2°C', highlight: 'Aspen & Vail' },
+        { code: 'NOR', name: 'Norway', temp: '-10 to 0°C', highlight: 'Nordic skiing' },
       ],
       'Feb': [
         { code: 'CHE', name: 'Switzerland', temp: '-3 to 6°C', highlight: 'Peak ski' },
         { code: 'JPN', name: 'Japan', temp: '-3 to 5°C', highlight: 'Niseko powder' },
         { code: 'NOR', name: 'Norway', temp: '-8 to 2°C', highlight: 'Northern lights' },
         { code: 'FIN', name: 'Finland', temp: '-12 to -3°C', highlight: 'Lapland magic' },
+        { code: 'AUT', name: 'Austria', temp: '-4 to 5°C', highlight: 'Kitzbühel' },
+        { code: 'SWE', name: 'Sweden', temp: '-10 to -2°C', highlight: 'Åre skiing' },
+        { code: 'CAN', name: 'Canada', temp: '-12 to -3°C', highlight: 'Banff powder' },
+        { code: 'USA', name: 'Utah', temp: '-5 to 3°C', highlight: 'Best snow on Earth' },
       ],
       'Mar': [
         { code: 'CHE', name: 'Switzerland', temp: '0 to 10°C', highlight: 'Spring skiing' },
         { code: 'CAN', name: 'Canada', temp: '-8 to 3°C', highlight: 'Late season' },
         { code: 'AUT', name: 'Austria', temp: '-2 to 8°C', highlight: 'Sunny slopes' },
         { code: 'USA', name: 'Colorado', temp: '-5 to 8°C', highlight: 'Rocky Mountains' },
+        { code: 'FRA', name: 'France', temp: '0 to 10°C', highlight: 'Spring skiing' },
+        { code: 'JPN', name: 'Japan', temp: '0 to 8°C', highlight: 'Late powder' },
+        { code: 'ITA', name: 'Italy', temp: '-2 to 10°C', highlight: 'Sunny Dolomites' },
+        { code: 'AND', name: 'Andorra', temp: '0 to 10°C', highlight: 'Budget skiing' },
       ],
       'Apr': [
         { code: 'NOR', name: 'Norway', temp: '0 to 8°C', highlight: 'Spring skiing' },
         { code: 'ISL', name: 'Iceland', temp: '0 to 8°C', highlight: 'Late snow' },
         { code: 'CHE', name: 'Switzerland', temp: '5 to 15°C', highlight: 'High altitude' },
         { code: 'CAN', name: 'Canada', temp: '-2 to 10°C', highlight: 'Final runs' },
+        { code: 'FIN', name: 'Finland', temp: '-3 to 5°C', highlight: 'Lapland spring' },
+        { code: 'SWE', name: 'Sweden', temp: '-2 to 6°C', highlight: 'Northern slopes' },
+        { code: 'AUT', name: 'Austria', temp: '2 to 12°C', highlight: 'Glacier skiing' },
+        { code: 'USA', name: 'California', temp: '0 to 10°C', highlight: 'Mammoth late' },
       ],
       'May': [
         { code: 'NOR', name: 'Norway', temp: '5 to 12°C', highlight: 'Glacier skiing' },
         { code: 'ARG', name: 'Argentina', temp: '5 to 15°C', highlight: 'Southern Alps' },
         { code: 'CHL', name: 'Chile', temp: '5 to 12°C', highlight: 'Andes start' },
         { code: 'NZL', name: 'New Zealand', temp: '5 to 12°C', highlight: 'Early snow' },
+        { code: 'CHE', name: 'Switzerland', temp: '8 to 18°C', highlight: 'Glacier only' },
+        { code: 'AUT', name: 'Austria', temp: '8 to 18°C', highlight: 'Hintertux' },
+        { code: 'FRA', name: 'France', temp: '8 to 18°C', highlight: 'Tignes glacier' },
+        { code: 'ITA', name: 'Italy', temp: '8 to 18°C', highlight: 'Cervinia glacier' },
       ],
       'Jun': [
         { code: 'ARG', name: 'Argentina', temp: '0 to 10°C', highlight: 'Bariloche' },
         { code: 'CHL', name: 'Chile', temp: '-2 to 8°C', highlight: 'Valle Nevado' },
         { code: 'NZL', name: 'New Zealand', temp: '2 to 10°C', highlight: 'Queenstown' },
         { code: 'AUS', name: 'Australia', temp: '0 to 8°C', highlight: 'Snowy Mountains' },
+        { code: 'AUT', name: 'Austria', temp: '10 to 20°C', highlight: 'Hintertux glacier' },
+        { code: 'CHE', name: 'Switzerland', temp: '10 to 20°C', highlight: 'Zermatt glacier' },
+        { code: 'FRA', name: 'France', temp: '10 to 20°C', highlight: "Les 2 Alpes" },
+        { code: 'ITA', name: 'Italy', temp: '10 to 20°C', highlight: 'Passo Stelvio' },
       ],
       'Jul': [
         { code: 'ARG', name: 'Argentina', temp: '-5 to 5°C', highlight: 'Peak season' },
         { code: 'CHL', name: 'Chile', temp: '-5 to 5°C', highlight: 'Best powder' },
         { code: 'NZL', name: 'New Zealand', temp: '0 to 8°C', highlight: 'Peak snow' },
         { code: 'AUS', name: 'Australia', temp: '-2 to 6°C', highlight: 'Thredbo' },
+        { code: 'BOL', name: 'Bolivia', temp: '-5 to 5°C', highlight: 'Chacaltaya' },
+        { code: 'AUT', name: 'Austria', temp: '12 to 22°C', highlight: 'Glacier skiing' },
+        { code: 'CHE', name: 'Switzerland', temp: '12 to 22°C', highlight: 'Saas Fee' },
+        { code: 'FRA', name: 'France', temp: '12 to 22°C', highlight: 'Tignes summer' },
       ],
       'Aug': [
         { code: 'ARG', name: 'Argentina', temp: '-3 to 7°C', highlight: 'Great conditions' },
         { code: 'CHL', name: 'Chile', temp: '-2 to 8°C', highlight: 'Late season' },
         { code: 'NZL', name: 'New Zealand', temp: '2 to 10°C', highlight: 'Snow sports' },
         { code: 'AUS', name: 'Australia', temp: '0 to 8°C', highlight: 'Perisher' },
+        { code: 'BOL', name: 'Bolivia', temp: '-3 to 7°C', highlight: 'Andes skiing' },
+        { code: 'PER', name: 'Peru', temp: '-2 to 8°C', highlight: 'High Andes' },
+        { code: 'AUT', name: 'Austria', temp: '12 to 22°C', highlight: 'Summer glacier' },
+        { code: 'CHE', name: 'Switzerland', temp: '12 to 22°C', highlight: 'Glacier camps' },
       ],
       'Sep': [
         { code: 'NZL', name: 'New Zealand', temp: '5 to 12°C', highlight: 'Spring snow' },
         { code: 'ARG', name: 'Argentina', temp: '5 to 15°C', highlight: 'End season' },
         { code: 'CHL', name: 'Chile', temp: '5 to 15°C', highlight: 'Spring skiing' },
         { code: 'AUS', name: 'Australia', temp: '3 to 12°C', highlight: 'Late runs' },
+        { code: 'AUT', name: 'Austria', temp: '5 to 15°C', highlight: 'Glacier open' },
+        { code: 'CHE', name: 'Switzerland', temp: '5 to 15°C', highlight: 'Zermatt open' },
+        { code: 'FRA', name: 'France', temp: '5 to 15°C', highlight: 'Tignes glacier' },
+        { code: 'ITA', name: 'Italy', temp: '5 to 15°C', highlight: 'Val Senales' },
       ],
       'Oct': [
         { code: 'AUT', name: 'Austria', temp: '2 to 12°C', highlight: 'Glacier opens' },
         { code: 'CHE', name: 'Switzerland', temp: '3 to 12°C', highlight: 'Early snow' },
         { code: 'FRA', name: 'France (Alps)', temp: '2 to 10°C', highlight: 'First flakes' },
         { code: 'ITA', name: 'Italy (Dolomites)', temp: '0 to 10°C', highlight: 'Season start' },
+        { code: 'AND', name: 'Andorra', temp: '3 to 12°C', highlight: 'Early openings' },
+        { code: 'NOR', name: 'Norway', temp: '-2 to 8°C', highlight: 'Early snow' },
+        { code: 'FIN', name: 'Finland', temp: '-5 to 5°C', highlight: 'Lapland opens' },
+        { code: 'SWE', name: 'Sweden', temp: '-3 to 7°C', highlight: 'First lifts' },
       ],
       'Nov': [
         { code: 'AUT', name: 'Austria', temp: '-3 to 5°C', highlight: 'Season opens' },
         { code: 'CHE', name: 'Switzerland', temp: '-2 to 6°C', highlight: 'Fresh snow' },
         { code: 'CAN', name: 'Canada', temp: '-10 to 0°C', highlight: 'Early bird' },
         { code: 'USA', name: 'Colorado', temp: '-8 to 5°C', highlight: 'Thanksgiving' },
+        { code: 'FRA', name: 'France', temp: '-2 to 8°C', highlight: 'Val Thorens' },
+        { code: 'ITA', name: 'Italy', temp: '-2 to 8°C', highlight: 'Cervinia opens' },
+        { code: 'JPN', name: 'Japan', temp: '-3 to 5°C', highlight: 'Season starts' },
+        { code: 'NOR', name: 'Norway', temp: '-8 to 2°C', highlight: 'Full swing' },
       ],
       'Dec': [
         { code: 'AUT', name: 'Austria', temp: '-5 to 3°C', highlight: 'Christmas skiing' },
         { code: 'CHE', name: 'Switzerland', temp: '-6 to 2°C', highlight: 'Winter magic' },
         { code: 'JPN', name: 'Japan', temp: '-5 to 2°C', highlight: 'Powder paradise' },
         { code: 'CAN', name: 'Canada', temp: '-12 to -2°C', highlight: 'Holiday slopes' },
+        { code: 'FRA', name: 'France', temp: '-5 to 3°C', highlight: 'Val dIsere' },
+        { code: 'ITA', name: 'Italy', temp: '-4 to 4°C', highlight: 'Dolomites magic' },
+        { code: 'USA', name: 'Utah', temp: '-8 to 2°C', highlight: 'Greatest snow' },
+        { code: 'FIN', name: 'Finland', temp: '-12 to -3°C', highlight: 'Santa Claus' },
       ],
     }
   },
@@ -834,37 +926,60 @@ const Seasons = () => {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  {weatherGuideData[selectedWeatherType].destinations[selectedMonthAbbrev]?.map((dest, idx) => (
-                    <motion.div
-                      key={dest.code}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: idx * 0.1 }}
-                      onClick={() => {
-                        const country = processedData.find(c => c.country_code === dest.code);
-                        if (country) setSelectedCountry(country);
-                      }}
-                      className="bg-white rounded-lg p-4 cursor-pointer hover:shadow-lg transition-all border border-gray-100 group"
-                      data-testid={`guide-dest-${dest.code}`}
-                    >
-                      <div className="flex items-center gap-2 mb-2">
-                        <img
-                          src={getFlag(dest.code)}
-                          alt={dest.name}
-                          className="w-8 h-5 object-cover rounded shadow-sm"
-                          onError={(e) => { e.target.style.display = 'none'; }}
-                        />
-                        <span className="font-bold text-primary group-hover:text-violet-600 transition-colors">{dest.name}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-sm mb-1">
-                        <ThermometerSun className="w-4 h-4 text-gray-400" />
-                        <span className="font-medium text-gray-700">{dest.temp}</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">{dest.highlight}</p>
-                      <p className="text-xs text-violet-600 mt-2 group-hover:underline">Explore →</p>
-                    </motion.div>
-                  ))}
+                <div className="relative">
+                  {/* Left scroll indicator (hidden, scroll starts at left) */}
+                  
+                  {/* Scrollable container */}
+                  <div 
+                    className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide scroll-smooth"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                    id="weather-guide-scroll"
+                  >
+                    {weatherGuideData[selectedWeatherType].destinations[selectedMonthAbbrev]?.map((dest, idx) => (
+                      <motion.div
+                        key={dest.code}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: idx * 0.05 }}
+                        onClick={() => {
+                          const country = processedData.find(c => c.country_code === dest.code);
+                          if (country) setSelectedCountry(country);
+                        }}
+                        className="bg-white rounded-lg p-4 cursor-pointer hover:shadow-lg transition-all border border-gray-100 group flex-shrink-0 w-[200px]"
+                        data-testid={`guide-dest-${dest.code}`}
+                      >
+                        <div className="flex items-center gap-2 mb-2">
+                          <img
+                            src={getFlag(dest.code)}
+                            alt={dest.name}
+                            className="w-8 h-5 object-cover rounded shadow-sm"
+                            onError={(e) => { e.target.style.display = 'none'; }}
+                          />
+                          <span className="font-bold text-primary group-hover:text-violet-600 transition-colors text-sm">{dest.name}</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-sm mb-1">
+                          <ThermometerSun className="w-4 h-4 text-gray-400" />
+                          <span className="font-medium text-gray-700">{dest.temp}</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground line-clamp-2">{dest.highlight}</p>
+                        <p className="text-xs text-violet-600 mt-2 group-hover:underline">Explore →</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                  
+                  {/* Right scroll arrow */}
+                  <button
+                    onClick={() => {
+                      const container = document.getElementById('weather-guide-scroll');
+                      if (container) container.scrollBy({ left: 220, behavior: 'smooth' });
+                    }}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all z-10 border border-gray-200"
+                    data-testid="scroll-right-btn"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
                 </div>
 
                 {/* Pro tip based on weather type */}
