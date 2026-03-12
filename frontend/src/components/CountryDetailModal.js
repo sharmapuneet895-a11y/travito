@@ -11,6 +11,109 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 // Month abbreviations
 const MONTH_ABBREV = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
+// Comprehensive currency data with estimated rates (when live API unavailable)
+const currencyData = {
+  // Asia
+  THB: { rate: 0.345, name: 'Thai Baht', symbol: '฿', countryCode: 'THA' },
+  JPY: { rate: 1.72, name: 'Japanese Yen', symbol: '¥', countryCode: 'JPN' },
+  SGD: { rate: 0.0138, name: 'Singapore Dollar', symbol: 'S$', countryCode: 'SGP' },
+  MYR: { rate: 0.0475, name: 'Malaysian Ringgit', symbol: 'RM', countryCode: 'MYS' },
+  IDR: { rate: 172.5, name: 'Indonesian Rupiah', symbol: 'Rp', countryCode: 'IDN' },
+  VND: { rate: 265.8, name: 'Vietnamese Dong', symbol: '₫', countryCode: 'VNM' },
+  PHP: { rate: 0.62, name: 'Philippine Peso', symbol: '₱', countryCode: 'PHL' },
+  KRW: { rate: 14.2, name: 'South Korean Won', symbol: '₩', countryCode: 'KOR' },
+  CNY: { rate: 0.0746, name: 'Chinese Yuan', symbol: '¥', countryCode: 'CHN' },
+  HKD: { rate: 0.085, name: 'Hong Kong Dollar', symbol: 'HK$', countryCode: 'HKG' },
+  TWD: { rate: 0.35, name: 'Taiwan Dollar', symbol: 'NT$', countryCode: 'TWN' },
+  NPR: { rate: 1.44, name: 'Nepalese Rupee', symbol: 'रू', countryCode: 'NPL' },
+  LKR: { rate: 3.42, name: 'Sri Lankan Rupee', symbol: 'Rs', countryCode: 'LKA' },
+  MVR: { rate: 0.167, name: 'Maldivian Rufiyaa', symbol: 'Rf', countryCode: 'MDV' },
+  PKR: { rate: 3.05, name: 'Pakistani Rupee', symbol: 'Rs', countryCode: 'PAK' },
+  BDT: { rate: 1.19, name: 'Bangladeshi Taka', symbol: '৳', countryCode: 'BGD' },
+  MMK: { rate: 22.8, name: 'Myanmar Kyat', symbol: 'K', countryCode: 'MMR' },
+  KHR: { rate: 44.2, name: 'Cambodian Riel', symbol: '៛', countryCode: 'KHM' },
+  LAK: { rate: 232, name: 'Lao Kip', symbol: '₭', countryCode: 'LAO' },
+  BTN: { rate: 1.0, name: 'Bhutanese Ngultrum', symbol: 'Nu.', countryCode: 'BTN' },
+  MNT: { rate: 36.8, name: 'Mongolian Tugrik', symbol: '₮', countryCode: 'MNG' },
+  // Middle East
+  AED: { rate: 0.04, name: 'UAE Dirham', symbol: 'د.إ', countryCode: 'ARE' },
+  SAR: { rate: 0.041, name: 'Saudi Riyal', symbol: 'ر.س', countryCode: 'SAU' },
+  QAR: { rate: 0.04, name: 'Qatari Riyal', symbol: 'ر.ق', countryCode: 'QAT' },
+  KWD: { rate: 0.0033, name: 'Kuwaiti Dinar', symbol: 'د.ك', countryCode: 'KWT' },
+  BHD: { rate: 0.0041, name: 'Bahraini Dinar', symbol: '.د.ب', countryCode: 'BHR' },
+  OMR: { rate: 0.0042, name: 'Omani Rial', symbol: 'ر.ع.', countryCode: 'OMN' },
+  JOD: { rate: 0.0077, name: 'Jordanian Dinar', symbol: 'د.أ', countryCode: 'JOR' },
+  ILS: { rate: 0.04, name: 'Israeli Shekel', symbol: '₪', countryCode: 'ISR' },
+  TRY: { rate: 0.352, name: 'Turkish Lira', symbol: '₺', countryCode: 'TUR' },
+  IRR: { rate: 458, name: 'Iranian Rial', symbol: '﷼', countryCode: 'IRN' },
+  IQD: { rate: 14.2, name: 'Iraqi Dinar', symbol: 'ع.د', countryCode: 'IRQ' },
+  LBP: { rate: 163, name: 'Lebanese Pound', symbol: 'ل.ل', countryCode: 'LBN' },
+  // Europe
+  EUR: { rate: 0.0094, name: 'Euro', symbol: '€', countryCode: 'FRA' },
+  GBP: { rate: 0.0081, name: 'British Pound', symbol: '£', countryCode: 'GBR' },
+  CHF: { rate: 0.0085, name: 'Swiss Franc', symbol: 'CHF', countryCode: 'CHE' },
+  RUB: { rate: 0.97, name: 'Russian Ruble', symbol: '₽', countryCode: 'RUS' },
+  SEK: { rate: 0.112, name: 'Swedish Krona', symbol: 'kr', countryCode: 'SWE' },
+  NOK: { rate: 0.115, name: 'Norwegian Krone', symbol: 'kr', countryCode: 'NOR' },
+  DKK: { rate: 0.073, name: 'Danish Krone', symbol: 'kr', countryCode: 'DNK' },
+  PLN: { rate: 0.043, name: 'Polish Zloty', symbol: 'zł', countryCode: 'POL' },
+  CZK: { rate: 0.248, name: 'Czech Koruna', symbol: 'Kč', countryCode: 'CZE' },
+  HUF: { rate: 3.92, name: 'Hungarian Forint', symbol: 'Ft', countryCode: 'HUN' },
+  RON: { rate: 0.05, name: 'Romanian Leu', symbol: 'lei', countryCode: 'ROU' },
+  BGN: { rate: 0.019, name: 'Bulgarian Lev', symbol: 'лв', countryCode: 'BGR' },
+  HRK: { rate: 0.073, name: 'Croatian Kuna', symbol: 'kn', countryCode: 'HRV' },
+  ISK: { rate: 1.49, name: 'Icelandic Króna', symbol: 'kr', countryCode: 'ISL' },
+  UAH: { rate: 0.40, name: 'Ukrainian Hryvnia', symbol: '₴', countryCode: 'UKR' },
+  RSD: { rate: 1.14, name: 'Serbian Dinar', symbol: 'дин.', countryCode: 'SRB' },
+  GEL: { rate: 0.029, name: 'Georgian Lari', symbol: '₾', countryCode: 'GEO' },
+  AMD: { rate: 4.22, name: 'Armenian Dram', symbol: '֏', countryCode: 'ARM' },
+  AZN: { rate: 0.0185, name: 'Azerbaijan Manat', symbol: '₼', countryCode: 'AZE' },
+  // Africa
+  EGP: { rate: 0.336, name: 'Egyptian Pound', symbol: 'E£', countryCode: 'EGY' },
+  ZAR: { rate: 0.197, name: 'South African Rand', symbol: 'R', countryCode: 'ZAF' },
+  MAD: { rate: 0.108, name: 'Moroccan Dirham', symbol: 'د.م.', countryCode: 'MAR' },
+  KES: { rate: 1.76, name: 'Kenyan Shilling', symbol: 'KSh', countryCode: 'KEN' },
+  NGN: { rate: 8.42, name: 'Nigerian Naira', symbol: '₦', countryCode: 'NGA' },
+  GHS: { rate: 0.132, name: 'Ghanaian Cedi', symbol: '₵', countryCode: 'GHA' },
+  TZS: { rate: 27.5, name: 'Tanzanian Shilling', symbol: 'TSh', countryCode: 'TZA' },
+  UGX: { rate: 40.2, name: 'Ugandan Shilling', symbol: 'USh', countryCode: 'UGA' },
+  ETB: { rate: 0.61, name: 'Ethiopian Birr', symbol: 'Br', countryCode: 'ETH' },
+  MUR: { rate: 0.49, name: 'Mauritian Rupee', symbol: '₨', countryCode: 'MUS' },
+  MGA: { rate: 48.5, name: 'Malagasy Ariary', symbol: 'Ar', countryCode: 'MDG' },
+  ZMW: { rate: 0.23, name: 'Zambian Kwacha', symbol: 'ZK', countryCode: 'ZMB' },
+  RWF: { rate: 13.8, name: 'Rwandan Franc', symbol: 'FRw', countryCode: 'RWA' },
+  TND: { rate: 0.034, name: 'Tunisian Dinar', symbol: 'د.ت', countryCode: 'TUN' },
+  // Americas
+  USD: { rate: 0.0109, name: 'US Dollar', symbol: '$', countryCode: 'USA' },
+  CAD: { rate: 0.0148, name: 'Canadian Dollar', symbol: 'C$', countryCode: 'CAN' },
+  MXN: { rate: 0.185, name: 'Mexican Peso', symbol: 'MX$', countryCode: 'MEX' },
+  BRL: { rate: 0.054, name: 'Brazilian Real', symbol: 'R$', countryCode: 'BRA' },
+  ARS: { rate: 9.12, name: 'Argentine Peso', symbol: 'AR$', countryCode: 'ARG' },
+  CLP: { rate: 10.1, name: 'Chilean Peso', symbol: 'CLP$', countryCode: 'CHL' },
+  COP: { rate: 42.8, name: 'Colombian Peso', symbol: 'COL$', countryCode: 'COL' },
+  PEN: { rate: 0.0408, name: 'Peruvian Sol', symbol: 'S/', countryCode: 'PER' },
+  CRC: { rate: 5.56, name: 'Costa Rican Colón', symbol: '₡', countryCode: 'CRI' },
+  DOP: { rate: 0.64, name: 'Dominican Peso', symbol: 'RD$', countryCode: 'DOM' },
+  JMD: { rate: 1.68, name: 'Jamaican Dollar', symbol: 'J$', countryCode: 'JAM' },
+  TTD: { rate: 0.073, name: 'Trinidad Dollar', symbol: 'TT$', countryCode: 'TTO' },
+  CUP: { rate: 0.26, name: 'Cuban Peso', symbol: '₱', countryCode: 'CUB' },
+  GTQ: { rate: 0.084, name: 'Guatemalan Quetzal', symbol: 'Q', countryCode: 'GTM' },
+  HNL: { rate: 0.27, name: 'Honduran Lempira', symbol: 'L', countryCode: 'HND' },
+  NIO: { rate: 0.40, name: 'Nicaraguan Córdoba', symbol: 'C$', countryCode: 'NIC' },
+  PAB: { rate: 0.0109, name: 'Panamanian Balboa', symbol: 'B/.', countryCode: 'PAN' },
+  BZD: { rate: 0.022, name: 'Belize Dollar', symbol: 'BZ$', countryCode: 'BLZ' },
+  HTG: { rate: 1.44, name: 'Haitian Gourde', symbol: 'G', countryCode: 'HTI' },
+  VES: { rate: 0.40, name: 'Venezuelan Bolívar', symbol: 'Bs.', countryCode: 'VEN' },
+  UYU: { rate: 0.43, name: 'Uruguayan Peso', symbol: '$U', countryCode: 'URY' },
+  PYG: { rate: 80.5, name: 'Paraguayan Guarani', symbol: '₲', countryCode: 'PRY' },
+  BOB: { rate: 0.075, name: 'Bolivian Boliviano', symbol: 'Bs.', countryCode: 'BOL' },
+  // Oceania
+  AUD: { rate: 0.0152, name: 'Australian Dollar', symbol: 'A$', countryCode: 'AUS' },
+  NZD: { rate: 0.0184, name: 'New Zealand Dollar', symbol: 'NZ$', countryCode: 'NZL' },
+  FJD: { rate: 0.024, name: 'Fijian Dollar', symbol: 'FJ$', countryCode: 'FJI' },
+  PGK: { rate: 0.039, name: 'Papua New Guinea Kina', symbol: 'K', countryCode: 'PNG' },
+};
+
 // Travel timing data - busiest/least busy months and expensive/cheap months
 const travelTimingData = {
   'USA': { busiest: ['Jun', 'Jul', 'Dec'], leastBusy: ['Feb', 'Sep', 'Nov'], expensive: ['Jun', 'Jul', 'Dec'], cheap: ['Jan', 'Feb', 'Nov'] },
@@ -156,44 +259,42 @@ const CountryDetailModal = ({ country, onClose }) => {
 
         // Find forex rate for this country
         const forexRates = forexRes.data?.rates || {};
-        // Currency to country code mapping (expanded - comprehensive)
-        const currencyToCountry = {
-          // Asia
-          'THB': 'THA', 'JPY': 'JPN', 'SGD': 'SGP', 'MYR': 'MYS', 'IDR': 'IDN', 'VND': 'VNM', 'PHP': 'PHL',
-          'KRW': 'KOR', 'CNY': 'CHN', 'HKD': 'HKG', 'TWD': 'TWN', 'NPR': 'NPL', 'LKR': 'LKA', 'MVR': 'MDV',
-          'PKR': 'PAK', 'BDT': 'BGD', 'MMK': 'MMR', 'KHR': 'KHM', 'LAK': 'LAO', 'BTN': 'BTN', 'MNT': 'MNG',
-          'KZT': 'KAZ', 'UZS': 'UZB', 'TJS': 'TJK', 'KGS': 'KGZ', 'AFN': 'AFG',
-          // Middle East
-          'AED': 'UAE', 'SAR': 'SAU', 'QAR': 'QAT', 'BHD': 'BHR', 'OMR': 'OMN', 'KWD': 'KWT', 'JOD': 'JOR',
-          'ILS': 'ISR', 'LBP': 'LBN', 'SYP': 'SYR', 'IQD': 'IRQ', 'IRR': 'IRN', 'YER': 'YEM', 'TRY': 'TUR',
-          // Africa
-          'EGP': 'EGY', 'ZAR': 'ZAF', 'MAD': 'MAR', 'TND': 'TUN', 'DZD': 'DZA', 'LYD': 'LBY', 'SDG': 'SDN',
-          'KES': 'KEN', 'TZS': 'TZA', 'UGX': 'UGA', 'ETB': 'ETH', 'NGN': 'NGA', 'GHS': 'GHA', 'XOF': 'SEN',
-          'XAF': 'CMR', 'MUR': 'MUS', 'MGA': 'MDG', 'ZMW': 'ZMB', 'BWP': 'BWA', 'NAD': 'NAM', 'MZN': 'MOZ',
-          'AOA': 'AGO', 'RWF': 'RWA', 'ZWL': 'ZWE',
-          // Europe
-          'EUR': 'FRA', 'GBP': 'GBR', 'CHF': 'CHE', 'RUB': 'RUS', 'SEK': 'SWE', 'NOK': 'NOR', 'DKK': 'DNK',
-          'PLN': 'POL', 'CZK': 'CZE', 'HUF': 'HUN', 'HRK': 'HRV', 'RON': 'ROU', 'BGN': 'BGR', 'UAH': 'UKR',
-          'BYN': 'BLR', 'RSD': 'SRB', 'MKD': 'MKD', 'BAM': 'BIH', 'GEL': 'GEO', 'AMD': 'ARM', 'AZN': 'AZE',
-          'ISK': 'ISL', 'ALL': 'ALB', 'MDL': 'MDA',
-          // Oceania
-          'AUD': 'AUS', 'NZD': 'NZL', 'FJD': 'FJI', 'PGK': 'PNG',
-          // Americas
-          'USD': 'USA', 'CAD': 'CAN', 'MXN': 'MEX', 'BRL': 'BRA', 'ARS': 'ARG', 'CLP': 'CHL', 'PEN': 'PER',
-          'COP': 'COL', 'VES': 'VEN', 'UYU': 'URY', 'PYG': 'PRY', 'BOB': 'BOL', 'CRC': 'CRI', 'PAB': 'PAN',
-          'GTQ': 'GTM', 'HNL': 'HND', 'NIO': 'NIC', 'DOP': 'DOM', 'JMD': 'JAM', 'TTD': 'TTO', 'BBD': 'BRB',
-          'CUP': 'CUB', 'HTG': 'HTI', 'BSD': 'BHS', 'BZD': 'BLZ', 'SVC': 'SLV', 'AWG': 'ABW', 'ANG': 'CUW',
-          'GYD': 'GUY', 'SRD': 'SUR',
-        };
-        // Also map ARE to UAE
-        currencyToCountry['AED'] = 'ARE';
         
+        // First try to find from live API rates
         let countryForex = null;
-        for (const [currency, rate] of Object.entries(forexRates)) {
-          if (currencyToCountry[currency] === code) {
-            countryForex = { currency, rate, country_name: name };
+        
+        // Find currency for this country from our comprehensive data
+        for (const [currency, info] of Object.entries(currencyData)) {
+          if (info.countryCode === code) {
+            // Check if we have a live rate from the API
+            const liveRate = forexRates[currency];
+            const rate = liveRate || info.rate;
+            const isLive = !!liveRate;
+            
+            countryForex = { 
+              currency, 
+              rate, 
+              country_name: name,
+              symbol: info.symbol,
+              currencyName: info.name,
+              isLive
+            };
             break;
           }
+        }
+        
+        // Special handling for UAE (ARE code vs UAE)
+        if (!countryForex && code === 'ARE') {
+          const aedInfo = currencyData['AED'];
+          const liveRate = forexRates['AED'];
+          countryForex = {
+            currency: 'AED',
+            rate: liveRate || aedInfo.rate,
+            country_name: name,
+            symbol: aedInfo.symbol,
+            currencyName: aedInfo.name,
+            isLive: !!liveRate
+          };
         }
 
         // Deduplicate apps by app_name (case-insensitive)
@@ -492,7 +593,7 @@ const CountryDetailModal = ({ country, onClose }) => {
                     <div className="flex items-center gap-3 bg-white rounded-lg px-4 py-3 shadow-sm">
                       <div className="text-center">
                         <p className="text-lg font-bold text-emerald-700">1 {countryData.forex.currency}</p>
-                        <p className="text-xs text-muted-foreground">{countryData.forex.country_name}</p>
+                        <p className="text-xs text-muted-foreground">{countryData.forex.currencyName || countryData.forex.country_name}</p>
                       </div>
                       <ArrowRightLeft className="w-5 h-5 text-emerald-500" />
                       <div className="text-center">
@@ -500,8 +601,18 @@ const CountryDetailModal = ({ country, onClose }) => {
                         <p className="text-xs text-muted-foreground">Indian Rupee</p>
                       </div>
                     </div>
-                    <div className="text-xs text-muted-foreground italic">
-                      Live exchange rates
+                    <div className="text-xs">
+                      {countryData.forex.isLive ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded-full">
+                          <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                          Live rate
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-amber-100 text-amber-700 rounded-full">
+                          <span className="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
+                          Estimated
+                        </span>
+                      )}
                     </div>
                   </div>
                 ) : (
