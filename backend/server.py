@@ -11,6 +11,7 @@ import uuid
 from datetime import datetime, timezone
 import httpx
 from emergentintegrations.llm.chat import LlmChat, UserMessage
+from production_data import SEASONS_DATA, VISA_DATA, SAFETY_DATA, APPS_DATA, FESTIVALS_DATA, DISHES_DATA, PLUGS_DATA
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -274,97 +275,51 @@ class DocumentChecklistResult(BaseModel):
 # Initialize sample data on startup
 @app.on_event("startup")
 async def initialize_data():
-    """Initialize sample data for countries, visa info, and apps"""
+    """Initialize production data for all collections"""
     
-    # Check if data already exists
+    # Initialize seasons data (with categories)
     season_count = await db.seasons.count_documents({})
     if season_count == 0:
-        # Sample season data
-        seasons_data = [
-            {"country_code": "USA", "country_name": "United States", "season_type": "peak", "best_months": ["Jun", "Jul", "Aug"]},
-            {"country_code": "GBR", "country_name": "United Kingdom", "season_type": "shoulder", "best_months": ["May", "Sep"]},
-            {"country_code": "FRA", "country_name": "France", "season_type": "peak", "best_months": ["Jun", "Jul", "Aug"]},
-            {"country_code": "DEU", "country_name": "Germany", "season_type": "shoulder", "best_months": ["May", "Sep", "Oct"]},
-            {"country_code": "ITA", "country_name": "Italy", "season_type": "peak", "best_months": ["Jun", "Jul", "Aug"]},
-            {"country_code": "ESP", "country_name": "Spain", "season_type": "peak", "best_months": ["Jun", "Jul", "Aug"]},
-            {"country_code": "CHN", "country_name": "China", "season_type": "shoulder", "best_months": ["Apr", "May", "Sep", "Oct"]},
-            {"country_code": "JPN", "country_name": "Japan", "season_type": "peak", "best_months": ["Mar", "Apr", "Oct", "Nov"]},
-            {"country_code": "THA", "country_name": "Thailand", "season_type": "off", "best_months": ["Nov", "Dec", "Jan", "Feb"]},
-            {"country_code": "SGP", "country_name": "Singapore", "season_type": "shoulder", "best_months": ["Feb", "Mar", "Jul", "Aug"]},
-            {"country_code": "ARE", "country_name": "United Arab Emirates", "season_type": "off", "best_months": ["Nov", "Dec", "Jan", "Feb", "Mar"]},
-            {"country_code": "AUS", "country_name": "Australia", "season_type": "peak", "best_months": ["Dec", "Jan", "Feb"]},
-            {"country_code": "CAN", "country_name": "Canada", "season_type": "shoulder", "best_months": ["Jun", "Jul", "Aug", "Sep"]},
-            {"country_code": "BRA", "country_name": "Brazil", "season_type": "off", "best_months": ["Apr", "May", "Sep", "Oct"]},
-            {"country_code": "ZAF", "country_name": "South Africa", "season_type": "shoulder", "best_months": ["May", "Jun", "Sep", "Oct"]},
-            {"country_code": "NZL", "country_name": "New Zealand", "season_type": "peak", "best_months": ["Dec", "Jan", "Feb"]},
-            {"country_code": "CHE", "country_name": "Switzerland", "season_type": "peak", "best_months": ["Jun", "Jul", "Aug", "Dec"]},
-            {"country_code": "AUT", "country_name": "Austria", "season_type": "shoulder", "best_months": ["May", "Sep", "Dec"]},
-            {"country_code": "NLD", "country_name": "Netherlands", "season_type": "shoulder", "best_months": ["Apr", "May", "Sep"]},
-            {"country_code": "GRC", "country_name": "Greece", "season_type": "peak", "best_months": ["Jun", "Jul", "Aug"]}
-        ]
-        await db.seasons.insert_many(seasons_data)
-        
-        # Sample visa data
-        visa_data = [
-            {"country_code": "USA", "country_name": "United States", "visa_type": "visa_required", "requirements": "B1/B2 Tourist Visa"},
-            {"country_code": "GBR", "country_name": "United Kingdom", "visa_type": "visa_required", "requirements": "Standard Visitor Visa"},
-            {"country_code": "FRA", "country_name": "France", "visa_type": "visa_required", "requirements": "Schengen Visa"},
-            {"country_code": "DEU", "country_name": "Germany", "visa_type": "visa_required", "requirements": "Schengen Visa"},
-            {"country_code": "ITA", "country_name": "Italy", "visa_type": "visa_required", "requirements": "Schengen Visa"},
-            {"country_code": "ESP", "country_name": "Spain", "visa_type": "visa_required", "requirements": "Schengen Visa"},
-            {"country_code": "CHN", "country_name": "China", "visa_type": "visa_required", "requirements": "Tourist Visa L"},
-            {"country_code": "JPN", "country_name": "Japan", "visa_type": "visa_required", "requirements": "Tourist Visa"},
-            {"country_code": "THA", "country_name": "Thailand", "visa_type": "visa_on_arrival", "requirements": "15 days visa on arrival"},
-            {"country_code": "SGP", "country_name": "Singapore", "visa_type": "e_visa", "requirements": "30 days e-visa"},
-            {"country_code": "ARE", "country_name": "United Arab Emirates", "visa_type": "visa_on_arrival", "requirements": "14 days visa on arrival"},
-            {"country_code": "AUS", "country_name": "Australia", "visa_type": "e_visa", "requirements": "ETA Electronic Visa"},
-            {"country_code": "CAN", "country_name": "Canada", "visa_type": "visa_required", "requirements": "Visitor Visa"},
-            {"country_code": "BRA", "country_name": "Brazil", "visa_type": "e_visa", "requirements": "e-Visa available"},
-            {"country_code": "ZAF", "country_name": "South Africa", "visa_type": "e_visa", "requirements": "e-Visa available"},
-            {"country_code": "NZL", "country_name": "New Zealand", "visa_type": "e_visa", "requirements": "NZeTA required"},
-            {"country_code": "CHE", "country_name": "Switzerland", "visa_type": "visa_required", "requirements": "Schengen Visa"},
-            {"country_code": "AUT", "country_name": "Austria", "visa_type": "visa_required", "requirements": "Schengen Visa"},
-            {"country_code": "NLD", "country_name": "Netherlands", "visa_type": "visa_required", "requirements": "Schengen Visa"},
-            {"country_code": "GRC", "country_name": "Greece", "visa_type": "visa_required", "requirements": "Schengen Visa"}
-        ]
-        await db.visa.insert_many(visa_data)
-        
-        # Sample app recommendations
-        apps_data = [
-            # USA
-            {"country_code": "USA", "country_name": "United States", "category": "transport", "app_name": "Uber", "description": "Ride-sharing service", "icon_url": None},
-            {"country_code": "USA", "country_name": "United States", "category": "convenience", "app_name": "Amazon", "description": "Shopping & delivery", "icon_url": None},
-            {"country_code": "USA", "country_name": "United States", "category": "food", "app_name": "DoorDash", "description": "Food delivery", "icon_url": None},
-            {"country_code": "USA", "country_name": "United States", "category": "sightseeing", "app_name": "TripAdvisor", "description": "Travel guide", "icon_url": None},
-            # UK
-            {"country_code": "GBR", "country_name": "United Kingdom", "category": "transport", "app_name": "Citymapper", "description": "Public transport navigation", "icon_url": None},
-            {"country_code": "GBR", "country_name": "United Kingdom", "category": "convenience", "app_name": "Revolut", "description": "Digital banking", "icon_url": None},
-            {"country_code": "GBR", "country_name": "United Kingdom", "category": "food", "app_name": "Deliveroo", "description": "Food delivery", "icon_url": None},
-            {"country_code": "GBR", "country_name": "United Kingdom", "category": "sightseeing", "app_name": "Visit Britain", "description": "Tourism guide", "icon_url": None},
-            # Japan
-            {"country_code": "JPN", "country_name": "Japan", "category": "transport", "app_name": "Hyperdia", "description": "Train schedules", "icon_url": None},
-            {"country_code": "JPN", "country_name": "Japan", "category": "convenience", "app_name": "PayPay", "description": "Mobile payment", "icon_url": None},
-            {"country_code": "JPN", "country_name": "Japan", "category": "food", "app_name": "Tabelog", "description": "Restaurant reviews", "icon_url": None},
-            {"country_code": "JPN", "country_name": "Japan", "category": "sightseeing", "app_name": "JNTO Guide", "description": "Official travel guide", "icon_url": None},
-            # Thailand
-            {"country_code": "THA", "country_name": "Thailand", "category": "transport", "app_name": "Grab", "description": "Ride-hailing", "icon_url": None},
-            {"country_code": "THA", "country_name": "Thailand", "category": "convenience", "app_name": "Line", "description": "Messaging & payments", "icon_url": None},
-            {"country_code": "THA", "country_name": "Thailand", "category": "food", "app_name": "Foodpanda", "description": "Food delivery", "icon_url": None},
-            {"country_code": "THA", "country_name": "Thailand", "category": "sightseeing", "app_name": "Amazing Thailand", "description": "Tourism guide", "icon_url": None},
-            # Singapore
-            {"country_code": "SGP", "country_name": "Singapore", "category": "transport", "app_name": "MyTransport.SG", "description": "Public transport", "icon_url": None},
-            {"country_code": "SGP", "country_name": "Singapore", "category": "convenience", "app_name": "GrabPay", "description": "Digital wallet", "icon_url": None},
-            {"country_code": "SGP", "country_name": "Singapore", "category": "food", "app_name": "GrabFood", "description": "Food delivery", "icon_url": None},
-            {"country_code": "SGP", "country_name": "Singapore", "category": "sightseeing", "app_name": "Visit Singapore", "description": "Official guide", "icon_url": None},
-            # UAE
-            {"country_code": "ARE", "country_name": "United Arab Emirates", "category": "transport", "app_name": "Careem", "description": "Ride-hailing", "icon_url": None},
-            {"country_code": "ARE", "country_name": "United Arab Emirates", "category": "convenience", "app_name": "Noon", "description": "E-commerce", "icon_url": None},
-            {"country_code": "ARE", "country_name": "United Arab Emirates", "category": "food", "app_name": "Talabat", "description": "Food delivery", "icon_url": None},
-            {"country_code": "ARE", "country_name": "United Arab Emirates", "category": "sightseeing", "app_name": "Visit Dubai", "description": "Tourism guide", "icon_url": None}
-        ]
-        await db.apps.insert_many(apps_data)
-        
-        logging.info("Sample data initialized successfully")
+        await db.seasons.insert_many(SEASONS_DATA)
+        logging.info(f"Initialized {len(SEASONS_DATA)} seasons documents")
+    
+    # Initialize visa data
+    visa_count = await db.visa.count_documents({})
+    if visa_count == 0:
+        await db.visa.insert_many(VISA_DATA)
+        logging.info(f"Initialized {len(VISA_DATA)} visa documents")
+    
+    # Initialize safety data (with emergency contacts, safety tips, areas to avoid)
+    safety_count = await db.safety.count_documents({})
+    if safety_count == 0:
+        await db.safety.insert_many(SAFETY_DATA)
+        logging.info(f"Initialized {len(SAFETY_DATA)} safety documents")
+    
+    # Initialize apps data
+    apps_count = await db.apps.count_documents({})
+    if apps_count == 0:
+        await db.apps.insert_many(APPS_DATA)
+        logging.info(f"Initialized {len(APPS_DATA)} apps documents")
+    
+    # Initialize festivals data
+    festivals_count = await db.festivals.count_documents({})
+    if festivals_count == 0:
+        await db.festivals.insert_many(FESTIVALS_DATA)
+        logging.info(f"Initialized {len(FESTIVALS_DATA)} festivals documents")
+    
+    # Initialize dishes data
+    dishes_count = await db.dishes.count_documents({})
+    if dishes_count == 0:
+        await db.dishes.insert_many(DISHES_DATA)
+        logging.info(f"Initialized {len(DISHES_DATA)} dishes documents")
+    
+    # Initialize plugs data
+    plugs_count = await db.plugs.count_documents({})
+    if plugs_count == 0:
+        await db.plugs.insert_many(PLUGS_DATA)
+        logging.info(f"Initialized {len(PLUGS_DATA)} plugs documents")
+    
+    logging.info("Data initialization check complete")
 
 # API Routes
 @api_router.get("/seasons")
