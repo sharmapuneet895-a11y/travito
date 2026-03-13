@@ -275,51 +275,146 @@ class DocumentChecklistResult(BaseModel):
 # Initialize sample data on startup
 @app.on_event("startup")
 async def initialize_data():
-    """Initialize production data for all collections"""
+    """Initialize production data for all collections - checks for completeness and reseeds if needed"""
     
-    # Initialize seasons data (with categories)
+    # Define expected minimum counts for complete data
+    EXPECTED_COUNTS = {
+        'seasons': 190,  # Should have ~199 countries with categories
+        'visa': 190,     # Should have ~200 countries
+        'safety': 60,    # Should have ~63 countries with safety tips
+        'apps': 200,     # Should have ~238 apps
+        'festivals': 100, # Should have ~117 festivals
+        'dishes': 80,    # Should have ~90 dishes
+        'plugs': 140     # Should have ~144 plugs
+    }
+    
+    # Check and reseed seasons (with categories)
     season_count = await db.seasons.count_documents({})
-    if season_count == 0:
+    seasons_with_categories = await db.seasons.count_documents({"categories": {"$exists": True}})
+    if season_count < EXPECTED_COUNTS['seasons'] or seasons_with_categories < 50:
+        logging.info(f"Reseeding seasons: current={season_count}, with_categories={seasons_with_categories}")
+        await db.seasons.drop()
         await db.seasons.insert_many(SEASONS_DATA)
-        logging.info(f"Initialized {len(SEASONS_DATA)} seasons documents")
+        logging.info(f"Initialized {len(SEASONS_DATA)} seasons documents with categories")
     
-    # Initialize visa data
+    # Check and reseed visa
     visa_count = await db.visa.count_documents({})
-    if visa_count == 0:
+    if visa_count < EXPECTED_COUNTS['visa']:
+        logging.info(f"Reseeding visa: current={visa_count}")
+        await db.visa.drop()
         await db.visa.insert_many(VISA_DATA)
         logging.info(f"Initialized {len(VISA_DATA)} visa documents")
     
-    # Initialize safety data (with emergency contacts, safety tips, areas to avoid)
+    # Check and reseed safety (with safety_tips and areas_to_avoid)
     safety_count = await db.safety.count_documents({})
-    if safety_count == 0:
+    safety_with_tips = await db.safety.count_documents({"safety_tips": {"$exists": True}})
+    safety_with_areas = await db.safety.count_documents({"areas_to_avoid": {"$exists": True}})
+    if safety_count < EXPECTED_COUNTS['safety'] or safety_with_tips < 30 or safety_with_areas < 30:
+        logging.info(f"Reseeding safety: current={safety_count}, with_tips={safety_with_tips}, with_areas={safety_with_areas}")
+        await db.safety.drop()
         await db.safety.insert_many(SAFETY_DATA)
         logging.info(f"Initialized {len(SAFETY_DATA)} safety documents")
     
-    # Initialize apps data
+    # Check and reseed apps
     apps_count = await db.apps.count_documents({})
-    if apps_count == 0:
+    if apps_count < EXPECTED_COUNTS['apps']:
+        logging.info(f"Reseeding apps: current={apps_count}")
+        await db.apps.drop()
         await db.apps.insert_many(APPS_DATA)
         logging.info(f"Initialized {len(APPS_DATA)} apps documents")
     
-    # Initialize festivals data
+    # Check and reseed festivals
     festivals_count = await db.festivals.count_documents({})
-    if festivals_count == 0:
+    if festivals_count < EXPECTED_COUNTS['festivals']:
+        logging.info(f"Reseeding festivals: current={festivals_count}")
+        await db.festivals.drop()
         await db.festivals.insert_many(FESTIVALS_DATA)
         logging.info(f"Initialized {len(FESTIVALS_DATA)} festivals documents")
     
-    # Initialize dishes data
+    # Check and reseed dishes
     dishes_count = await db.dishes.count_documents({})
-    if dishes_count == 0:
+    if dishes_count < EXPECTED_COUNTS['dishes']:
+        logging.info(f"Reseeding dishes: current={dishes_count}")
+        await db.dishes.drop()
         await db.dishes.insert_many(DISHES_DATA)
         logging.info(f"Initialized {len(DISHES_DATA)} dishes documents")
     
-    # Initialize plugs data
+    # Check and reseed plugs
     plugs_count = await db.plugs.count_documents({})
-    if plugs_count == 0:
+    if plugs_count < EXPECTED_COUNTS['plugs']:
+        logging.info(f"Reseeding plugs: current={plugs_count}")
+        await db.plugs.drop()
         await db.plugs.insert_many(PLUGS_DATA)
         logging.info(f"Initialized {len(PLUGS_DATA)} plugs documents")
     
     logging.info("Data initialization check complete")
+
+# Force reseed endpoint for production data refresh
+@api_router.post("/admin/reseed")
+async def force_reseed_data():
+    """Force reseed all data - use this if production data is incomplete"""
+    try:
+        await db.seasons.drop()
+        await db.seasons.insert_many(SEASONS_DATA)
+        
+        await db.visa.drop()
+        await db.visa.insert_many(VISA_DATA)
+        
+        await db.safety.drop()
+        await db.safety.insert_many(SAFETY_DATA)
+        
+        await db.apps.drop()
+        await db.apps.insert_many(APPS_DATA)
+        
+        await db.festivals.drop()
+        await db.festivals.insert_many(FESTIVALS_DATA)
+        
+        await db.dishes.drop()
+        await db.dishes.insert_many(DISHES_DATA)
+        
+        await db.plugs.drop()
+        await db.plugs.insert_many(PLUGS_DATA)
+        
+        return {
+            "status": "success",
+            "message": "All collections reseeded",
+            "counts": {
+                "seasons": len(SEASONS_DATA),
+                "visa": len(VISA_DATA),
+                "safety": len(SAFETY_DATA),
+                "apps": len(APPS_DATA),
+                "festivals": len(FESTIVALS_DATA),
+                "dishes": len(DISHES_DATA),
+                "plugs": len(PLUGS_DATA)
+            }
+        }
+    except Exception as e:
+        logging.error(f"Reseed error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Data status check endpoint
+@api_router.get("/admin/status")
+async def get_data_status():
+    """Check current data status in database"""
+    seasons_count = await db.seasons.count_documents({})
+    seasons_with_categories = await db.seasons.count_documents({"categories": {"$exists": True}})
+    visa_count = await db.visa.count_documents({})
+    safety_count = await db.safety.count_documents({})
+    safety_with_tips = await db.safety.count_documents({"safety_tips": {"$exists": True}})
+    apps_count = await db.apps.count_documents({})
+    festivals_count = await db.festivals.count_documents({})
+    dishes_count = await db.dishes.count_documents({})
+    plugs_count = await db.plugs.count_documents({})
+    
+    return {
+        "seasons": {"count": seasons_count, "with_categories": seasons_with_categories, "expected": 199},
+        "visa": {"count": visa_count, "expected": 200},
+        "safety": {"count": safety_count, "with_tips": safety_with_tips, "expected": 63},
+        "apps": {"count": apps_count, "expected": 238},
+        "festivals": {"count": festivals_count, "expected": 117},
+        "dishes": {"count": dishes_count, "expected": 90},
+        "plugs": {"count": plugs_count, "expected": 144}
+    }
 
 # API Routes
 @api_router.get("/seasons")
