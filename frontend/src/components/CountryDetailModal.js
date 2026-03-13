@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2, Shield, Phone, DollarSign, ArrowRightLeft, Users, TrendingUp, TrendingDown, CheckCircle, ClipboardList } from 'lucide-react';
+import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2, Shield, Phone, DollarSign, ArrowRightLeft, Users, TrendingUp, TrendingDown, CheckCircle, ClipboardList, MapPinOff, AlertTriangle } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
 import VisaEligibilityChecker from './VisaEligibilityChecker';
@@ -694,7 +694,9 @@ const CountryDetailModal = ({ country, onClose }) => {
                     <Shield className="w-5 h-5 text-red-500" />
                     <h3 className="font-semibold text-primary">Safety & Emergency</h3>
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+                  
+                  {/* Emergency Numbers */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                     {countryData.safety.emergency_police && (
                       <div className="bg-blue-50 p-2 rounded text-center">
                         <Phone className="w-4 h-4 text-blue-600 mx-auto mb-1" />
@@ -724,6 +726,44 @@ const CountryDetailModal = ({ country, onClose }) => {
                       </div>
                     )}
                   </div>
+
+                  {/* Safety Tips */}
+                  {countryData.safety.safety_tips && countryData.safety.safety_tips.length > 0 && (
+                    <div className="mb-4">
+                      <h4 className="font-semibold text-primary flex items-center gap-2 mb-2 text-sm">
+                        <CheckCircle className="w-4 h-4 text-green-500" />
+                        Safety Tips
+                      </h4>
+                      <ul className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
+                        {countryData.safety.safety_tips.slice(0, 6).map((tip, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-xs text-gray-700 bg-white/50 rounded px-2 py-1">
+                            <CheckCircle className="w-3 h-3 text-green-500 flex-shrink-0 mt-0.5" />
+                            <span>{tip}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Areas to Avoid */}
+                  {countryData.safety.areas_to_avoid && countryData.safety.areas_to_avoid.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold text-red-600 flex items-center gap-2 mb-2 text-sm">
+                        <MapPinOff className="w-4 h-4" />
+                        Areas to Avoid
+                      </h4>
+                      <div className="bg-red-100/50 border border-red-200 rounded-lg p-3">
+                        <ul className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
+                          {countryData.safety.areas_to_avoid.slice(0, 6).map((area, idx) => (
+                            <li key={idx} className="flex items-start gap-2 text-xs text-red-800">
+                              <AlertTriangle className="w-3 h-3 text-red-500 flex-shrink-0 mt-0.5" />
+                              <span>{area}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

@@ -7,6 +7,7 @@ import CostEstimator from '../components/CostEstimator';
 import BackToTop from '../components/BackToTop';
 import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Calculator, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
+import { useAuth } from '../context/AuthContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -575,7 +576,8 @@ const Seasons = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showCostEstimator, setShowCostEstimator] = useState(false);
   const [selectedWeatherType, setSelectedWeatherType] = useState(null); // For seasonal guide
-  const { addToWishlist, isInWishlist } = useWishlist();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const { requireAuth, user } = useAuth();
   
   // Date state - default to current month
   const today = new Date();
@@ -584,6 +586,19 @@ const Seasons = () => {
   
   const selectedMonthAbbrev = MONTH_ABBREV[selectedMonth];
   const selectedMonthName = MONTH_NAMES[selectedMonth];
+
+  // Handle wishlist toggle with auth
+  const handleWishlistToggle = (e, countryCode, countryName) => {
+    e.stopPropagation(); // Prevent card click
+    const country = { country_code: countryCode, country_name: countryName };
+    if (isInWishlist(countryCode)) {
+      removeFromWishlist(countryCode, user?.user_id);
+    } else {
+      requireAuth(() => {
+        addToWishlist(country, user?.user_id);
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchSeasons = async () => {
@@ -822,6 +837,7 @@ const Seasons = () => {
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               {topDestinationsData[selectedMonthAbbrev]?.map((dest, idx) => {
                 const categoryData = CATEGORIES.find(c => c.id === dest.category);
+                const inWishlist = isInWishlist(dest.code);
                 return (
                   <motion.div
                     key={dest.code}
@@ -832,9 +848,21 @@ const Seasons = () => {
                       const country = processedData.find(c => c.country_code === dest.code);
                       if (country) setSelectedCountry(country);
                     }}
-                    className="bg-white rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all border border-amber-100 group"
+                    className="bg-white rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all border border-amber-100 group relative"
                     data-testid={`top-dest-${dest.code}`}
                   >
+                    {/* Wishlist Button */}
+                    <button
+                      onClick={(e) => handleWishlistToggle(e, dest.code, dest.name)}
+                      className={`absolute top-2 right-2 p-1.5 rounded-full transition-all z-10 ${
+                        inWishlist 
+                          ? 'bg-red-100 text-red-500' 
+                          : 'bg-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-400'
+                      }`}
+                      data-testid={`wishlist-top-dest-${dest.code}`}
+                    >
+                      <Heart className={`w-4 h-4 ${inWishlist ? 'fill-current' : ''}`} />
+                    </button>
                     <div className="flex items-center gap-3 mb-3">
                       <span className="text-2xl font-bold text-amber-500">#{idx + 1}</span>
                       <img
@@ -947,36 +975,51 @@ const Seasons = () => {
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     id="weather-guide-scroll"
                   >
-                    {weatherGuideData[selectedWeatherType].destinations[selectedMonthAbbrev]?.map((dest, idx) => (
-                      <motion.div
-                        key={dest.code}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: idx * 0.05 }}
-                        onClick={() => {
-                          const country = processedData.find(c => c.country_code === dest.code);
-                          if (country) setSelectedCountry(country);
-                        }}
-                        className="bg-white rounded-lg p-4 cursor-pointer hover:shadow-lg transition-all border border-gray-100 group flex-shrink-0 w-[200px]"
-                        data-testid={`guide-dest-${dest.code}`}
-                      >
-                        <div className="flex items-center gap-2 mb-2">
-                          <img
-                            src={getFlag(dest.code)}
-                            alt={dest.name}
-                            className="w-8 h-5 object-cover rounded shadow-sm"
-                            onError={(e) => { e.target.style.display = 'none'; }}
-                          />
-                          <span className="font-bold text-primary group-hover:text-violet-600 transition-colors text-sm">{dest.name}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm mb-1">
-                          <ThermometerSun className="w-4 h-4 text-gray-400" />
-                          <span className="font-medium text-gray-700">{dest.temp}</span>
-                        </div>
-                        <p className="text-xs text-muted-foreground line-clamp-2">{dest.highlight}</p>
-                        <p className="text-xs text-violet-600 mt-2 group-hover:underline">Explore →</p>
-                      </motion.div>
-                    ))}
+                    {weatherGuideData[selectedWeatherType].destinations[selectedMonthAbbrev]?.map((dest, idx) => {
+                      const inWishlist = isInWishlist(dest.code);
+                      return (
+                        <motion.div
+                          key={dest.code}
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: idx * 0.05 }}
+                          onClick={() => {
+                            const country = processedData.find(c => c.country_code === dest.code);
+                            if (country) setSelectedCountry(country);
+                          }}
+                          className="bg-white rounded-lg p-4 cursor-pointer hover:shadow-lg transition-all border border-gray-100 group flex-shrink-0 w-[200px] relative"
+                          data-testid={`guide-dest-${dest.code}`}
+                        >
+                          {/* Wishlist Button */}
+                          <button
+                            onClick={(e) => handleWishlistToggle(e, dest.code, dest.name)}
+                            className={`absolute top-2 right-2 p-1.5 rounded-full transition-all z-10 ${
+                              inWishlist 
+                                ? 'bg-red-100 text-red-500' 
+                                : 'bg-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-400'
+                            }`}
+                            data-testid={`wishlist-guide-${dest.code}`}
+                          >
+                            <Heart className={`w-4 h-4 ${inWishlist ? 'fill-current' : ''}`} />
+                          </button>
+                          <div className="flex items-center gap-2 mb-2 pr-8">
+                            <img
+                              src={getFlag(dest.code)}
+                              alt={dest.name}
+                              className="w-8 h-5 object-cover rounded shadow-sm"
+                              onError={(e) => { e.target.style.display = 'none'; }}
+                            />
+                            <span className="font-bold text-primary group-hover:text-violet-600 transition-colors text-sm">{dest.name}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-sm mb-1">
+                            <ThermometerSun className="w-4 h-4 text-gray-400" />
+                            <span className="font-medium text-gray-700">{dest.temp}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground line-clamp-2">{dest.highlight}</p>
+                          <p className="text-xs text-violet-600 mt-2 group-hover:underline">Explore →</p>
+                        </motion.div>
+                      );
+                    })}
                   </div>
                   
                   {/* Right scroll arrow */}

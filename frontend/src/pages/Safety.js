@@ -3,7 +3,7 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import WorldMap from '../components/WorldMap';
 import BackToTop from '../components/BackToTop';
-import { Shield, Phone, AlertTriangle, CheckCircle, Info, Search } from 'lucide-react';
+import { Shield, Phone, AlertTriangle, CheckCircle, Info, Search, MapPinOff } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -216,9 +216,9 @@ const Safety = () => {
 
                       {/* Safety Tips */}
                       {country.safety_tips && country.safety_tips.length > 0 && (
-                        <div>
+                        <div className="mb-4">
                           <h5 className="font-semibold text-primary flex items-center gap-2 mb-2">
-                            <AlertTriangle className="w-4 h-4" />
+                            <CheckCircle className="w-4 h-4" />
                             Safety Tips
                           </h5>
                           <ul className="text-sm space-y-1">
@@ -229,6 +229,26 @@ const Safety = () => {
                               </li>
                             ))}
                           </ul>
+                        </div>
+                      )}
+
+                      {/* Areas to Avoid */}
+                      {country.areas_to_avoid && country.areas_to_avoid.length > 0 && (
+                        <div className="mb-4">
+                          <h5 className="font-semibold text-red-600 flex items-center gap-2 mb-2">
+                            <MapPinOff className="w-4 h-4" />
+                            Areas to Avoid
+                          </h5>
+                          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                            <ul className="text-sm space-y-1">
+                              {country.areas_to_avoid.map((area, idx) => (
+                                <li key={idx} className="flex items-start gap-2">
+                                  <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+                                  <span className="text-red-800">{area}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
                         </div>
                       )}
                     </motion.div>
