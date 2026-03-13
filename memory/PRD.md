@@ -14,7 +14,22 @@ Build a comprehensive travel information website called "Pass-e-port" for Indian
 
 ## What's Been Implemented
 
-### Latest Updates (March 12, 2026) - Session 3
+### Latest Updates (March 13, 2026) - Session 4
+- [x] **User Registration System**: Simple auth modal collecting Name, Email, Mobile Number (no password/OTP)
+  - Auth gating on Wishlist, Visa Eligibility Checker, Document Checklist Generator
+  - User profile page at `/profile` with edit and delete account functionality
+  - Data persisted to MongoDB with ability to delete user data
+- [x] **Wishlist Icons on Seasons Page**: Added heart icons to Top 5 Destinations and Seasonal Travel Guide cards
+- [x] **Areas to Avoid**: Added "Areas to Avoid" section on Safety page and Country Detail Modal
+  - Red warning styling with AlertTriangle icons
+  - 38 countries updated with unsafe areas data (crime hotspots, no-go zones for tourists)
+  - Countries include: Mexico, Brazil, South Africa, India, USA, France, Colombia, Egypt, Thailand, Turkey, etc.
+- [x] **Safety Tips Enhanced**: Safety tips now displayed in both Safety page and Country Detail Modal
+- [x] **Expanded Seasonal Travel Guide**: 
+  - "Mild & Pleasant" category now has 8 destinations per month (was 4)
+  - "Monsoon Adventures" category now has 8 destinations per month (was 4)
+
+### Updates (March 12, 2026) - Session 3
 - [x] **Forex Page Expanded**: Now shows 66 currencies (vs ~11 before) with search input and region filters (All, Asia, Europe, Americas, Middle East, Africa, Oceania)
 - [x] **Live/Estimated Badges**: Forex cards show "Live Rate" (12 currencies) or "Estimated" badges for transparency
 - [x] **Weather Temperature Fix**: Fixed contradiction where live temperature was shown for future months - now only displays for current month
