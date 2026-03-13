@@ -148,9 +148,17 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
         default: return '#E8E8E6';
       }
     } else if (mode === 'plug') {
+      // Match colors with PowerPlug.js legend
       const plugColors = {
-        'a': '#DC2626', 'b': '#2563EB', 'c': '#F59E0B', 'd': '#16A34A',
-        'e': '#9333EA', 'f': '#EC4899', 'g': '#F97316', 'mixed': '#6B7280'
+        'a': '#E25A53', // Red - USA, Japan, Canada
+        'b': '#F2A900', // Yellow/Orange - USA, Mexico
+        'c': '#4B89AC', // Blue - Europe, Asia
+        'd': '#9B59B6', // Purple - India, Nepal
+        'e': '#2A9D8F', // Teal - France, Belgium
+        'f': '#E74C3C', // Red variant - Germany
+        'g': '#3498DB', // Blue - UK, Singapore, UAE
+        'i': '#F39C12', // Orange - Australia, China
+        'mixed': '#95A5A6' // Grey - Multiple types
       };
       return plugColors[countryData.plug_type?.toLowerCase()] || '#E5E5E5';
     } else if (mode === 'festivals') {

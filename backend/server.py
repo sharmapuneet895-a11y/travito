@@ -11,7 +11,7 @@ import uuid
 from datetime import datetime, timezone
 import httpx
 from emergentintegrations.llm.chat import LlmChat, UserMessage
-from production_data import SEASONS_DATA, VISA_DATA, SAFETY_DATA, APPS_DATA, FESTIVALS_DATA, DISHES_DATA, PLUGS_DATA
+from production_data import SEASONS_DATA, VISA_DATA, SAFETY_DATA, APPS_DATA, FESTIVALS_DATA, DISHES_DATA, PLUGS_DATA, BLOGS_DATA
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -347,6 +347,14 @@ async def initialize_data():
         await db.plugs.insert_many(PLUGS_DATA)
         logging.info(f"Initialized {len(PLUGS_DATA)} plugs documents")
     
+    # Check and reseed blogs
+    blogs_count = await db.blogs.count_documents({})
+    if blogs_count < 5:
+        logging.info(f"Reseeding blogs: current={blogs_count}")
+        await db.blogs.drop()
+        await db.blogs.insert_many(BLOGS_DATA)
+        logging.info(f"Initialized {len(BLOGS_DATA)} blogs documents")
+    
     logging.info("Data initialization check complete")
 
 # Force reseed endpoint for production data refresh
@@ -375,6 +383,9 @@ async def force_reseed_data():
         await db.plugs.drop()
         await db.plugs.insert_many(PLUGS_DATA)
         
+        await db.blogs.drop()
+        await db.blogs.insert_many(BLOGS_DATA)
+        
         return {
             "status": "success",
             "message": "All collections reseeded",
@@ -385,7 +396,8 @@ async def force_reseed_data():
                 "apps": len(APPS_DATA),
                 "festivals": len(FESTIVALS_DATA),
                 "dishes": len(DISHES_DATA),
-                "plugs": len(PLUGS_DATA)
+                "plugs": len(PLUGS_DATA),
+                "blogs": len(BLOGS_DATA)
             }
         }
     except Exception as e:

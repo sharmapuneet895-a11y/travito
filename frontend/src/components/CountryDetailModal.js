@@ -383,17 +383,17 @@ const CountryDetailModal = ({ country, onClose }) => {
           data-testid="country-detail-modal"
         >
           {/* Header */}
-          <div className="sticky top-0 bg-white border-b border-border p-6 flex items-center justify-between z-10">
+          <div className="sticky top-0 bg-gradient-to-r from-slate-50 to-white border-b border-gray-200 p-6 flex items-center justify-between z-10">
             <div className="flex items-center gap-4">
               <img
                 src={getFlag(country.country_code)}
                 alt={country.country_name}
-                className="w-12 h-8 object-cover rounded shadow"
+                className="w-14 h-10 object-cover rounded-lg shadow-md"
                 onError={(e) => { e.target.style.display = 'none'; }}
               />
               <div>
-                <h2 className="text-2xl font-bold text-primary">{country.country_name}</h2>
-                <p className="text-sm text-muted-foreground">Country Code: {country.country_code}</p>
+                <h2 className="text-2xl font-bold text-gray-800" style={{ fontFamily: "'Poppins', 'Inter', sans-serif" }}>{country.country_name}</h2>
+                <p className="text-sm text-gray-500 font-medium">Country Code: {country.country_code}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -409,7 +409,7 @@ const CountryDetailModal = ({ country, onClose }) => {
                 className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-all"
                 data-testid="close-country-modal"
               >
-                <X className="w-6 h-6 text-primary" />
+                <X className="w-6 h-6 text-gray-700" />
               </button>
             </div>
           </div>
@@ -421,12 +421,12 @@ const CountryDetailModal = ({ country, onClose }) => {
               <span className="ml-2 text-muted-foreground">Loading country information...</span>
             </div>
           ) : (
-            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6" style={{ fontFamily: "'Inter', sans-serif" }}>
               {/* Best Season */}
               <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl p-5 border border-orange-100">
                 <div className="flex items-center gap-2 mb-3">
                   <Calendar className="w-5 h-5 text-orange-500" />
-                  <h3 className="font-semibold text-primary">Best Season to Visit</h3>
+                  <h3 className="font-bold text-gray-800" style={{ fontFamily: "'Poppins', sans-serif" }}>Best Season to Visit</h3>
                 </div>
                 {countryData.seasons ? (
                   <div>
@@ -434,12 +434,12 @@ const CountryDetailModal = ({ country, onClose }) => {
                       const isCurrentlyBest = countryData.seasons.best_months?.includes(currentMonth);
                       return (
                         <>
-                          <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                          <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
                             isCurrentlyBest ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
                           }`}>
                             {isCurrentlyBest ? '✓ BEST TIME NOW' : 'NOT IDEAL NOW'}
                           </span>
-                          <p className="mt-2 text-sm text-muted-foreground">
+                          <p className="mt-2 text-sm text-gray-600 font-medium">
                             Best months: {countryData.seasons.best_months?.join(', ') || 'N/A'}
                           </p>
                         </>
@@ -447,7 +447,7 @@ const CountryDetailModal = ({ country, onClose }) => {
                     })()}
                   </div>
                 ) : (
-                  <p className="text-sm text-muted-foreground">No season data available</p>
+                  <p className="text-sm text-gray-500">No season data available</p>
                 )}
               </div>
 
@@ -456,22 +456,22 @@ const CountryDetailModal = ({ country, onClose }) => {
                 <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-xl p-5 border border-violet-100">
                   <div className="flex items-center gap-2 mb-3">
                     <Users className="w-5 h-5 text-violet-500" />
-                    <h3 className="font-semibold text-primary">Crowd & Cost Insights</h3>
+                    <h3 className="font-bold text-gray-800" style={{ fontFamily: "'Poppins', sans-serif" }}>Crowd & Cost Insights</h3>
                   </div>
                   <div className="space-y-3">
                     {/* Busiest/Least Busy */}
                     <div className="flex items-start gap-2">
                       <TrendingUp className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
                       <div>
-                        <span className="text-xs font-medium text-red-600">Busiest:</span>
-                        <span className="text-xs text-muted-foreground ml-1">{travelTimingData[country.country_code].busiest.join(', ')}</span>
+                        <span className="text-xs font-semibold text-red-600">Busiest:</span>
+                        <span className="text-xs text-gray-600 ml-1">{travelTimingData[country.country_code].busiest.join(', ')}</span>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
                       <TrendingDown className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                       <div>
-                        <span className="text-xs font-medium text-green-600">Least Busy:</span>
-                        <span className="text-xs text-muted-foreground ml-1">{travelTimingData[country.country_code].leastBusy.join(', ')}</span>
+                        <span className="text-xs font-semibold text-green-600">Least Busy:</span>
+                        <span className="text-xs text-gray-600 ml-1">{travelTimingData[country.country_code].leastBusy.join(', ')}</span>
                       </div>
                     </div>
                     {/* Most/Least Expensive */}

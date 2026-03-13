@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import BackToTop from '../components/BackToTop';
-import { PartyPopper, Calendar, MapPin, Filter, Utensils, Leaf, Drumstick, ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { PartyPopper, Calendar, MapPin, Filter, Utensils, Leaf, Drumstick, ChevronDown, ChevronUp, Sparkles, Music, Star } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -23,18 +23,33 @@ const MONTHS = [
 ];
 
 const MONTH_COLORS = {
-  1: '#3B82F6',
-  2: '#EC4899',
-  3: '#10B981',
-  4: '#F59E0B',
-  5: '#8B5CF6',
-  6: '#EF4444',
-  7: '#F97316',
-  8: '#06B6D4',
-  9: '#84CC16',
-  10: '#F59E0B',
-  11: '#A855F7',
-  12: '#EF4444'
+  1: '#3B82F6',  // Blue - January
+  2: '#EC4899',  // Pink - February
+  3: '#10B981',  // Green - March
+  4: '#F59E0B',  // Amber - April
+  5: '#8B5CF6',  // Purple - May
+  6: '#EF4444',  // Red - June
+  7: '#F97316',  // Orange - July
+  8: '#06B6D4',  // Cyan - August
+  9: '#84CC16',  // Lime - September
+  10: '#F59E0B', // Amber - October
+  11: '#A855F7', // Violet - November
+  12: '#EF4444'  // Red - December
+};
+
+const MONTH_GRADIENTS = {
+  1: 'from-blue-500 to-blue-600',
+  2: 'from-pink-500 to-rose-600',
+  3: 'from-emerald-500 to-green-600',
+  4: 'from-amber-500 to-orange-600',
+  5: 'from-violet-500 to-purple-600',
+  6: 'from-red-500 to-rose-600',
+  7: 'from-orange-500 to-amber-600',
+  8: 'from-cyan-500 to-teal-600',
+  9: 'from-lime-500 to-green-600',
+  10: 'from-amber-500 to-yellow-600',
+  11: 'from-purple-500 to-violet-600',
+  12: 'from-red-500 to-pink-600'
 };
 
 // Helper to normalize month to number (1-12)
@@ -108,7 +123,7 @@ const Festivals = () => {
   }, {});
 
   return (
-    <div className="min-h-screen py-12 px-6">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-rose-50 to-violet-50 py-12 px-6">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -117,27 +132,30 @@ const Festivals = () => {
         >
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <PartyPopper className="w-12 h-12 text-accent" />
-              <h1 className="text-4xl md:text-5xl font-semibold text-primary section-title" data-testid="festivals-page-title">
+              <div className="relative">
+                <PartyPopper className="w-14 h-14 text-amber-500" />
+                <Sparkles className="w-6 h-6 text-pink-500 absolute -top-1 -right-1" />
+              </div>
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-amber-600 via-rose-500 to-violet-600 bg-clip-text text-transparent" data-testid="festivals-page-title">
                 Famous Festivals
               </h1>
             </div>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
               Discover the world's most spectacular festivals and must-try local dishes.
             </p>
           </div>
 
           {/* Month Filter */}
-          <div className="bg-white rounded-xl p-6 mb-8 shadow-sm">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 mb-8 shadow-lg border border-white/50">
             <div className="flex items-center gap-4 flex-wrap">
               <div className="flex items-center gap-2">
-                <Filter className="w-5 h-5 text-primary" />
-                <span className="font-semibold text-primary">Filter by Month:</span>
+                <Filter className="w-5 h-5 text-violet-600" />
+                <span className="font-semibold text-gray-700">Filter by Month:</span>
               </div>
               <select
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-                className="px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                className="px-4 py-2 border-2 border-violet-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white text-gray-700 font-medium"
                 data-testid="month-filter"
               >
                 {MONTHS.map(month => (
@@ -146,56 +164,60 @@ const Festivals = () => {
                   </option>
                 ))}
               </select>
-              <span className="text-sm text-muted-foreground">
-                Showing {filteredFestivals.length} festival{filteredFestivals.length !== 1 ? 's' : ''}
+              <span className="text-sm text-gray-500 bg-violet-100 px-3 py-1 rounded-full">
+                <Star className="w-4 h-4 inline mr-1 text-violet-500" />
+                {filteredFestivals.length} festival{filteredFestivals.length !== 1 ? 's' : ''}
               </span>
             </div>
           </div>
 
           {/* Dish Indicators Legend */}
-          <div className="bg-white rounded-xl p-6 mb-8 shadow-sm">
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 mb-8 shadow-lg border border-white/50">
             <div className="flex flex-wrap gap-8 items-center">
               <div>
-                <h3 className="text-lg font-semibold text-primary mb-3">Dish Indicators</h3>
-                <div className="flex gap-4">
+                <h3 className="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+                  <Utensils className="w-5 h-5 text-amber-500" />
+                  Dish Indicators
+                </h3>
+                <div className="flex gap-6">
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-600">
+                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 text-white shadow-md">
                       <Leaf className="w-4 h-4" />
                     </span>
-                    <span className="text-sm">Vegetarian</span>
+                    <span className="text-sm font-medium text-gray-700">Vegetarian</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-100 text-red-600">
+                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-red-400 to-rose-500 text-white shadow-md">
                       <Drumstick className="w-4 h-4" />
                     </span>
-                    <span className="text-sm">Non-Veg</span>
+                    <span className="text-sm font-medium text-gray-700">Non-Veg</span>
                   </div>
                 </div>
               </div>
-              <div className="text-sm text-muted-foreground">
-                <Sparkles className="w-4 h-4 inline mr-1" />
+              <div className="text-sm text-gray-500 flex items-center gap-2 bg-amber-50 px-4 py-2 rounded-full">
+                <Music className="w-4 h-4 text-amber-500" />
                 Click on any festival card to see more details
               </div>
             </div>
           </div>
 
           {/* Festival List by Month */}
-          <div className="space-y-8">
+          <div className="space-y-10">
             {Object.entries(festivalsByMonth)
               .sort((a, b) => {
                 const monthA = MONTHS.findIndex(m => m.label === a[0]);
                 const monthB = MONTHS.findIndex(m => m.label === b[0]);
                 return monthA - monthB;
               })
-              .map(([month, monthFestivals]) => (
+              .map(([month, monthFestivals]) => {
+                const monthValue = MONTHS.find(m => m.label === month)?.value || 1;
+                const gradient = MONTH_GRADIENTS[monthValue] || 'from-violet-500 to-purple-600';
+                return (
                 <div key={month} data-testid={`festival-month-${month.toLowerCase()}`}>
-                  <div className="flex items-center gap-3 mb-4">
-                    <Calendar 
-                      className="w-6 h-6" 
-                      style={{ color: MONTH_COLORS[MONTHS.find(m => m.label === month)?.value] || '#4B89AC' }}
-                    />
-                    <h3 className="text-2xl font-semibold text-primary">{month}</h3>
-                    <span className="text-sm text-muted-foreground bg-accent/20 px-2 py-1 rounded-full">
+                  <div className={`flex items-center gap-3 mb-6 bg-gradient-to-r ${gradient} p-4 rounded-2xl shadow-lg`}>
+                    <Calendar className="w-8 h-8 text-white" />
+                    <h3 className="text-2xl font-bold text-white">{month}</h3>
+                    <span className="text-sm bg-white/20 text-white px-3 py-1 rounded-full font-medium">
                       {monthFestivals.length} festival{monthFestivals.length !== 1 ? 's' : ''}
                     </span>
                   </div>
@@ -206,6 +228,7 @@ const Festivals = () => {
                       const festivalName = festival.festival_name || festival.name || 'Festival';
                       const festivalKey = `${festival.country_code}-${festivalName}-${idx}`;
                       const isExpanded = expandedFestival === festivalKey;
+                      const monthColor = MONTH_COLORS[festival.month] || '#8B5CF6';
                       
                       return (
                         <motion.div
@@ -213,38 +236,37 @@ const Festivals = () => {
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: idx * 0.05 }}
-                          className="bg-white rounded-xl border border-border hover:shadow-lg transition-all cursor-pointer"
+                          className="bg-white rounded-2xl border-2 border-gray-100 hover:border-violet-200 hover:shadow-xl transition-all cursor-pointer overflow-hidden"
                           data-testid={`festival-card-${festival.country_code}`}
                           onClick={() => setExpandedFestival(isExpanded ? null : festivalKey)}
                         >
                           <div className="p-5">
                             <div className="flex items-start gap-4">
                               <div 
-                                className="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-                                style={{ backgroundColor: `${MONTH_COLORS[festival.month]}20` }}
+                                className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg"
+                                style={{ background: `linear-gradient(135deg, ${monthColor}40, ${monthColor}80)` }}
                               >
                                 <PartyPopper 
-                                  className="w-6 h-6" 
-                                  style={{ color: MONTH_COLORS[festival.month] }}
+                                  className="w-7 h-7 text-white drop-shadow-md" 
                                 />
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between">
-                                  <h4 className="font-semibold text-foreground text-lg mb-1">
+                                  <h4 className="font-bold text-gray-800 text-lg mb-1">
                                     {festival.festival_name || festival.name || 'Festival'}
                                   </h4>
                                   {isExpanded ? (
-                                    <ChevronUp className="w-5 h-5 text-muted-foreground" />
+                                    <ChevronUp className="w-5 h-5 text-violet-500" />
                                   ) : (
-                                    <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                                    <ChevronDown className="w-5 h-5 text-gray-400" />
                                   )}
                                 </div>
-                                <div className="flex items-center gap-1 text-sm text-muted-foreground mb-1">
-                                  <MapPin className="w-4 h-4" />
-                                  <span>{festival.country_name}</span>
+                                <div className="flex items-center gap-1 text-sm text-gray-600 mb-1">
+                                  <MapPin className="w-4 h-4 text-rose-500" />
+                                  <span className="font-medium">{festival.country_name}</span>
                                 </div>
                                 {festival.date && (
-                                  <div className="flex items-center gap-1 text-sm text-primary font-medium">
+                                  <div className="flex items-center gap-1 text-sm font-semibold" style={{ color: monthColor }}>
                                     <Calendar className="w-4 h-4" />
                                     <span>{festival.date}</span>
                                   </div>
@@ -324,7 +346,8 @@ const Festivals = () => {
                     })}
                   </div>
                 </div>
-              ))}
+              );
+              })}
           </div>
 
           {filteredFestivals.length === 0 && !loading && (
