@@ -34,11 +34,7 @@ OPENWEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 # Open-Meteo API (free, no key required) - used as primary for weather
 OPEN_METEO_BASE_URL = "https://api.open-meteo.com/v1/forecast"
 
-# FOREX API configuration
-FOREX_API_KEY = os.environ.get('FOREX_API_KEY', '')
-FOREX_BASE_URL = "https://v6.exchangerate-api.com/v6"
-
-# Frankfurter API (free, no key required) - used as fallback for FOREX
+# Frankfurter API (free, no key required) - primary FOREX source
 FRANKFURTER_BASE_URL = "https://api.frankfurter.app"
 
 # Country capital coordinates for weather lookup
@@ -385,32 +381,12 @@ async def get_visa_info():
 
 @api_router.get("/forex/rates")
 async def get_forex_rates():
-    """Get live FOREX exchange rates for INR using multiple API sources"""
+    """Get live FOREX exchange rates for INR using Frankfurter API (free, no key required)"""
     major_currencies = ["USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "SGD", "AED", "THB", "NZD"]
     
     async with httpx.AsyncClient(timeout=10.0) as client:
-        # Try ExchangeRate-API first
+        # Use Frankfurter API (free, no key required, reliable)
         try:
-            url = f"{FOREX_BASE_URL}/{FOREX_API_KEY}/latest/INR"
-            response = await client.get(url)
-            response.raise_for_status()
-            data = response.json()
-            
-            if data.get("result") == "success":
-                filtered_rates = {k: v for k, v in data["conversion_rates"].items() if k in major_currencies}
-                return {
-                    "base_currency": "INR",
-                    "rates": filtered_rates,
-                    "last_updated": data.get("time_last_update_utc", ""),
-                    "source": "exchangerate-api",
-                    "realtime": True
-                }
-        except Exception as e:
-            logging.warning(f"ExchangeRate-API error: {e}, trying Frankfurter API")
-        
-        # Try Frankfurter API as fallback (free, no key required)
-        try:
-            # Frankfurter API uses EUR as base, so we need to convert
             url = f"{FRANKFURTER_BASE_URL}/latest?from=INR"
             response = await client.get(url)
             response.raise_for_status()
