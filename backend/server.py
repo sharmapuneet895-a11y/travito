@@ -35,7 +35,7 @@ OPENWEATHER_BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 OPEN_METEO_BASE_URL = "https://api.open-meteo.com/v1/forecast"
 
 # FOREX API configuration
-FOREX_API_KEY = "4c80c30afeadb2fb5bd13e82"
+FOREX_API_KEY = os.environ.get('FOREX_API_KEY', '')
 FOREX_BASE_URL = "https://v6.exchangerate-api.com/v6"
 
 # Frankfurter API (free, no key required) - used as fallback for FOREX
