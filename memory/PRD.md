@@ -15,21 +15,24 @@ Build a comprehensive travel information website called "Travito" (previously "P
 ## What's Been Implemented
 
 ### Latest Updates (March 17, 2026) - Session 5
-- [x] **Homepage Redesign (Reference Design Implementation)**:
+- [x] **Homepage UI Redesign (Complete)**:
   - Hero section with mountain background image and overlay
   - "Plan Your Trip + Visa in One Place" headline
   - Horizontal search bar with: Destination input, Month selector, Year selector, Search button
-  - Search results show 6 country cards in horizontal row:
+  - Search results show country cards in **horizontal scroll** with left/right arrows:
     - "Your Choice" card (highlighted with orange border)
     - 5 "Alternative" destination cards
-    - Each card shows flag, name, season badge, visa type badge
-  - 4-column horizontal visa info section:
-    - Visa Type (Visa Free / Visa on Arrival / E-Visa / Visa Required)
-    - Documents Needed
-    - Processing Time
-    - Cost Estimate
-  - "Explore Visa Details" button to open Country Detail Modal
-- [x] **Testing**: 23/23 test cases passed for homepage redesign
+  - **VISA INTELLIGENCE separator** between Top Destinations and Visa section
+  - **Visa section always visible** below Top 5 Destinations:
+    - Default shows placeholders: "Visa on Arr / E-Visa / Visa Required" and "xxx"
+    - Updates with country-specific data when searched (Visa Type, Documents, Time, Cost)
+  - **"Explore Visa Details"** button now links to /visa page (was opening modal)
+  - **SEASONAL TRAVEL GUIDE separator** 
+  - **New category-based Seasonal Guide** with horizontal scroll:
+    - 8 categories: Beach, Mountain, Snowy, City, Cultural, Adventure, Nature, Fitness
+    - Left/right scroll arrows, shows destination recommendations on click
+  - **Removed**: Trip Cost Estimator
+- [x] **Testing**: 18/18 test cases passed for all UI changes
 
 ### Previous Updates (March 17, 2026)
 - [x] **User Registration System**: Simple auth modal collecting Name, Email, Mobile Number (no password/OTP)
