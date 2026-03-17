@@ -5,7 +5,7 @@ import WorldMap from '../components/WorldMap';
 import BackToTop from '../components/BackToTop';
 import VisaEligibilityChecker from '../components/VisaEligibilityChecker';
 import DocumentChecklistGenerator from '../components/DocumentChecklistGenerator';
-import { FileText, Shield, ClipboardList, Sparkles, Info, Clock, User, ChevronRight, Video, FileCheck } from 'lucide-react';
+import { FileText, Shield, ClipboardList, Sparkles, Info, Clock, User, ChevronRight, FileCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -234,71 +234,131 @@ const Visa = () => {
           </div>
 
           {/* ========== COMPARE VISA OPTIONS SECTION ========== */}
-          <div id="visa-options" className="mb-8">
-            {/* Section Separator */}
-            <div className="flex items-center gap-4 my-8">
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-              <h2 className="text-xl font-bold italic" style={{ color: '#0B3C5D', fontFamily: 'serif' }}>
-                Compare Visa Options <span className="text-sm font-normal">(Coming Soon)</span>
-              </h2>
-              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-            </div>
-
-            <p className="text-center text-gray-600 italic mb-6">We're onboarding verified visa agents.</p>
-
-            {/* Visa Agents Table */}
-            <div className="bg-gradient-to-b from-blue-50 to-indigo-50 rounded-xl overflow-hidden border" style={{ borderColor: '#E2E8F0' }}>
-              {/* Table Header */}
-              <div className="grid grid-cols-4 gap-4 p-4 bg-blue-100/70 border-b" style={{ borderColor: '#D1D5DB' }}>
-                <div className="font-bold italic" style={{ color: '#0B3C5D', fontFamily: 'serif' }}>Agent</div>
-                <div className="font-bold italic" style={{ color: '#0B3C5D', fontFamily: 'serif' }}>Processing Time</div>
-                <div className="font-bold italic" style={{ color: '#0B3C5D', fontFamily: 'serif' }}>Service Fee</div>
-                <div className="font-bold italic" style={{ color: '#0B3C5D', fontFamily: 'serif' }}>Services</div>
+          <div 
+            id="visa-options" 
+            className="mb-8 rounded-2xl overflow-hidden shadow-xl"
+            style={{ 
+              backgroundImage: `linear-gradient(135deg, rgba(11, 60, 93, 0.95), rgba(75, 137, 172, 0.9)), url('https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=1920&q=80')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }}
+          >
+            <div className="p-8">
+              {/* Section Header */}
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-amber-400 text-amber-900 rounded-full text-sm font-bold mb-4">
+                  <Sparkles className="w-4 h-4" />
+                  COMING SOON
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-3" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                  Compare Visa Options
+                </h2>
+                <p className="text-blue-100 text-lg max-w-2xl mx-auto">
+                  We're onboarding verified visa agents to help you with hassle-free visa processing
+                </p>
               </div>
 
-              {/* Sample Agent Row (Placeholder) */}
-              <div className="grid grid-cols-4 gap-4 p-4 bg-white/80 items-center">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-                    <User className="w-6 h-6 text-gray-400" />
+              {/* Visa Agents Table */}
+              <div className="bg-white/95 backdrop-blur-sm rounded-xl overflow-hidden shadow-lg">
+                {/* Table Header */}
+                <div className="grid grid-cols-5 gap-4 p-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+                  <div className="font-bold text-sm">Agent</div>
+                  <div className="font-bold text-sm">Processing Time</div>
+                  <div className="font-bold text-sm">Service Fee</div>
+                  <div className="font-bold text-sm">Success Rate</div>
+                  <div className="font-bold text-sm">Services</div>
+                </div>
+
+                {/* Sample Agent Row (Placeholder) */}
+                <div className="grid grid-cols-5 gap-4 p-4 items-center border-b border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg flex items-center justify-center">
+                      <User className="w-6 h-6 text-blue-500" />
+                    </div>
+                    <div>
+                      <div className="w-24 h-3 bg-gray-200 rounded mb-1"></div>
+                      <div className="w-16 h-2 bg-gray-100 rounded"></div>
+                    </div>
                   </div>
-                  <div className="w-20 h-3 bg-gray-200 rounded"></div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-gray-400" />
-                  <span className="text-gray-600">2+ Days</span>
-                  <div className="w-12 h-3 bg-gray-200 rounded"></div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-600">₹3,000</span>
-                  <div className="w-12 h-3 bg-gray-200 rounded"></div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-1 text-gray-600 text-sm">
-                    <FileCheck className="w-4 h-4 text-blue-600" />
-                    <span>Procesta, Step</span>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-blue-500" />
+                    <span className="text-gray-700 font-medium">2-5 Days</span>
                   </div>
-                  <div className="flex items-center gap-1 text-gray-600 text-sm">
-                    <Video className="w-4 h-4 text-blue-600" />
-                    <span>Webinar</span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-gray-700 font-bold">₹3,000</span>
+                    <span className="text-gray-400 text-sm">onwards</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-2 bg-green-200 rounded-full overflow-hidden">
+                      <div className="w-4/5 h-full bg-green-500 rounded-full"></div>
+                    </div>
+                    <span className="text-green-600 font-bold text-sm">95%</span>
+                  </div>
+                  <div className="text-sm text-gray-600 space-y-1">
+                    <div className="flex items-center gap-1">
+                      <FileCheck className="w-3 h-3 text-blue-500" />
+                      <span>Documentation Check</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <ClipboardList className="w-3 h-3 text-blue-500" />
+                      <span>Application Form Filling</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Second Sample Row */}
+                <div className="grid grid-cols-5 gap-4 p-4 items-center bg-gray-50/50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-emerald-100 rounded-lg flex items-center justify-center">
+                      <User className="w-6 h-6 text-green-500" />
+                    </div>
+                    <div>
+                      <div className="w-20 h-3 bg-gray-200 rounded mb-1"></div>
+                      <div className="w-14 h-2 bg-gray-100 rounded"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-green-500" />
+                    <span className="text-gray-700 font-medium">3-7 Days</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-gray-700 font-bold">₹2,500</span>
+                    <span className="text-gray-400 text-sm">onwards</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-2 bg-green-200 rounded-full overflow-hidden">
+                      <div className="w-11/12 h-full bg-green-500 rounded-full"></div>
+                    </div>
+                    <span className="text-green-600 font-bold text-sm">92%</span>
+                  </div>
+                  <div className="text-sm text-gray-600 space-y-1">
+                    <div className="flex items-center gap-1">
+                      <FileCheck className="w-3 h-3 text-green-500" />
+                      <span>Documentation Check</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <ClipboardList className="w-3 h-3 text-green-500" />
+                      <span>Application Form Filling</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* CTA Button */}
-            <div className="text-center mt-6">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="px-8 py-3 rounded-lg font-bold text-white text-lg inline-flex items-center gap-2 shadow-lg"
-                style={{ backgroundColor: '#FF7A00' }}
-                disabled
-                data-testid="get-quotes-btn"
-              >
-                Get Quotes from Agents
-                <ChevronRight className="w-5 h-5" />
-              </motion.button>
+              {/* CTA Button */}
+              <div className="text-center mt-8">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="px-10 py-4 rounded-xl font-bold text-white text-lg inline-flex items-center gap-3 shadow-xl transition-all"
+                  style={{ backgroundColor: '#FF7A00' }}
+                  disabled
+                  data-testid="get-quotes-btn"
+                >
+                  Get Quotes from Agents
+                  <ChevronRight className="w-6 h-6" />
+                </motion.button>
+                <p className="text-blue-200 text-sm mt-3">Be the first to know when we launch!</p>
+              </div>
             </div>
           </div>
         </motion.div>
