@@ -39,6 +39,15 @@ const TRAVEL_GUIDE_CATEGORIES = [
   { id: 'fitness', label: 'Fitness Destination', icon: Dumbbell, color: 'from-rose-400 to-pink-500', bgColor: 'bg-rose-50', borderColor: 'border-rose-200', description: 'Wellness retreats', image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&q=80' },
 ];
 
+// Services Section Data
+const SERVICES_DATA = [
+  { id: 'forex', label: 'FOREX', description: 'Live currency rates', link: '/forex', image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&q=80', color: 'from-green-500 to-emerald-600' },
+  { id: 'weather', label: 'Weather', description: 'Real-time forecasts', link: '/weather', image: 'https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=400&q=80', color: 'from-blue-400 to-cyan-500' },
+  { id: 'powerplug', label: 'Power Plug', description: 'Electrical standards', link: '/power-plug', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80', color: 'from-yellow-400 to-orange-500' },
+  { id: 'festivals', label: 'Festival & Local Dishes', description: 'Culture & cuisine', link: '/festivals', image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&q=80', color: 'from-pink-500 to-rose-600' },
+  { id: 'apps', label: 'Top Apps', description: 'Essential travel apps', link: '/apps', image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&q=80', color: 'from-purple-500 to-violet-600' },
+];
+
 // ISO3 to ISO2 country code mapping for flags
 const iso3ToIso2 = {
   'USA': 'us', 'CAN': 'ca', 'MEX': 'mx', 'GBR': 'gb', 'FRA': 'fr', 'DEU': 'de', 'ITA': 'it', 'ESP': 'es',
@@ -689,6 +698,7 @@ const Seasons = () => {
   // Refs for horizontal scrolling
   const alternatesScrollRef = useRef(null);
   const guideCategoriesScrollRef = useRef(null);
+  const servicesScrollRef = useRef(null);
   
   // NEW: Search result state for visa info and alternate destinations
   const [searchResult, setSearchResult] = useState(null);
@@ -1636,229 +1646,64 @@ const Seasons = () => {
             )}
           </div>
 
-          {/* Country Lists by Season */}
-          <div className="mt-12 space-y-8" id="destinations-section">
-            {/* Category Filtered Peak Destinations */}
-            {selectedCategory !== 'all' && categoryFilteredData.length > 0 && (
-              <div>
-                <h3 className="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
-                  <Sun className="w-6 h-6 text-red-500" />
-                  {CATEGORIES.find(c => c.id === selectedCategory)?.label} Destinations - Best in {selectedMonthName} ({categoryFilteredData.length})
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {categoryFilteredData.map((country) => (
-                    <div
-                      key={`cat-${country.country_code}`}
-                      className="bg-red-50 rounded-lg p-4 border border-red-200 hover:shadow-md transition-all cursor-pointer group"
-                      data-testid={`category-country-card-${country.country_code}`}
-                      onClick={() => handleCountryCardClick(country)}
-                    >
-                      <div className="flex items-start gap-3">
-                        <img 
-                          src={getFlag(country.country_code)} 
-                          alt={country.country_name}
-                          className="w-8 h-5 object-cover rounded shadow flex-shrink-0 mt-0.5"
-                          onError={(e) => { e.target.style.display = 'none'; }}
-                        />
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-semibold text-foreground">{country.country_name}</h4>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                addToWishlist(country);
-                              }}
-                              className={`p-1 rounded-full transition-all ${
-                                isInWishlist(country.country_code) 
-                                  ? 'text-red-500' 
-                                  : 'text-gray-300 hover:text-red-400 opacity-0 group-hover:opacity-100'
-                              }`}
-                            >
-                              <Heart className={`w-4 h-4 ${isInWishlist(country.country_code) ? 'fill-current' : ''}`} />
-                            </button>
-                          </div>
-                          <p className="text-sm text-green-700 font-medium">✓ Best in {selectedMonthAbbrev}</p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Best months: {country.best_months?.join(', ')}
-                          </p>
-                          {country.categories && (
-                            <div className="flex flex-wrap gap-1 mt-2">
-                              {country.categories.slice(0, 3).map(cat => (
-                                <span key={cat} className="text-xs px-2 py-0.5 bg-white rounded-full text-gray-600 capitalize">{cat}</span>
-                              ))}
-                            </div>
-                          )}
-                          <p className="text-xs text-primary mt-2 group-hover:underline">View details →</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+          {/* ========== SEPARATOR - SERVICES ========== */}
+          <div className="flex items-center gap-4 my-8">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+            <h2 className="text-lg font-bold tracking-widest" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
+              SERVICES
+            </h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+          </div>
 
-            {/* All Peak Destinations (when no category filter) */}
-            {selectedCategory === 'all' && peakCountries.length > 0 && (
-              <div>
-                <h3 className="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
-                  <Sun className="w-6 h-6 text-red-500" />
-                  Best Time to Visit in {selectedMonthName} ({peakCountries.length} destinations)
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {peakCountries.map((country) => (
-                    <div
-                      key={country.country_code}
-                      className="bg-red-50 rounded-lg p-4 border border-red-200 hover:shadow-md transition-all cursor-pointer group"
-                      data-testid={`country-card-${country.country_code}`}
-                      onClick={() => handleCountryCardClick(country)}
-                    >
-                      <div className="flex items-start gap-3">
-                        <img 
-                          src={getFlag(country.country_code)} 
-                          alt={country.country_name}
-                          className="w-8 h-5 object-cover rounded shadow flex-shrink-0 mt-0.5"
-                          onError={(e) => { e.target.style.display = 'none'; }}
-                        />
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-semibold text-foreground">{country.country_name}</h4>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                addToWishlist(country);
-                              }}
-                              className={`p-1 rounded-full transition-all ${
-                                isInWishlist(country.country_code) 
-                                  ? 'text-red-500' 
-                                  : 'text-gray-300 hover:text-red-400 opacity-0 group-hover:opacity-100'
-                              }`}
-                            >
-                              <Heart className={`w-4 h-4 ${isInWishlist(country.country_code) ? 'fill-current' : ''}`} />
-                            </button>
-                          </div>
-                          <p className="text-sm text-green-700 font-medium">✓ Ideal in {selectedMonthAbbrev}</p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Best months: {country.best_months?.join(', ')}
-                          </p>
-                          <p className="text-xs text-primary mt-2 group-hover:underline">View details →</p>
-                        </div>
-                      </div>
+          {/* Services Section - Horizontal Scroll with Images */}
+          <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-xl p-6 mb-6 border border-gray-200" data-testid="services-section">
+            <div className="relative">
+              {/* Left scroll arrow */}
+              <button
+                onClick={() => servicesScrollRef.current?.scrollBy({ left: -250, behavior: 'smooth' })}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all border border-gray-200"
+              >
+                <ChevronLeft className="w-5 h-5 text-gray-600" />
+              </button>
+              
+              {/* Scrollable container */}
+              <div 
+                ref={servicesScrollRef}
+                className="flex gap-4 overflow-x-auto pb-2 px-12 scroll-smooth"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                {SERVICES_DATA.map((service) => (
+                  <Link
+                    key={service.id}
+                    to={service.link}
+                    className="relative rounded-xl overflow-hidden transition-all flex-shrink-0 w-52 h-36 group hover:shadow-xl hover:scale-105"
+                    data-testid={`service-${service.id}`}
+                  >
+                    {/* Background Image */}
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center"
+                      style={{ backgroundImage: `url('${service.image}')` }}
+                    />
+                    {/* Gradient Overlay */}
+                    <div className={`absolute inset-0 bg-gradient-to-t ${service.color} opacity-80`} />
+                    
+                    {/* Content */}
+                    <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                      <h4 className="font-bold text-lg">{service.label}</h4>
+                      <p className="text-xs text-white/90">{service.description}</p>
                     </div>
-                  ))}
-                </div>
+                  </Link>
+                ))}
               </div>
-            )}
-
-            {/* Good Time (Shoulder) */}
-            {shoulderCountries.length > 0 && (
-              <div>
-                <h3 className="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
-                  <CloudSun className="w-6 h-6 text-blue-500" />
-                  Good Time to Visit ({shoulderCountries.length} destinations)
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {shoulderCountries.map((country) => (
-                    <div
-                      key={`shoulder-${country.country_code}`}
-                      className="bg-blue-50 rounded-lg p-4 border border-blue-200 hover:shadow-md transition-all cursor-pointer group"
-                      data-testid={`country-card-shoulder-${country.country_code}`}
-                      onClick={() => handleCountryCardClick(country)}
-                    >
-                      <div className="flex items-start gap-3">
-                        <img 
-                          src={getFlag(country.country_code)} 
-                          alt={country.country_name}
-                          className="w-8 h-5 object-cover rounded shadow flex-shrink-0 mt-0.5"
-                          onError={(e) => { e.target.style.display = 'none'; }}
-                        />
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-semibold text-foreground">{country.country_name}</h4>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                addToWishlist(country);
-                              }}
-                              className={`p-1 rounded-full transition-all ${
-                                isInWishlist(country.country_code) 
-                                  ? 'text-red-500' 
-                                  : 'text-gray-300 hover:text-red-400 opacity-0 group-hover:opacity-100'
-                              }`}
-                            >
-                              <Heart className={`w-4 h-4 ${isInWishlist(country.country_code) ? 'fill-current' : ''}`} />
-                            </button>
-                          </div>
-                          <p className="text-sm text-blue-700 font-medium">○ Near peak season</p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Best months: {country.best_months?.join(', ')}
-                          </p>
-                          <p className="text-xs text-primary mt-2 group-hover:underline">View details →</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Off Season */}
-            {offCountries.length > 0 && (
-              <div>
-                <h3 className="text-xl font-semibold text-primary mb-4 flex items-center gap-2">
-                  <Cloud className="w-6 h-6 text-amber-500" />
-                  Off Season ({offCountries.length} destinations)
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {offCountries.slice(0, 12).map((country) => (
-                    <div
-                      key={`off-${country.country_code}`}
-                      className="bg-amber-50 rounded-lg p-4 border border-amber-200 hover:shadow-md transition-all cursor-pointer group"
-                      data-testid={`country-card-off-${country.country_code}`}
-                      onClick={() => handleCountryCardClick(country)}
-                    >
-                      <div className="flex items-start gap-3">
-                        <img 
-                          src={getFlag(country.country_code)} 
-                          alt={country.country_name}
-                          className="w-8 h-5 object-cover rounded shadow flex-shrink-0 mt-0.5"
-                          onError={(e) => { e.target.style.display = 'none'; }}
-                        />
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-semibold text-foreground">{country.country_name}</h4>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                addToWishlist(country);
-                              }}
-                              className={`p-1 rounded-full transition-all ${
-                                isInWishlist(country.country_code) 
-                                  ? 'text-red-500' 
-                                  : 'text-gray-300 hover:text-red-400 opacity-0 group-hover:opacity-100'
-                              }`}
-                            >
-                              <Heart className={`w-4 h-4 ${isInWishlist(country.country_code) ? 'fill-current' : ''}`} />
-                            </button>
-                          </div>
-                          <p className="text-sm text-amber-700 font-medium">△ Not ideal in {selectedMonthAbbrev}</p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Best months: {country.best_months?.join(', ')}
-                          </p>
-                          <p className="text-xs text-primary mt-2 group-hover:underline">View details →</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {offCountries.length > 12 && (
-                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 flex items-center justify-center">
-                      <span className="text-sm text-muted-foreground">
-                        +{offCountries.length - 12} more destinations
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+              
+              {/* Right scroll arrow */}
+              <button
+                onClick={() => servicesScrollRef.current?.scrollBy({ left: 250, behavior: 'smooth' })}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all border border-gray-200"
+              >
+                <ChevronRight className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
           </div>
         </motion.div>
       </div>
