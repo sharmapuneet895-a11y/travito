@@ -24,27 +24,27 @@ const Navigation = () => {
 
   return (
     <>
-      <nav className="sticky top-0 z-50" style={{ backgroundColor: '#F5E6C8' }} data-testid="main-navigation">
+      <nav className="sticky top-0 z-50" style={{ backgroundColor: '#F5F7FA', borderBottom: '1px solid rgba(11, 60, 93, 0.1)' }} data-testid="main-navigation">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             {/* Hamburger Menu - Left */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-accent/20 transition-all"
+              className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-orange-100 transition-all"
               data-testid="hamburger-menu"
               aria-label="Toggle menu"
             >
               {isMenuOpen ? (
-                <X className="w-6 h-6 text-primary" />
+                <X className="w-6 h-6" style={{ color: '#0B3C5D' }} />
               ) : (
-                <Menu className="w-6 h-6 text-primary" />
+                <Menu className="w-6 h-6" style={{ color: '#0B3C5D' }} />
               )}
             </button>
 
             {/* Logo - Center */}
             <Link to="/" className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2" data-testid="logo-link">
-              <Compass className="w-8 h-8 text-primary" />
-              <span className="text-2xl font-bold text-primary" style={{ fontFamily: 'Playfair Display, serif' }}>
+              <Compass className="w-8 h-8" style={{ color: '#FF7A00' }} />
+              <span className="text-2xl font-bold" style={{ fontFamily: 'Playfair Display, serif', color: '#0B3C5D' }}>
                 Pass-e-port
               </span>
             </Link>
@@ -53,7 +53,8 @@ const Navigation = () => {
             {isLoggedIn ? (
               <Link
                 to="/profile"
-                className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-bold hover:shadow-lg transition-all"
+                className="flex items-center justify-center w-10 h-10 rounded-full text-white font-bold hover:shadow-lg transition-all"
+                style={{ background: 'linear-gradient(135deg, #0B3C5D 0%, #FF7A00 100%)' }}
                 data-testid="user-avatar"
                 title={user.name}
               >
@@ -98,18 +99,18 @@ const Navigation = () => {
             >
               <div className="p-6">
                 {/* Menu Header */}
-                <div className="flex items-center justify-between mb-8 pb-4 border-b border-border">
+                <div className="flex items-center justify-between mb-8 pb-4 border-b" style={{ borderColor: 'rgba(11, 60, 93, 0.1)' }}>
                   <div className="flex items-center gap-2">
-                    <Compass className="w-8 h-8 text-primary" />
-                    <span className="text-xl font-bold text-primary" style={{ fontFamily: 'Playfair Display, serif' }}>
+                    <Compass className="w-8 h-8" style={{ color: '#FF7A00' }} />
+                    <span className="text-xl font-bold" style={{ fontFamily: 'Playfair Display, serif', color: '#0B3C5D' }}>
                       Pass-e-port
                     </span>
                   </div>
                   <button
                     onClick={() => setIsMenuOpen(false)}
-                    className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-accent/20 transition-all"
+                    className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-orange-100 transition-all"
                   >
-                    <X className="w-5 h-5 text-primary" />
+                    <X className="w-5 h-5" style={{ color: '#0B3C5D' }} />
                   </button>
                 </div>
 
@@ -125,9 +126,10 @@ const Navigation = () => {
                         onClick={() => setIsMenuOpen(false)}
                         className={`flex items-center gap-4 px-4 py-4 rounded-xl transition-all ${
                           isActive
-                            ? 'bg-primary text-white'
-                            : 'text-foreground hover:bg-accent/20'
+                            ? 'text-white'
+                            : 'hover:bg-orange-50'
                         }`}
+                        style={isActive ? { backgroundColor: '#0B3C5D' } : { color: '#0B3C5D' }}
                         data-testid={`menu-${item.label.toLowerCase().replace(/ /g, '-')}`}
                       >
                         <Icon className="w-5 h-5" />

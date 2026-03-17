@@ -715,7 +715,17 @@ const Seasons = () => {
   useEffect(() => {
     if (seasonsData.length === 0) return;
     
-    const processed = seasonsData.map(country => {
+    // Deduplicate by country_code - keep only the first occurrence
+    const uniqueCountries = [];
+    const seenCodes = new Set();
+    for (const country of seasonsData) {
+      if (!seenCodes.has(country.country_code)) {
+        seenCodes.add(country.country_code);
+        uniqueCountries.push(country);
+      }
+    }
+    
+    const processed = uniqueCountries.map(country => {
       const bestMonths = country.best_months || [];
       const isSelectedMonthBest = bestMonths.includes(selectedMonthAbbrev);
       
@@ -787,10 +797,10 @@ const Seasons = () => {
   };
 
   const legends = [
-    { color: '#E25A53', label: 'Best Time', description: `Ideal to visit in ${selectedMonthName}`, icon: Sun },
-    { color: '#4B89AC', label: 'Good Time', description: 'Near peak season', icon: CloudSun },
-    { color: '#F2A900', label: 'Off Season', description: `Not ideal in ${selectedMonthName}`, icon: Cloud },
-    { color: '#D6D6D6', label: 'No Data', description: 'Information not available', icon: null }
+    { color: '#FF7A00', label: 'Best Time', description: `Ideal to visit in ${selectedMonthName}`, icon: Sun },
+    { color: '#0B3C5D', label: 'Good Time', description: 'Near peak season', icon: CloudSun },
+    { color: '#94A3B8', label: 'Off Season', description: `Not ideal in ${selectedMonthName}`, icon: Cloud },
+    { color: '#E2E8F0', label: 'No Data', description: 'Information not available', icon: null }
   ];
 
   // For the all destinations view (without category filter)
@@ -799,7 +809,7 @@ const Seasons = () => {
   const offCountries = processedData.filter(c => c.current_season === 'off');
 
   return (
-    <div className="min-h-screen py-12 px-6">
+    <div className="min-h-screen py-12 px-6" style={{ backgroundColor: '#F5F7FA' }}>
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -808,27 +818,27 @@ const Seasons = () => {
         >
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <Calendar className="w-12 h-12 text-accent" />
-              <h1 className="text-4xl md:text-5xl font-semibold text-primary section-title" data-testid="seasons-page-title">
+              <Calendar className="w-12 h-12" style={{ color: '#FF7A00' }} />
+              <h1 className="text-4xl md:text-5xl font-semibold section-title" style={{ color: '#0B3C5D' }} data-testid="seasons-page-title">
                 Best Seasons to Travel
               </h1>
             </div>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg max-w-3xl mx-auto leading-relaxed" style={{ color: '#64748B' }}>
               Find the perfect time to visit your dream destination
             </p>
           </div>
 
           {/* Search and Date Filter Section */}
-          <div className="bg-white rounded-xl p-6 mb-6 shadow-sm border border-border">
+          <div className="bg-white rounded-xl p-6 mb-6 shadow-sm" style={{ border: '1px solid rgba(11, 60, 93, 0.1)' }}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Travelling To Search */}
               <div className="relative">
-                <label className="block text-sm font-semibold text-primary mb-2">
-                  <MapPin className="w-4 h-4 inline mr-1" />
+                <label className="block text-sm font-semibold mb-2" style={{ color: '#0B3C5D' }}>
+                  <MapPin className="w-4 h-4 inline mr-1" style={{ color: '#FF7A00' }} />
                   Travelling To
                 </label>
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{ color: '#94A3B8' }} />
                   <input
                     type="text"
                     value={searchQuery}
@@ -838,7 +848,8 @@ const Seasons = () => {
                     }}
                     onFocus={() => setShowDropdown(true)}
                     placeholder="Search country..."
-                    className="w-full pl-10 pr-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
+                    className="w-full pl-10 pr-4 py-3 rounded-lg focus:outline-none focus:ring-2"
+                    style={{ border: '1px solid rgba(11, 60, 93, 0.2)', color: '#0B3C5D' }}
                     data-testid="country-search"
                   />
                 </div>
@@ -1254,9 +1265,9 @@ const Seasons = () => {
                   {CATEGORIES.find(c => c.id === selectedCategory)?.label} Destinations - Best in {selectedMonthName} ({categoryFilteredData.length})
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {categoryFilteredData.map((country, idx) => (
+                  {categoryFilteredData.map((country) => (
                     <div
-                      key={`${country.country_code}-${idx}`}
+                      key={`cat-${country.country_code}`}
                       className="bg-red-50 rounded-lg p-4 border border-red-200 hover:shadow-md transition-all cursor-pointer group"
                       data-testid={`category-country-card-${country.country_code}`}
                       onClick={() => handleCountryCardClick(country)}
@@ -1313,9 +1324,9 @@ const Seasons = () => {
                   Best Time to Visit in {selectedMonthName} ({peakCountries.length} destinations)
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {peakCountries.map((country, idx) => (
+                  {peakCountries.map((country) => (
                     <div
-                      key={`${country.country_code}-${idx}`}
+                      key={country.country_code}
                       className="bg-red-50 rounded-lg p-4 border border-red-200 hover:shadow-md transition-all cursor-pointer group"
                       data-testid={`country-card-${country.country_code}`}
                       onClick={() => handleCountryCardClick(country)}
@@ -1365,11 +1376,11 @@ const Seasons = () => {
                   Good Time to Visit ({shoulderCountries.length} destinations)
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {shoulderCountries.map((country, idx) => (
+                  {shoulderCountries.map((country) => (
                     <div
-                      key={`shoulder-${country.country_code}-${idx}`}
+                      key={`shoulder-${country.country_code}`}
                       className="bg-blue-50 rounded-lg p-4 border border-blue-200 hover:shadow-md transition-all cursor-pointer group"
-                      data-testid={`country-card-${country.country_code}`}
+                      data-testid={`country-card-shoulder-${country.country_code}`}
                       onClick={() => handleCountryCardClick(country)}
                     >
                       <div className="flex items-start gap-3">
@@ -1417,11 +1428,11 @@ const Seasons = () => {
                   Off Season ({offCountries.length} destinations)
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {offCountries.slice(0, 12).map((country, idx) => (
+                  {offCountries.slice(0, 12).map((country) => (
                     <div
-                      key={`off-${country.country_code}-${idx}`}
+                      key={`off-${country.country_code}`}
                       className="bg-amber-50 rounded-lg p-4 border border-amber-200 hover:shadow-md transition-all cursor-pointer group"
-                      data-testid={`country-card-${country.country_code}`}
+                      data-testid={`country-card-off-${country.country_code}`}
                       onClick={() => handleCountryCardClick(country)}
                     >
                       <div className="flex items-start gap-3">

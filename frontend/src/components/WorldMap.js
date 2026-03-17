@@ -120,62 +120,62 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       d.country_name === geo.properties?.name
     );
 
-    if (!countryData) return '#E5E5E5';
+    if (!countryData) return '#E2E8F0';
 
     if (mode === 'seasons') {
       switch (countryData.season_type || countryData.current_season) {
-        case 'peak': return '#DC2626';
-        case 'shoulder': return '#2563EB';
-        case 'off': return '#F59E0B';
-        default: return '#E5E5E5';
+        case 'peak': return '#FF7A00';      // Orange - Best time
+        case 'shoulder': return '#0B3C5D';  // Deep Blue - Good time
+        case 'off': return '#94A3B8';       // Grey - Off season
+        default: return '#E2E8F0';
       }
     } else if (mode === 'visa') {
       switch (countryData.visa_type) {
-        case 'visa_free': return '#16A34A';
-        case 'visa_on_arrival': return '#DC2626';
-        case 'e_visa': return '#2563EB';
-        case 'visa_required': return '#F59E0B';
-        default: return '#E5E5E5';
+        case 'visa_free': return '#16A34A';      // Green
+        case 'visa_on_arrival': return '#FF7A00'; // Orange
+        case 'e_visa': return '#0B3C5D';          // Deep Blue
+        case 'visa_required': return '#94A3B8';   // Grey
+        default: return '#E2E8F0';
       }
     } else if (mode === 'weather') {
       switch (countryData.weather_type) {
-        case 'hot': return '#E25A53';
-        case 'warm': return '#F59E0B';
-        case 'rainy': return '#4B89AC';
-        case 'mild': return '#90EE90';  // Light green - distinct from ocean
-        case 'cold': return '#E8E8FF';  // Light purple/lavender for cold
-        case 'snow': return '#E8E8FF';  // Light purple/lavender for snow
-        default: return '#E8E8E6';
+        case 'hot': return '#FF7A00';     // Orange
+        case 'warm': return '#F59E0B';    // Amber
+        case 'rainy': return '#0B3C5D';   // Deep Blue
+        case 'mild': return '#10B981';    // Green
+        case 'cold': return '#6366F1';    // Indigo
+        case 'snow': return '#A5B4FC';    // Light indigo
+        default: return '#E2E8F0';
       }
     } else if (mode === 'plug') {
       // Match colors with PowerPlug.js legend
       const plugColors = {
-        'a': '#E25A53', // Red - USA, Japan, Canada
-        'b': '#F2A900', // Yellow/Orange - USA, Mexico
-        'c': '#4B89AC', // Blue - Europe, Asia
-        'd': '#9B59B6', // Purple - India, Nepal
-        'e': '#2A9D8F', // Teal - France, Belgium
-        'f': '#E74C3C', // Red variant - Germany
-        'g': '#3498DB', // Blue - UK, Singapore, UAE
-        'i': '#F39C12', // Orange - Australia, China
-        'mixed': '#95A5A6' // Grey - Multiple types
+        'a': '#FF7A00', // Orange - USA, Japan, Canada
+        'b': '#F59E0B', // Amber - USA, Mexico
+        'c': '#0B3C5D', // Deep Blue - Europe, Asia
+        'd': '#8B5CF6', // Purple - India, Nepal
+        'e': '#10B981', // Teal - France, Belgium
+        'f': '#EF4444', // Red variant - Germany
+        'g': '#3B82F6', // Blue - UK, Singapore, UAE
+        'i': '#F97316', // Orange - Australia, China
+        'mixed': '#94A3B8' // Grey - Multiple types
       };
-      return plugColors[countryData.plug_type?.toLowerCase()] || '#E5E5E5';
+      return plugColors[countryData.plug_type?.toLowerCase()] || '#E2E8F0';
     } else if (mode === 'festivals') {
       switch (countryData.festival_type) {
-        case 'many': return '#DC2626';
-        case 'some': return '#F59E0B';
-        case 'few': return '#2563EB';
-        default: return '#E5E5E5';
+        case 'many': return '#FF7A00';    // Orange
+        case 'some': return '#0B3C5D';    // Deep Blue
+        case 'few': return '#94A3B8';     // Grey
+        default: return '#E2E8F0';
       }
     } else if (mode === 'safety') {
       switch (countryData.safety_level) {
-        case 'very_safe': return '#16A34A';
-        case 'safe': return '#22C55E';
-        case 'moderate': return '#EAB308';
-        case 'caution': return '#F97316';
-        case 'high_risk': return '#DC2626';
-        default: return '#E5E5E5';
+        case 'very_safe': return '#10B981';   // Green
+        case 'safe': return '#0B3C5D';        // Deep Blue
+        case 'moderate': return '#F59E0B';    // Amber
+        case 'caution': return '#FF7A00';     // Orange
+        case 'high_risk': return '#EF4444';   // Red
+        default: return '#E2E8F0';
       }
     }
     return '#E5E5E5';
