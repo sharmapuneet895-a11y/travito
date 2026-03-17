@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import WorldMap from '../components/WorldMap';
 import CountryDetailModal from '../components/CountryDetailModal';
-import CostEstimator from '../components/CostEstimator';
 import BackToTop from '../components/BackToTop';
-import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Calculator, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun, FileText, Clock, DollarSign, Plane, X } from 'lucide-react';
+import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun, FileText, Clock, DollarSign, Plane, X, ChevronLeft, ChevronRight, Dumbbell } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -25,6 +25,18 @@ const CATEGORIES = [
   { id: 'culture', label: 'Culture', icon: Landmark, color: 'purple', bgColor: 'bg-purple-100', textColor: 'text-purple-700', activeColor: 'bg-purple-600 text-white' },
   { id: 'adventure', label: 'Adventure', icon: Compass, color: 'orange', bgColor: 'bg-orange-100', textColor: 'text-orange-700', activeColor: 'bg-orange-500 text-white' },
   { id: 'nature', label: 'Nature', icon: Trees, color: 'lime', bgColor: 'bg-lime-100', textColor: 'text-lime-700', activeColor: 'bg-lime-500 text-white' },
+];
+
+// Seasonal Travel Guide Categories with horizontal scroll
+const TRAVEL_GUIDE_CATEGORIES = [
+  { id: 'beach', label: 'Beach Destinations', icon: Palmtree, color: 'from-cyan-400 to-blue-500', bgColor: 'bg-cyan-50', borderColor: 'border-cyan-200', description: 'Sun, sand & sea' },
+  { id: 'mountain', label: 'Mountain Destinations', icon: Mountain, color: 'from-green-400 to-emerald-600', bgColor: 'bg-green-50', borderColor: 'border-green-200', description: 'Peaks & valleys' },
+  { id: 'snow', label: 'Snowy Experience', icon: Snowflake, color: 'from-sky-400 to-blue-500', bgColor: 'bg-sky-50', borderColor: 'border-sky-200', description: 'Winter wonderland' },
+  { id: 'city', label: 'City Destinations', icon: Building2, color: 'from-slate-400 to-gray-600', bgColor: 'bg-slate-50', borderColor: 'border-slate-200', description: 'Urban exploration' },
+  { id: 'culture', label: 'Cultural Destinations', icon: Landmark, color: 'from-purple-400 to-violet-600', bgColor: 'bg-purple-50', borderColor: 'border-purple-200', description: 'Heritage & history' },
+  { id: 'adventure', label: 'Adventure Destinations', icon: Compass, color: 'from-orange-400 to-red-500', bgColor: 'bg-orange-50', borderColor: 'border-orange-200', description: 'Thrills & action' },
+  { id: 'nature', label: 'Explore Nature', icon: Trees, color: 'from-lime-400 to-green-500', bgColor: 'bg-lime-50', borderColor: 'border-lime-200', description: 'Wildlife & forests' },
+  { id: 'fitness', label: 'Fitness Destination', icon: Dumbbell, color: 'from-rose-400 to-pink-500', bgColor: 'bg-rose-50', borderColor: 'border-rose-200', description: 'Wellness retreats' },
 ];
 
 // ISO3 to ISO2 country code mapping for flags
@@ -670,10 +682,13 @@ const Seasons = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [showCostEstimator, setShowCostEstimator] = useState(false);
-  const [selectedWeatherType, setSelectedWeatherType] = useState(null); // For seasonal guide
+  const [selectedGuideCategory, setSelectedGuideCategory] = useState(null); // For new seasonal guide
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { requireAuth, user } = useAuth();
+  
+  // Refs for horizontal scrolling
+  const alternatesScrollRef = useRef(null);
+  const guideCategoriesScrollRef = useRef(null);
   
   // NEW: Search result state for visa info and alternate destinations
   const [searchResult, setSearchResult] = useState(null);
@@ -1081,101 +1096,126 @@ const Seasons = () => {
               </button>
             </div>
 
-            {/* Country Cards Row - Searched + 5 Alternates */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6" data-testid="search-results-section">
-              {/* Main Searched Country - Highlighted */}
-              <div 
-                className="relative rounded-xl overflow-hidden cursor-pointer group border-2"
-                style={{ borderColor: '#FF7A00' }}
-                onClick={() => setSelectedCountry(searchResult.country)}
-                data-testid={`search-result-country-${searchResult.country.country_code}`}
+            {/* Country Cards Row - Searched + 5 Alternates with horizontal scroll */}
+            <div className="relative mb-6" data-testid="search-results-section">
+              {/* Left scroll arrow */}
+              <button
+                onClick={() => alternatesScrollRef.current?.scrollBy({ left: -200, behavior: 'smooth' })}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all border"
+                style={{ borderColor: '#E2E8F0' }}
               >
-                <div className="absolute top-0 left-0 right-0 px-2 py-1 text-xs font-bold text-white text-center" style={{ backgroundColor: '#FF7A00' }}>
-                  Your Choice
-                </div>
-                <div className="pt-7 pb-3 px-3 bg-gradient-to-br from-orange-50 to-white">
-                  <div className="flex flex-col items-center text-center">
-                    <img
-                      src={getFlag(searchResult.country.country_code)}
-                      alt={searchResult.country.country_name}
-                      className="w-12 h-8 object-cover rounded shadow-sm mb-2"
-                      onError={(e) => { e.target.style.display = 'none'; }}
-                    />
-                    <h3 className="font-bold text-sm mb-1" style={{ color: '#0B3C5D' }}>
-                      {searchResult.country.country_name}
-                    </h3>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${
-                      searchResult.country.current_season === 'peak' ? 'bg-green-100 text-green-700' :
-                      searchResult.country.current_season === 'shoulder' ? 'bg-blue-100 text-blue-700' :
-                      'bg-amber-100 text-amber-700'
-                    }`}>
-                      {searchResult.country.current_season === 'peak' ? 'Best Time' :
-                       searchResult.country.current_season === 'shoulder' ? 'Good' : 'Off Season'}
-                    </span>
-                  </div>
-                </div>
-                {/* Wishlist */}
-                <button
-                  onClick={(e) => handleWishlistToggle(e, searchResult.country.country_code, searchResult.country.country_name)}
-                  className={`absolute bottom-2 right-2 p-1.5 rounded-full transition-all ${
-                    isInWishlist(searchResult.country.country_code) 
-                      ? 'bg-red-100 text-red-500' 
-                      : 'bg-white/80 text-gray-400 hover:text-red-400'
-                  }`}
-                  data-testid={`wishlist-search-${searchResult.country.country_code}`}
-                >
-                  <Heart className={`w-4 h-4 ${isInWishlist(searchResult.country.country_code) ? 'fill-current' : ''}`} />
-                </button>
-              </div>
+                <ChevronLeft className="w-5 h-5" style={{ color: '#0B3C5D' }} />
+              </button>
 
-              {/* 5 Alternate Destinations */}
-              {searchResult.alternates.map((alt, idx) => (
+              {/* Scrollable container */}
+              <div 
+                ref={alternatesScrollRef}
+                className="flex gap-3 overflow-x-auto px-10 pb-2 scroll-smooth"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                {/* Main Searched Country - Highlighted */}
                 <div 
-                  key={alt.country_code}
-                  className="relative rounded-xl overflow-hidden cursor-pointer group bg-white border hover:shadow-md transition-all"
-                  style={{ borderColor: '#E2E8F0' }}
-                  onClick={() => setSelectedCountry(alt)}
-                  data-testid={`alt-dest-${alt.country_code}`}
+                  className="relative rounded-xl overflow-hidden cursor-pointer group border-2 flex-shrink-0 w-36"
+                  style={{ borderColor: '#FF7A00' }}
+                  onClick={() => setSelectedCountry(searchResult.country)}
+                  data-testid={`search-result-country-${searchResult.country.country_code}`}
                 >
-                  <div className="absolute top-0 left-0 right-0 px-2 py-1 text-xs font-medium text-white text-center" style={{ backgroundColor: '#0B3C5D' }}>
-                    Alternative #{idx + 1}
+                  <div className="absolute top-0 left-0 right-0 px-2 py-1 text-xs font-bold text-white text-center" style={{ backgroundColor: '#FF7A00' }}>
+                    Your Choice
                   </div>
-                  <div className="pt-7 pb-3 px-3">
+                  <div className="pt-7 pb-3 px-3 bg-gradient-to-br from-orange-50 to-white">
                     <div className="flex flex-col items-center text-center">
                       <img
-                        src={getFlag(alt.country_code)}
-                        alt={alt.country_name}
-                        className="w-10 h-7 object-cover rounded shadow-sm mb-2"
+                        src={getFlag(searchResult.country.country_code)}
+                        alt={searchResult.country.country_name}
+                        className="w-12 h-8 object-cover rounded shadow-sm mb-2"
                         onError={(e) => { e.target.style.display = 'none'; }}
                       />
-                      <h3 className="font-semibold text-sm mb-1" style={{ color: '#0B3C5D' }}>
-                        {alt.country_name}
+                      <h3 className="font-bold text-sm mb-1" style={{ color: '#0B3C5D' }}>
+                        {searchResult.country.country_name}
                       </h3>
-                      <div className="flex flex-wrap gap-1 justify-center">
-                        <span className={`text-xs px-1.5 py-0.5 rounded ${
-                          alt.current_season === 'peak' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
-                        }`}>
-                          {alt.current_season === 'peak' ? 'Peak' : 'Good'}
-                        </span>
-                        <span className={`text-xs px-1.5 py-0.5 rounded ${getVisaTypeColor(alt.visa?.visa_type).bg} ${getVisaTypeColor(alt.visa?.visa_type).text}`}>
-                          {formatVisaType(alt.visa?.visa_type).split(' ')[0]}
-                        </span>
-                      </div>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${
+                        searchResult.country.current_season === 'peak' ? 'bg-green-100 text-green-700' :
+                        searchResult.country.current_season === 'shoulder' ? 'bg-blue-100 text-blue-700' :
+                        'bg-amber-100 text-amber-700'
+                      }`}>
+                        {searchResult.country.current_season === 'peak' ? 'Best Time' :
+                         searchResult.country.current_season === 'shoulder' ? 'Good' : 'Off Season'}
+                      </span>
                     </div>
                   </div>
                   {/* Wishlist */}
                   <button
-                    onClick={(e) => handleWishlistToggle(e, alt.country_code, alt.country_name)}
-                    className={`absolute bottom-2 right-2 p-1 rounded-full transition-all ${
-                      isInWishlist(alt.country_code) 
+                    onClick={(e) => handleWishlistToggle(e, searchResult.country.country_code, searchResult.country.country_name)}
+                    className={`absolute bottom-2 right-2 p-1.5 rounded-full transition-all ${
+                      isInWishlist(searchResult.country.country_code) 
                         ? 'bg-red-100 text-red-500' 
-                        : 'bg-white text-gray-400 hover:text-red-400'
+                        : 'bg-white/80 text-gray-400 hover:text-red-400'
                     }`}
+                    data-testid={`wishlist-search-${searchResult.country.country_code}`}
                   >
-                    <Heart className={`w-3.5 h-3.5 ${isInWishlist(alt.country_code) ? 'fill-current' : ''}`} />
+                    <Heart className={`w-4 h-4 ${isInWishlist(searchResult.country.country_code) ? 'fill-current' : ''}`} />
                   </button>
                 </div>
-              ))}
+
+                {/* 5 Alternate Destinations */}
+                {searchResult.alternates.map((alt, idx) => (
+                  <div 
+                    key={alt.country_code}
+                    className="relative rounded-xl overflow-hidden cursor-pointer group bg-white border hover:shadow-md transition-all flex-shrink-0 w-36"
+                    style={{ borderColor: '#E2E8F0' }}
+                    onClick={() => setSelectedCountry(alt)}
+                    data-testid={`alt-dest-${alt.country_code}`}
+                  >
+                    <div className="absolute top-0 left-0 right-0 px-2 py-1 text-xs font-medium text-white text-center" style={{ backgroundColor: '#0B3C5D' }}>
+                      Alternative #{idx + 1}
+                    </div>
+                    <div className="pt-7 pb-3 px-3">
+                      <div className="flex flex-col items-center text-center">
+                        <img
+                          src={getFlag(alt.country_code)}
+                          alt={alt.country_name}
+                          className="w-10 h-7 object-cover rounded shadow-sm mb-2"
+                          onError={(e) => { e.target.style.display = 'none'; }}
+                        />
+                        <h3 className="font-semibold text-sm mb-1" style={{ color: '#0B3C5D' }}>
+                          {alt.country_name}
+                        </h3>
+                        <div className="flex flex-wrap gap-1 justify-center">
+                          <span className={`text-xs px-1.5 py-0.5 rounded ${
+                            alt.current_season === 'peak' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                          }`}>
+                            {alt.current_season === 'peak' ? 'Peak' : 'Good'}
+                          </span>
+                          <span className={`text-xs px-1.5 py-0.5 rounded ${getVisaTypeColor(alt.visa?.visa_type).bg} ${getVisaTypeColor(alt.visa?.visa_type).text}`}>
+                            {formatVisaType(alt.visa?.visa_type).split(' ')[0]}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Wishlist */}
+                    <button
+                      onClick={(e) => handleWishlistToggle(e, alt.country_code, alt.country_name)}
+                      className={`absolute bottom-2 right-2 p-1 rounded-full transition-all ${
+                        isInWishlist(alt.country_code) 
+                          ? 'bg-red-100 text-red-500' 
+                          : 'bg-white text-gray-400 hover:text-red-400'
+                      }`}
+                    >
+                      <Heart className={`w-3.5 h-3.5 ${isInWishlist(alt.country_code) ? 'fill-current' : ''}`} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Right scroll arrow */}
+              <button
+                onClick={() => alternatesScrollRef.current?.scrollBy({ left: 200, behavior: 'smooth' })}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-all border"
+                style={{ borderColor: '#E2E8F0' }}
+              >
+                <ChevronRight className="w-5 h-5" style={{ color: '#0B3C5D' }} />
+              </button>
             </div>
 
             {/* Visa Information - Horizontal 4-Column Layout */}
@@ -1226,17 +1266,17 @@ const Seasons = () => {
                 </div>
               </div>
 
-              {/* CTA Button */}
+              {/* CTA Button - Link to Visa Page */}
               <div className="text-center">
-                <button
-                  onClick={() => setSelectedCountry(searchResult.country)}
+                <Link
+                  to="/visa"
                   className="px-8 py-2.5 rounded-lg font-semibold text-white transition-all hover:opacity-90 inline-flex items-center gap-2"
                   style={{ backgroundColor: '#0B3C5D' }}
                   data-testid="view-full-details-btn"
                 >
                   Explore Visa Details
                   <Plane className="w-4 h-4" />
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -1251,28 +1291,8 @@ const Seasons = () => {
           transition={{ duration: 0.6 }}
         >
 
-          {/* Current Selection Indicator + Cost Estimator Button */}
-          <div className="bg-accent/10 rounded-xl p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <span className="text-lg font-semibold text-primary">
-              📅 Showing travel conditions for: <span className="text-accent">{selectedMonthName} {selectedYear}</span>
-              {selectedCategory !== 'all' && (
-                <span className="ml-2 text-muted-foreground">
-                  • Filtered by: <span className="text-accent capitalize">{selectedCategory}</span>
-                </span>
-              )}
-            </span>
-            <button
-              onClick={() => setShowCostEstimator(true)}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-medium hover:opacity-90 transition-all shadow-lg"
-              data-testid="open-cost-estimator-btn"
-            >
-              <Calculator className="w-5 h-5" />
-              Trip Cost Estimator
-            </button>
-          </div>
-
           {/* Top 5 Destinations This Month */}
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 mb-6 border border-amber-200" data-testid="top-destinations-section">
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-200" data-testid="top-destinations-section">
             <div className="flex items-center gap-2 mb-4">
               <Sun className="w-6 h-6 text-amber-500" />
               <h3 className="text-xl font-bold text-primary">Top 5 Destinations for {selectedMonthName}</h3>
@@ -1333,173 +1353,242 @@ const Seasons = () => {
             </div>
           </div>
 
-          {/* Seasonal Travel Guide - Weather-based recommendations */}
+          {/* ========== SEPARATOR - VISA INTELLIGENCE ========== */}
+          <div className="flex items-center gap-4 my-8">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+            <h2 className="text-lg font-bold tracking-widest" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
+              VISA INTELLIGENCE
+            </h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+          </div>
+
+          {/* Always Visible Visa Section */}
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border mb-8" style={{ borderColor: '#E2E8F0' }} data-testid="visa-section-always">
+            <div className="text-center mb-5">
+              <h3 className="text-xl font-bold" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
+                Confused About Visa? We Simplify It.
+              </h3>
+              <p className="text-sm text-gray-600">
+                {searchResult 
+                  ? `Everything you need to know before you travel to ${searchResult.country.country_name}` 
+                  : 'Enter destination and travel details for details'}
+              </p>
+            </div>
+
+            {/* 4-Column Visa Info Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
+              {/* Visa Type */}
+              <div className="bg-white rounded-lg p-4 border text-center" style={{ borderColor: '#E2E8F0' }}>
+                <FileText className="w-6 h-6 mx-auto mb-2" style={{ color: '#FF7A00' }} />
+                <p className="text-xs text-gray-500 mb-1">Visa Type</p>
+                <p className="font-bold text-sm" style={{ color: '#0B3C5D' }}>
+                  {searchResult ? formatVisaType(searchResult.visa?.visa_type) : 'Visa on Arr / E-Visa / Visa Required'}
+                </p>
+              </div>
+
+              {/* Documents Needed */}
+              <div className="bg-white rounded-lg p-4 border text-center" style={{ borderColor: '#E2E8F0' }}>
+                <FileText className="w-6 h-6 mx-auto mb-2" style={{ color: '#FF7A00' }} />
+                <p className="text-xs text-gray-500 mb-1">Documents Needed</p>
+                <p className="font-bold text-sm" style={{ color: '#0B3C5D' }}>
+                  {searchResult ? getDefaultVisaInfo(searchResult.visa?.visa_type).documents.slice(0, 2).join(', ') : 'xxx'}
+                </p>
+              </div>
+
+              {/* Processing Time */}
+              <div className="bg-white rounded-lg p-4 border text-center" style={{ borderColor: '#E2E8F0' }}>
+                <Clock className="w-6 h-6 mx-auto mb-2" style={{ color: '#FF7A00' }} />
+                <p className="text-xs text-gray-500 mb-1">Processing Time</p>
+                <p className="font-bold text-sm" style={{ color: '#0B3C5D' }}>
+                  {searchResult ? getDefaultVisaInfo(searchResult.visa?.visa_type).processing : 'xxx'}
+                </p>
+              </div>
+
+              {/* Cost Estimate */}
+              <div className="bg-white rounded-lg p-4 border text-center" style={{ borderColor: '#E2E8F0' }}>
+                <DollarSign className="w-6 h-6 mx-auto mb-2" style={{ color: '#FF7A00' }} />
+                <p className="text-xs text-gray-500 mb-1">Cost Estimate</p>
+                <p className="font-bold text-sm" style={{ color: '#0B3C5D' }}>
+                  {searchResult ? getDefaultVisaInfo(searchResult.visa?.visa_type).cost : 'xxx'}
+                </p>
+              </div>
+            </div>
+
+            {/* CTA Button - Link to Visa Page */}
+            <div className="text-center">
+              <Link
+                to="/visa"
+                className="px-8 py-2.5 rounded-lg font-semibold text-white transition-all hover:opacity-90 inline-flex items-center gap-2"
+                style={{ backgroundColor: '#0B3C5D' }}
+                data-testid="explore-visa-btn"
+              >
+                Explore Visa Details
+                <Plane className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+
+          {/* ========== SEPARATOR - SEASONAL TRAVEL GUIDE ========== */}
+          <div className="flex items-center gap-4 my-8">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+            <h2 className="text-lg font-bold tracking-widest" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
+              SEASONAL TRAVEL GUIDE
+            </h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+          </div>
+
+          {/* NEW Seasonal Travel Guide - Category-based horizontal scroll */}
           <div className="bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl p-6 mb-6 border border-violet-200" data-testid="seasonal-guide-section">
             <div className="flex items-center gap-2 mb-4">
               <Sparkles className="w-6 h-6 text-violet-500" />
-              <h3 className="text-xl font-bold text-primary">Seasonal Travel Guide</h3>
-              <span className="px-2 py-0.5 bg-violet-200 text-violet-800 text-xs font-bold rounded-full">AI PICKS</span>
+              <h3 className="text-xl font-bold text-primary">Explore by Category</h3>
+              <span className="px-2 py-0.5 bg-violet-200 text-violet-800 text-xs font-bold rounded-full">CURATED</span>
             </div>
             <p className="text-muted-foreground mb-4">
-              What kind of weather are you looking for in <span className="font-semibold text-primary">{selectedMonthName}</span>?
+              What kind of travel experience are you looking for?
             </p>
             
-            {/* Weather Type Selector */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-              {Object.entries(weatherGuideData).map(([type, data]) => {
-                const Icon = data.icon;
-                const isSelected = selectedWeatherType === type;
-                return (
-                  <button
-                    key={type}
-                    onClick={() => setSelectedWeatherType(isSelected ? null : type)}
-                    className={`relative p-4 rounded-xl border-2 transition-all ${
-                      isSelected 
-                        ? `${data.borderColor} ${data.bgColor} shadow-lg ring-2 ring-offset-2 ring-${type === 'sunny' ? 'amber' : type === 'snow' ? 'sky' : type === 'mild' ? 'emerald' : 'blue'}-300`
-                        : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
-                    }`}
-                    data-testid={`weather-guide-${type}`}
-                  >
-                    <div className={`w-12 h-12 mx-auto rounded-full bg-gradient-to-br ${data.color} flex items-center justify-center mb-3 shadow-md`}>
-                      <Icon className="w-6 h-6 text-white" />
-                    </div>
-                    <h4 className="font-bold text-primary text-sm">{data.label}</h4>
-                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{data.description}</p>
-                    {isSelected && (
-                      <div className="absolute top-2 right-2">
-                        <span className="flex h-3 w-3">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-3 w-3 bg-violet-500"></span>
-                        </span>
+            {/* Category Cards - Horizontal Scroll */}
+            <div className="relative">
+              {/* Left scroll arrow */}
+              <button
+                onClick={() => guideCategoriesScrollRef.current?.scrollBy({ left: -250, behavior: 'smooth' })}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all border border-gray-200"
+              >
+                <ChevronLeft className="w-5 h-5 text-gray-600" />
+              </button>
+              
+              {/* Scrollable container */}
+              <div 
+                ref={guideCategoriesScrollRef}
+                className="flex gap-4 overflow-x-auto pb-2 px-12 scroll-smooth"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                {TRAVEL_GUIDE_CATEGORIES.map((cat) => {
+                  const Icon = cat.icon;
+                  const isSelected = selectedGuideCategory === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => setSelectedGuideCategory(isSelected ? null : cat.id)}
+                      className={`relative p-4 rounded-xl border-2 transition-all flex-shrink-0 w-40 ${
+                        isSelected 
+                          ? `${cat.borderColor} ${cat.bgColor} shadow-lg ring-2 ring-offset-2 ring-violet-300`
+                          : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
+                      }`}
+                      data-testid={`guide-cat-${cat.id}`}
+                    >
+                      <div className={`w-12 h-12 mx-auto rounded-full bg-gradient-to-br ${cat.color} flex items-center justify-center mb-3 shadow-md`}>
+                        <Icon className="w-6 h-6 text-white" />
                       </div>
-                    )}
-                  </button>
-                );
-              })}
+                      <h4 className="font-bold text-primary text-sm text-center">{cat.label}</h4>
+                      <p className="text-xs text-muted-foreground mt-1 text-center">{cat.description}</p>
+                      {isSelected && (
+                        <div className="absolute top-2 right-2">
+                          <span className="flex h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-violet-500"></span>
+                          </span>
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+              
+              {/* Right scroll arrow */}
+              <button
+                onClick={() => guideCategoriesScrollRef.current?.scrollBy({ left: 250, behavior: 'smooth' })}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all border border-gray-200"
+              >
+                <ChevronRight className="w-5 h-5 text-gray-600" />
+              </button>
             </div>
 
-            {/* Weather-based Destination Results */}
-            {selectedWeatherType && weatherGuideData[selectedWeatherType] && (
+            {/* Category-based Destination Results */}
+            {selectedGuideCategory && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
-                className={`${weatherGuideData[selectedWeatherType].bgColor} rounded-xl p-5 ${weatherGuideData[selectedWeatherType].borderColor} border-2`}
+                className={`${TRAVEL_GUIDE_CATEGORIES.find(c => c.id === selectedGuideCategory)?.bgColor} rounded-xl p-5 ${TRAVEL_GUIDE_CATEGORIES.find(c => c.id === selectedGuideCategory)?.borderColor} border-2 mt-6`}
               >
                 <div className="flex items-center gap-3 mb-4">
-                  {React.createElement(weatherGuideData[selectedWeatherType].icon, { className: "w-6 h-6 text-gray-700" })}
+                  {React.createElement(TRAVEL_GUIDE_CATEGORIES.find(c => c.id === selectedGuideCategory)?.icon || Compass, { className: "w-6 h-6 text-gray-700" })}
                   <div>
                     <h4 className="font-bold text-primary">
-                      {weatherGuideData[selectedWeatherType].label} Destinations for {selectedMonthName}
+                      {TRAVEL_GUIDE_CATEGORIES.find(c => c.id === selectedGuideCategory)?.label} for {selectedMonthName}
                     </h4>
                     <p className="text-sm text-muted-foreground">
-                      Perfect picks based on your weather preference
+                      Top picks based on your preference
                     </p>
                   </div>
                 </div>
                 
-                <div className="relative">
-                  {/* Left scroll arrow */}
-                  <button
-                    onClick={() => {
-                      const container = document.getElementById('weather-guide-scroll');
-                      if (container) container.scrollBy({ left: -220, behavior: 'smooth' });
-                    }}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all z-10 border border-gray-200"
-                    data-testid="scroll-left-btn"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-                  
-                  {/* Scrollable container */}
-                  <div 
-                    className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide scroll-smooth px-12"
-                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                    id="weather-guide-scroll"
-                  >
-                    {weatherGuideData[selectedWeatherType].destinations[selectedMonthAbbrev]?.map((dest, idx) => {
-                      const inWishlist = isInWishlist(dest.code);
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {processedData
+                    .filter(c => c.categories?.includes(selectedGuideCategory) && (c.current_season === 'peak' || c.current_season === 'shoulder'))
+                    .slice(0, 8)
+                    .map((dest, idx) => {
+                      const inWishlist = isInWishlist(dest.country_code);
                       return (
                         <motion.div
-                          key={dest.code}
+                          key={dest.country_code}
                           initial={{ opacity: 0, scale: 0.95 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: idx * 0.05 }}
-                          onClick={() => {
-                            const country = processedData.find(c => c.country_code === dest.code);
-                            if (country) setSelectedCountry(country);
-                          }}
-                          className="bg-white rounded-lg p-4 cursor-pointer hover:shadow-lg transition-all border border-gray-100 group flex-shrink-0 w-[200px] relative"
-                          data-testid={`guide-dest-${dest.code}`}
+                          onClick={() => setSelectedCountry(dest)}
+                          className="bg-white rounded-lg p-4 cursor-pointer hover:shadow-lg transition-all border border-gray-100 group relative"
+                          data-testid={`guide-dest-${dest.country_code}`}
                         >
                           {/* Wishlist Button */}
                           <button
-                            onClick={(e) => handleWishlistToggle(e, dest.code, dest.name)}
+                            onClick={(e) => handleWishlistToggle(e, dest.country_code, dest.country_name)}
                             className={`absolute top-2 right-2 p-1.5 rounded-full transition-all z-10 ${
                               inWishlist 
                                 ? 'bg-red-100 text-red-500' 
                                 : 'bg-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-400'
                             }`}
-                            data-testid={`wishlist-guide-${dest.code}`}
                           >
                             <Heart className={`w-4 h-4 ${inWishlist ? 'fill-current' : ''}`} />
                           </button>
                           <div className="flex items-center gap-2 mb-2 pr-8">
                             <img
-                              src={getFlag(dest.code)}
-                              alt={dest.name}
+                              src={getFlag(dest.country_code)}
+                              alt={dest.country_name}
                               className="w-8 h-5 object-cover rounded shadow-sm"
                               onError={(e) => { e.target.style.display = 'none'; }}
                             />
-                            <span className="font-bold text-primary group-hover:text-violet-600 transition-colors text-sm">{dest.name}</span>
+                            <span className="font-bold text-primary text-sm">{dest.country_name}</span>
                           </div>
-                          <div className="flex items-center gap-1 text-sm mb-1">
-                            <ThermometerSun className="w-4 h-4 text-gray-400" />
-                            <span className="font-medium text-gray-700">{dest.temp}</span>
-                          </div>
-                          <p className="text-xs text-muted-foreground line-clamp-2">{dest.highlight}</p>
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${
+                            dest.current_season === 'peak' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                          }`}>
+                            {dest.current_season === 'peak' ? 'Best Time' : 'Good Time'}
+                          </span>
                           <p className="text-xs text-violet-600 mt-2 group-hover:underline">Explore →</p>
                         </motion.div>
                       );
                     })}
-                  </div>
-                  
-                  {/* Right scroll arrow */}
-                  <button
-                    onClick={() => {
-                      const container = document.getElementById('weather-guide-scroll');
-                      if (container) container.scrollBy({ left: 220, behavior: 'smooth' });
-                    }}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all z-10 border border-gray-200"
-                    data-testid="scroll-right-btn"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
                 </div>
 
-                {/* Pro tip based on weather type */}
-                <div className="mt-4 p-3 bg-white/70 rounded-lg border border-white">
-                  <p className="text-sm text-gray-600">
-                    <span className="font-bold">💡 Pro Tip:</span>{' '}
-                    {selectedWeatherType === 'sunny' && 'Book accommodations with pools or beach access. Don\'t forget sunscreen and stay hydrated!'}
-                    {selectedWeatherType === 'snow' && 'Book ski passes in advance for better rates. Layer up and pack thermal gear!'}
-                    {selectedWeatherType === 'mild' && 'Perfect for walking tours and outdoor activities. Pack layers for temperature changes.'}
-                    {selectedWeatherType === 'rainy' && 'Enjoy lower prices and fewer crowds. Pack waterproof gear and plan indoor activities as backup!'}
-                  </p>
-                </div>
+                {/* Show message if no results */}
+                {processedData
+                  .filter(c => c.categories?.includes(selectedGuideCategory) && (c.current_season === 'peak' || c.current_season === 'shoulder'))
+                  .length === 0 && (
+                  <div className="text-center py-6">
+                    <p className="text-muted-foreground">No destinations found for this category in {selectedMonthName}. Try a different month!</p>
+                  </div>
+                )}
               </motion.div>
             )}
 
-            {/* Default state when no weather selected */}
-            {!selectedWeatherType && (
-              <div className="text-center py-6 bg-white/50 rounded-xl border border-dashed border-violet-200">
+            {/* Default state when no category selected */}
+            {!selectedGuideCategory && (
+              <div className="text-center py-6 bg-white/50 rounded-xl border border-dashed border-violet-200 mt-6">
                 <Sparkles className="w-10 h-10 text-violet-300 mx-auto mb-3" />
                 <p className="text-muted-foreground">
-                  Select a weather preference above to get personalized destination recommendations
+                  Select a travel category above to get personalized destination recommendations
                 </p>
               </div>
             )}
@@ -1826,12 +1915,6 @@ const Seasons = () => {
           onClose={() => setSelectedCountry(null)}
         />
       )}
-
-      {/* Cost Estimator Modal */}
-      <CostEstimator 
-        isOpen={showCostEstimator} 
-        onClose={() => setShowCostEstimator(false)} 
-      />
 
       <BackToTop />
     </div>
