@@ -881,9 +881,10 @@ const Seasons = () => {
         currentSeasonType = 'peak';
       } else {
         const bestMonthIndices = bestMonths.map(m => MONTH_ABBREV.indexOf(m));
+        // Only shoulder if within 1 month of a best month (stricter for better filtering)
         const isNearBest = bestMonthIndices.some(idx => {
           const diff = Math.abs(selectedMonth - idx);
-          return diff <= 2 || diff >= 10;
+          return diff === 1 || diff === 11; // Only adjacent months
         });
         currentSeasonType = isNearBest ? 'shoulder' : 'off';
       }
@@ -1470,7 +1471,7 @@ const Seasons = () => {
               <p className="text-sm text-gray-600">
                 {searchResult 
                   ? `Everything you need to know before you travel to ${searchResult.country.country_name}` 
-                  : 'Enter destination and travel details for details'}
+                  : 'Enter destination and travel dates for details'}
               </p>
             </div>
 
