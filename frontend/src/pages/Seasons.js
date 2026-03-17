@@ -29,14 +29,14 @@ const CATEGORIES = [
 
 // Seasonal Travel Guide Categories with horizontal scroll
 const TRAVEL_GUIDE_CATEGORIES = [
-  { id: 'beach', label: 'Beach Destinations', icon: Palmtree, color: 'from-cyan-400 to-blue-500', bgColor: 'bg-cyan-50', borderColor: 'border-cyan-200', description: 'Sun, sand & sea' },
-  { id: 'mountain', label: 'Mountain Destinations', icon: Mountain, color: 'from-green-400 to-emerald-600', bgColor: 'bg-green-50', borderColor: 'border-green-200', description: 'Peaks & valleys' },
-  { id: 'snow', label: 'Snowy Experience', icon: Snowflake, color: 'from-sky-400 to-blue-500', bgColor: 'bg-sky-50', borderColor: 'border-sky-200', description: 'Winter wonderland' },
-  { id: 'city', label: 'City Destinations', icon: Building2, color: 'from-slate-400 to-gray-600', bgColor: 'bg-slate-50', borderColor: 'border-slate-200', description: 'Urban exploration' },
-  { id: 'culture', label: 'Cultural Destinations', icon: Landmark, color: 'from-purple-400 to-violet-600', bgColor: 'bg-purple-50', borderColor: 'border-purple-200', description: 'Heritage & history' },
-  { id: 'adventure', label: 'Adventure Destinations', icon: Compass, color: 'from-orange-400 to-red-500', bgColor: 'bg-orange-50', borderColor: 'border-orange-200', description: 'Thrills & action' },
-  { id: 'nature', label: 'Explore Nature', icon: Trees, color: 'from-lime-400 to-green-500', bgColor: 'bg-lime-50', borderColor: 'border-lime-200', description: 'Wildlife & forests' },
-  { id: 'fitness', label: 'Fitness Destination', icon: Dumbbell, color: 'from-rose-400 to-pink-500', bgColor: 'bg-rose-50', borderColor: 'border-rose-200', description: 'Wellness retreats' },
+  { id: 'beach', label: 'Beach Destinations', icon: Palmtree, color: 'from-cyan-400 to-blue-500', bgColor: 'bg-cyan-50', borderColor: 'border-cyan-200', description: 'Sun, sand & sea', image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80' },
+  { id: 'mountain', label: 'Mountain Destinations', icon: Mountain, color: 'from-green-400 to-emerald-600', bgColor: 'bg-green-50', borderColor: 'border-green-200', description: 'Peaks & valleys', image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&q=80' },
+  { id: 'snow', label: 'Snowy Experience', icon: Snowflake, color: 'from-sky-400 to-blue-500', bgColor: 'bg-sky-50', borderColor: 'border-sky-200', description: 'Winter wonderland', image: 'https://images.unsplash.com/photo-1610479201125-a5c7f17370a8?w=400&q=80' },
+  { id: 'city', label: 'City Destinations', icon: Building2, color: 'from-slate-400 to-gray-600', bgColor: 'bg-slate-50', borderColor: 'border-slate-200', description: 'Urban exploration', image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=80' },
+  { id: 'culture', label: 'Cultural Destinations', icon: Landmark, color: 'from-purple-400 to-violet-600', bgColor: 'bg-purple-50', borderColor: 'border-purple-200', description: 'Heritage & history', image: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=400&q=80' },
+  { id: 'adventure', label: 'Adventure Destinations', icon: Compass, color: 'from-orange-400 to-red-500', bgColor: 'bg-orange-50', borderColor: 'border-orange-200', description: 'Thrills & action', image: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&q=80' },
+  { id: 'nature', label: 'Explore Nature', icon: Trees, color: 'from-lime-400 to-green-500', bgColor: 'bg-lime-50', borderColor: 'border-lime-200', description: 'Wildlife & forests', image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&q=80' },
+  { id: 'fitness', label: 'Fitness Destination', icon: Dumbbell, color: 'from-rose-400 to-pink-500', bgColor: 'bg-rose-50', borderColor: 'border-rose-200', description: 'Wellness retreats', image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&q=80' },
 ];
 
 // ISO3 to ISO2 country code mapping for flags
@@ -958,7 +958,7 @@ const Seasons = () => {
               Plan Your Trip + Visa in One Place
             </h1>
             <p className="text-base md:text-lg text-white/90 mb-6 max-w-xl">
-              Check visa requirements, compare options, and book flights — all in minutes.
+              Check Best Seasons, Visa requirements and compare options - all in minutes
             </p>
 
             {/* Search Box */}
@@ -1444,11 +1444,8 @@ const Seasons = () => {
               <h3 className="text-xl font-bold text-primary">Explore by Category</h3>
               <span className="px-2 py-0.5 bg-violet-200 text-violet-800 text-xs font-bold rounded-full">CURATED</span>
             </div>
-            <p className="text-muted-foreground mb-4">
-              What kind of travel experience are you looking for?
-            </p>
             
-            {/* Category Cards - Horizontal Scroll */}
+            {/* Category Cards - Horizontal Scroll with Images */}
             <div className="relative">
               {/* Left scroll arrow */}
               <button
@@ -1471,23 +1468,36 @@ const Seasons = () => {
                     <button
                       key={cat.id}
                       onClick={() => setSelectedGuideCategory(isSelected ? null : cat.id)}
-                      className={`relative p-4 rounded-xl border-2 transition-all flex-shrink-0 w-40 ${
+                      className={`relative rounded-xl overflow-hidden transition-all flex-shrink-0 w-44 h-48 group ${
                         isSelected 
-                          ? `${cat.borderColor} ${cat.bgColor} shadow-lg ring-2 ring-offset-2 ring-violet-300`
-                          : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
+                          ? 'ring-4 ring-violet-400 ring-offset-2 shadow-xl'
+                          : 'hover:shadow-xl hover:scale-105'
                       }`}
                       data-testid={`guide-cat-${cat.id}`}
                     >
-                      <div className={`w-12 h-12 mx-auto rounded-full bg-gradient-to-br ${cat.color} flex items-center justify-center mb-3 shadow-md`}>
-                        <Icon className="w-6 h-6 text-white" />
+                      {/* Background Image */}
+                      <div 
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{ backgroundImage: `url('${cat.image}')` }}
+                      />
+                      {/* Gradient Overlay */}
+                      <div className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent ${isSelected ? 'from-violet-900/90' : ''}`} />
+                      
+                      {/* Content */}
+                      <div className="absolute inset-0 flex flex-col justify-end p-3 text-white">
+                        <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${cat.color} flex items-center justify-center mb-2 shadow-lg`}>
+                          <Icon className="w-5 h-5 text-white" />
+                        </div>
+                        <h4 className="font-bold text-sm leading-tight">{cat.label}</h4>
+                        <p className="text-xs text-white/80 mt-0.5">{cat.description}</p>
                       </div>
-                      <h4 className="font-bold text-primary text-sm text-center">{cat.label}</h4>
-                      <p className="text-xs text-muted-foreground mt-1 text-center">{cat.description}</p>
+                      
+                      {/* Selected Indicator */}
                       {isSelected && (
                         <div className="absolute top-2 right-2">
-                          <span className="flex h-3 w-3">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-violet-500"></span>
+                          <span className="flex h-4 w-4">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-4 w-4 bg-white"></span>
                           </span>
                         </div>
                       )}
@@ -1582,61 +1592,6 @@ const Seasons = () => {
                 )}
               </motion.div>
             )}
-
-            {/* Default state when no category selected */}
-            {!selectedGuideCategory && (
-              <div className="text-center py-6 bg-white/50 rounded-xl border border-dashed border-violet-200 mt-6">
-                <Sparkles className="w-10 h-10 text-violet-300 mx-auto mb-3" />
-                <p className="text-muted-foreground">
-                  Select a travel category above to get personalized destination recommendations
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Category Filter Tabs - Shows only PEAK SEASON destinations */}
-          <div className="bg-white rounded-xl p-4 mb-6 shadow-sm border border-border">
-            <h3 className="text-sm font-semibold text-primary mb-3 flex items-center gap-2">
-              <Sun className="w-4 h-4 text-red-500" />
-              Best Time to Visit in {selectedMonthName} - Filter by Type:
-            </h3>
-            <div className="flex gap-2 flex-wrap">
-              {CATEGORIES.map((cat) => {
-                const Icon = cat.icon;
-                const isActive = selectedCategory === cat.id;
-                const count = categoryCounts[cat.id] || 0;
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => {
-                      setSelectedCategory(cat.id);
-                      // Scroll to destinations section after a short delay
-                      setTimeout(() => {
-                        const destinationsSection = document.getElementById('destinations-section');
-                        if (destinationsSection) {
-                          destinationsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }
-                      }, 100);
-                    }}
-                    disabled={count === 0 && cat.id !== 'all'}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all whitespace-nowrap border-2 ${
-                      isActive 
-                        ? cat.activeColor + ' border-transparent shadow-md' 
-                        : count === 0 && cat.id !== 'all'
-                        ? 'bg-gray-100 text-gray-400 border-transparent cursor-not-allowed'
-                        : cat.bgColor + ' ' + cat.textColor + ' border-transparent hover:shadow-sm'
-                    }`}
-                    data-testid={`category-tab-${cat.id}`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span>{cat.label}</span>
-                    <span className={`text-xs px-1.5 py-0.5 rounded-full ${isActive ? 'bg-white/30' : 'bg-white/50'}`}>
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
           </div>
 
           {/* Legend */}
