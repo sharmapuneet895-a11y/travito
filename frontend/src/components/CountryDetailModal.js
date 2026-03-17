@@ -764,6 +764,13 @@ const CountryDetailModal = ({ country, onClose }) => {
                       </div>
                     </div>
                   )}
+
+                  {/* Source */}
+                  <div className="mt-4 pt-3 border-t border-red-100">
+                    <p className="text-xs text-gray-500 italic">
+                      Source: Ministry of External Affairs, Government of India & Travel Advisories
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
