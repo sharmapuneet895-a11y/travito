@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Navigation from './components/Navigation';
+import Footer from './components/Footer';
 import BackToTop from './components/BackToTop';
 import AuthModal from './components/AuthModal';
 import { WishlistProvider } from './context/WishlistContext';
@@ -56,6 +57,7 @@ function App() {
               <Route path="/profile" element={<UserProfile />} />
               <Route path="/contact" element={<Contact />} />
             </Routes>
+            <Footer />
             <BackToTop />
           </BrowserRouter>
         </WishlistProvider>
