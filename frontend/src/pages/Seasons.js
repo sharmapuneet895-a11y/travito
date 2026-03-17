@@ -256,9 +256,6 @@ const topDestinationsData = {
     { code: 'ZAF', name: 'South Africa', highlight: 'Summer begins', rating: 4.1, category: 'adventure' },
     { code: 'AUS', name: 'Australia', highlight: 'Spring bloom', rating: 4.0, category: 'nature' },
   ],
-    { code: 'UAE', name: 'UAE', highlight: 'Pleasant weather', rating: 4.6, category: 'city' },
-    { code: 'VNM', name: 'Vietnam', highlight: 'Cool season starts', rating: 4.5, category: 'culture' },
-  ],
   'Dec': [
     { code: 'DEU', name: 'Germany', highlight: 'Christmas markets', rating: 4.9, category: 'culture' },
     { code: 'AUT', name: 'Austria', highlight: 'Winter wonderland', rating: 4.8, category: 'culture' },

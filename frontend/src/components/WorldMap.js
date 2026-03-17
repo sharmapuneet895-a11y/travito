@@ -131,11 +131,11 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       }
     } else if (mode === 'visa') {
       switch (countryData.visa_type) {
-        case 'visa_free': return '#16A34A';      // Green
-        case 'visa_on_arrival': return '#FF7A00'; // Orange
-        case 'e_visa': return '#0B3C5D';          // Deep Blue
-        case 'visa_required': return '#94A3B8';   // Grey
-        default: return '#E2E8F0';
+        case 'visa_free': return '#22C55E';      // Green - matches legend
+        case 'visa_on_arrival': return '#E25A53'; // Red - matches legend
+        case 'e_visa': return '#4B89AC';          // Light Blue - matches legend
+        case 'visa_required': return '#F2A900';   // Yellow/Amber - matches legend
+        default: return '#D6D6D6';               // No Data grey
       }
     } else if (mode === 'weather') {
       switch (countryData.weather_type) {
