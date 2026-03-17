@@ -48,6 +48,53 @@ const SERVICES_DATA = [
   { id: 'apps', label: 'Top Apps', description: 'Essential travel apps', link: '/apps', image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&q=80', color: 'from-purple-500 to-violet-600' },
 ];
 
+// Country images for destination cards
+const COUNTRY_IMAGES = {
+  'USA': 'https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=400&q=80',
+  'JPN': 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&q=80',
+  'THA': 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=400&q=80',
+  'FRA': 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=80',
+  'ITA': 'https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=400&q=80',
+  'ESP': 'https://images.unsplash.com/photo-1543783207-ec64e4d95325?w=400&q=80',
+  'GBR': 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&q=80',
+  'DEU': 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=400&q=80',
+  'AUS': 'https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=400&q=80',
+  'NZL': 'https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=400&q=80',
+  'SGP': 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400&q=80',
+  'ARE': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=80',
+  'IND': 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=400&q=80',
+  'CHN': 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=400&q=80',
+  'KOR': 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=400&q=80',
+  'BRA': 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=400&q=80',
+  'MEX': 'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=400&q=80',
+  'EGY': 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=400&q=80',
+  'ZAF': 'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=80',
+  'GRC': 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=400&q=80',
+  'TUR': 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?w=400&q=80',
+  'MDV': 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=400&q=80',
+  'IDN': 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400&q=80',
+  'VNM': 'https://images.unsplash.com/photo-1528127269322-539801943592?w=400&q=80',
+  'MYS': 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=400&q=80',
+  'PHL': 'https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=400&q=80',
+  'CHE': 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=400&q=80',
+  'AUT': 'https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=400&q=80',
+  'NOR': 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&q=80',
+  'SWE': 'https://images.unsplash.com/photo-1509356843151-3e7d96241e11?w=400&q=80',
+  'PRT': 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=400&q=80',
+  'NLD': 'https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=400&q=80',
+  'CAN': 'https://images.unsplash.com/photo-1517935706615-2717063c2225?w=400&q=80',
+  'ARG': 'https://images.unsplash.com/photo-1612294037637-ec328d0e075e?w=400&q=80',
+  'CHL': 'https://images.unsplash.com/photo-1478827536114-da961b7f86d2?w=400&q=80',
+  'PER': 'https://images.unsplash.com/photo-1526392060635-9d6019884377?w=400&q=80',
+  'MAR': 'https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400&q=80',
+  'KEN': 'https://images.unsplash.com/photo-1489392191049-fc10c97e64b6?w=400&q=80',
+};
+
+// Default country image
+const getCountryImage = (countryCode) => {
+  return COUNTRY_IMAGES[countryCode] || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&q=80';
+};
+
 // ISO3 to ISO2 country code mapping for flags
 const iso3ToIso2 = {
   'USA': 'us', 'CAN': 'ca', 'MEX': 'mx', 'GBR': 'gb', 'FRA': 'fr', 'DEU': 'de', 'ITA': 'it', 'ESP': 'es',
@@ -866,6 +913,36 @@ const Seasons = () => {
     setSearchQuery('');
   };
 
+  // Update search results when month changes (recalculate alternates)
+  useEffect(() => {
+    if (searchResult && processedData.length > 0) {
+      const countryVisa = visaData.find(v => v.country_code === searchResult.country.country_code);
+      const updatedCountry = processedData.find(c => c.country_code === searchResult.country.country_code);
+      
+      const alternates = processedData
+        .filter(c => 
+          c.country_code !== searchResult.country.country_code && 
+          (c.current_season === 'peak' || c.current_season === 'shoulder')
+        )
+        .sort((a, b) => {
+          if (a.current_season === 'peak' && b.current_season !== 'peak') return -1;
+          if (b.current_season === 'peak' && a.current_season !== 'peak') return 1;
+          return 0;
+        })
+        .slice(0, 5)
+        .map(c => ({
+          ...c,
+          visa: visaData.find(v => v.country_code === c.country_code)
+        }));
+      
+      setSearchResult({
+        country: updatedCountry || searchResult.country,
+        visa: countryVisa || searchResult.visa,
+        alternates: alternates
+      });
+    }
+  }, [selectedMonth, processedData, visaData]);
+
   // Helper function to format visa type for display
   const formatVisaType = (visaType) => {
     switch (visaType) {
@@ -888,7 +965,7 @@ const Seasons = () => {
     }
   };
 
-  // Default visa info based on visa type
+  // Default visa info based on visa type (prices in Indian Rupees)
   const getDefaultVisaInfo = (visaType) => {
     switch (visaType) {
       case 'visa_free':
@@ -901,20 +978,20 @@ const Seasons = () => {
         return {
           documents: ['Valid passport', 'Passport photos', 'Hotel booking', 'Return ticket'],
           processing: 'At airport (15-30 mins)',
-          cost: '$20 - $50'
+          cost: '₹1,500 - ₹4,000'
         };
       case 'e_visa':
         return {
           documents: ['Valid passport', 'Passport photos', 'Travel itinerary', 'Bank statement'],
           processing: '3-5 business days',
-          cost: '$30 - $80'
+          cost: '₹2,500 - ₹6,500'
         };
       case 'visa_required':
       default:
         return {
           documents: ['Valid passport', 'Visa application form', 'Passport photos', 'Bank statements', 'Travel insurance', 'Flight bookings'],
           processing: '5-15 business days',
-          cost: '$50 - $200'
+          cost: '₹4,000 - ₹16,000'
         };
     }
   };
@@ -1120,100 +1197,114 @@ const Seasons = () => {
               {/* Scrollable container */}
               <div 
                 ref={alternatesScrollRef}
-                className="flex gap-3 overflow-x-auto px-10 pb-2 scroll-smooth"
+                className="flex gap-4 overflow-x-auto px-10 pb-2 scroll-smooth"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
-                {/* Main Searched Country - Highlighted */}
+                {/* Main Searched Country - Highlighted with Image */}
                 <div 
-                  className="relative rounded-xl overflow-hidden cursor-pointer group border-2 flex-shrink-0 w-36"
+                  className="relative rounded-xl overflow-hidden cursor-pointer group border-2 flex-shrink-0 w-48"
                   style={{ borderColor: '#FF7A00' }}
                   onClick={() => setSelectedCountry(searchResult.country)}
                   data-testid={`search-result-country-${searchResult.country.country_code}`}
                 >
-                  <div className="absolute top-0 left-0 right-0 px-2 py-1 text-xs font-bold text-white text-center" style={{ backgroundColor: '#FF7A00' }}>
-                    Your Choice
+                  {/* Country Image */}
+                  <div 
+                    className="h-28 bg-cover bg-center"
+                    style={{ backgroundImage: `url('${getCountryImage(searchResult.country.country_code)}')` }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent h-28" />
+                    <div className="absolute top-0 left-0 right-0 px-2 py-1 text-xs font-bold text-white text-center" style={{ backgroundColor: '#FF7A00' }}>
+                      Your Choice
+                    </div>
+                    {/* Wishlist */}
+                    <button
+                      onClick={(e) => handleWishlistToggle(e, searchResult.country.country_code, searchResult.country.country_name)}
+                      className={`absolute top-8 right-2 p-1.5 rounded-full transition-all ${
+                        isInWishlist(searchResult.country.country_code) 
+                          ? 'bg-red-100 text-red-500' 
+                          : 'bg-white/80 text-gray-400 hover:text-red-400'
+                      }`}
+                      data-testid={`wishlist-search-${searchResult.country.country_code}`}
+                    >
+                      <Heart className={`w-4 h-4 ${isInWishlist(searchResult.country.country_code) ? 'fill-current' : ''}`} />
+                    </button>
                   </div>
-                  <div className="pt-7 pb-3 px-3 bg-gradient-to-br from-orange-50 to-white">
-                    <div className="flex flex-col items-center text-center">
+                  <div className="p-3 bg-white">
+                    <div className="flex items-center gap-2 mb-2">
                       <img
                         src={getFlag(searchResult.country.country_code)}
                         alt={searchResult.country.country_name}
-                        className="w-12 h-8 object-cover rounded shadow-sm mb-2"
+                        className="w-6 h-4 object-cover rounded shadow-sm"
                         onError={(e) => { e.target.style.display = 'none'; }}
                       />
-                      <h3 className="font-bold text-sm mb-1" style={{ color: '#0B3C5D' }}>
+                      <h3 className="font-bold text-sm" style={{ color: '#0B3C5D' }}>
                         {searchResult.country.country_name}
                       </h3>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${
-                        searchResult.country.current_season === 'peak' ? 'bg-green-100 text-green-700' :
-                        searchResult.country.current_season === 'shoulder' ? 'bg-blue-100 text-blue-700' :
-                        'bg-amber-100 text-amber-700'
-                      }`}>
-                        {searchResult.country.current_season === 'peak' ? 'Best Time' :
-                         searchResult.country.current_season === 'shoulder' ? 'Good' : 'Off Season'}
-                      </span>
                     </div>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                      searchResult.country.current_season === 'peak' ? 'bg-green-100 text-green-700' :
+                      searchResult.country.current_season === 'shoulder' ? 'bg-blue-100 text-blue-700' :
+                      'bg-amber-100 text-amber-700'
+                    }`}>
+                      {searchResult.country.current_season === 'peak' ? 'Best Time' :
+                       searchResult.country.current_season === 'shoulder' ? 'Good' : 'Off Season'}
+                    </span>
                   </div>
-                  {/* Wishlist */}
-                  <button
-                    onClick={(e) => handleWishlistToggle(e, searchResult.country.country_code, searchResult.country.country_name)}
-                    className={`absolute bottom-2 right-2 p-1.5 rounded-full transition-all ${
-                      isInWishlist(searchResult.country.country_code) 
-                        ? 'bg-red-100 text-red-500' 
-                        : 'bg-white/80 text-gray-400 hover:text-red-400'
-                    }`}
-                    data-testid={`wishlist-search-${searchResult.country.country_code}`}
-                  >
-                    <Heart className={`w-4 h-4 ${isInWishlist(searchResult.country.country_code) ? 'fill-current' : ''}`} />
-                  </button>
                 </div>
 
-                {/* 5 Alternate Destinations */}
+                {/* 5 Alternate Destinations with Images */}
                 {searchResult.alternates.map((alt, idx) => (
                   <div 
                     key={alt.country_code}
-                    className="relative rounded-xl overflow-hidden cursor-pointer group bg-white border hover:shadow-md transition-all flex-shrink-0 w-36"
+                    className="relative rounded-xl overflow-hidden cursor-pointer group bg-white border hover:shadow-md transition-all flex-shrink-0 w-48"
                     style={{ borderColor: '#E2E8F0' }}
                     onClick={() => setSelectedCountry(alt)}
                     data-testid={`alt-dest-${alt.country_code}`}
                   >
-                    <div className="absolute top-0 left-0 right-0 px-2 py-1 text-xs font-medium text-white text-center" style={{ backgroundColor: '#0B3C5D' }}>
-                      Alternative #{idx + 1}
+                    {/* Country Image */}
+                    <div 
+                      className="h-28 bg-cover bg-center relative"
+                      style={{ backgroundImage: `url('${getCountryImage(alt.country_code)}')` }}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <div className="absolute top-0 left-0 right-0 px-2 py-1 text-xs font-medium text-white text-center" style={{ backgroundColor: '#0B3C5D' }}>
+                        Alternative #{idx + 1}
+                      </div>
+                      {/* Wishlist */}
+                      <button
+                        onClick={(e) => handleWishlistToggle(e, alt.country_code, alt.country_name)}
+                        className={`absolute top-8 right-2 p-1 rounded-full transition-all ${
+                          isInWishlist(alt.country_code) 
+                            ? 'bg-red-100 text-red-500' 
+                            : 'bg-white/80 text-gray-400 hover:text-red-400'
+                        }`}
+                      >
+                        <Heart className={`w-3.5 h-3.5 ${isInWishlist(alt.country_code) ? 'fill-current' : ''}`} />
+                      </button>
                     </div>
-                    <div className="pt-7 pb-3 px-3">
-                      <div className="flex flex-col items-center text-center">
+                    <div className="p-3">
+                      <div className="flex items-center gap-2 mb-2">
                         <img
                           src={getFlag(alt.country_code)}
                           alt={alt.country_name}
-                          className="w-10 h-7 object-cover rounded shadow-sm mb-2"
+                          className="w-5 h-3.5 object-cover rounded shadow-sm"
                           onError={(e) => { e.target.style.display = 'none'; }}
                         />
-                        <h3 className="font-semibold text-sm mb-1" style={{ color: '#0B3C5D' }}>
+                        <h3 className="font-semibold text-sm" style={{ color: '#0B3C5D' }}>
                           {alt.country_name}
                         </h3>
-                        <div className="flex flex-wrap gap-1 justify-center">
-                          <span className={`text-xs px-1.5 py-0.5 rounded ${
-                            alt.current_season === 'peak' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
-                          }`}>
-                            {alt.current_season === 'peak' ? 'Peak' : 'Good'}
-                          </span>
-                          <span className={`text-xs px-1.5 py-0.5 rounded ${getVisaTypeColor(alt.visa?.visa_type).bg} ${getVisaTypeColor(alt.visa?.visa_type).text}`}>
-                            {formatVisaType(alt.visa?.visa_type).split(' ')[0]}
-                          </span>
-                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        <span className={`text-xs px-1.5 py-0.5 rounded ${
+                          alt.current_season === 'peak' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                        }`}>
+                          {alt.current_season === 'peak' ? 'Peak' : 'Good'}
+                        </span>
+                        <span className={`text-xs px-1.5 py-0.5 rounded ${getVisaTypeColor(alt.visa?.visa_type).bg} ${getVisaTypeColor(alt.visa?.visa_type).text}`}>
+                          {formatVisaType(alt.visa?.visa_type).split(' ')[0]}
+                        </span>
                       </div>
                     </div>
-                    {/* Wishlist */}
-                    <button
-                      onClick={(e) => handleWishlistToggle(e, alt.country_code, alt.country_name)}
-                      className={`absolute bottom-2 right-2 p-1 rounded-full transition-all ${
-                        isInWishlist(alt.country_code) 
-                          ? 'bg-red-100 text-red-500' 
-                          : 'bg-white text-gray-400 hover:text-red-400'
-                      }`}
-                    >
-                      <Heart className={`w-3.5 h-3.5 ${isInWishlist(alt.country_code) ? 'fill-current' : ''}`} />
-                    </button>
                   </div>
                 ))}
               </div>
@@ -1226,68 +1317,6 @@ const Seasons = () => {
               >
                 <ChevronRight className="w-5 h-5" style={{ color: '#0B3C5D' }} />
               </button>
-            </div>
-
-            {/* Visa Information - Horizontal 4-Column Layout */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border" style={{ borderColor: '#E2E8F0' }} data-testid="visa-info-card">
-              <div className="text-center mb-4">
-                <h3 className="text-lg font-bold" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
-                  Confused About Visa? We Simplify It.
-                </h3>
-                <p className="text-sm text-gray-600">Everything you need to know before you travel to {searchResult.country.country_name}</p>
-              </div>
-
-              {/* 4-Column Visa Info Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                {/* Visa Type */}
-                <div className="bg-white rounded-lg p-4 border text-center" style={{ borderColor: '#E2E8F0' }}>
-                  <FileText className="w-6 h-6 mx-auto mb-2" style={{ color: '#FF7A00' }} />
-                  <p className="text-xs text-gray-500 mb-1">Visa Type</p>
-                  <p className="font-bold text-sm" style={{ color: '#0B3C5D' }}>
-                    {formatVisaType(searchResult.visa?.visa_type)}
-                  </p>
-                </div>
-
-                {/* Documents Needed */}
-                <div className="bg-white rounded-lg p-4 border text-center" style={{ borderColor: '#E2E8F0' }}>
-                  <FileText className="w-6 h-6 mx-auto mb-2" style={{ color: '#FF7A00' }} />
-                  <p className="text-xs text-gray-500 mb-1">Documents Needed</p>
-                  <p className="font-bold text-sm" style={{ color: '#0B3C5D' }}>
-                    {getDefaultVisaInfo(searchResult.visa?.visa_type).documents.slice(0, 2).join(', ')}
-                  </p>
-                </div>
-
-                {/* Processing Time */}
-                <div className="bg-white rounded-lg p-4 border text-center" style={{ borderColor: '#E2E8F0' }}>
-                  <Clock className="w-6 h-6 mx-auto mb-2" style={{ color: '#FF7A00' }} />
-                  <p className="text-xs text-gray-500 mb-1">Processing Time</p>
-                  <p className="font-bold text-sm" style={{ color: '#0B3C5D' }}>
-                    {getDefaultVisaInfo(searchResult.visa?.visa_type).processing}
-                  </p>
-                </div>
-
-                {/* Cost Estimate */}
-                <div className="bg-white rounded-lg p-4 border text-center" style={{ borderColor: '#E2E8F0' }}>
-                  <DollarSign className="w-6 h-6 mx-auto mb-2" style={{ color: '#FF7A00' }} />
-                  <p className="text-xs text-gray-500 mb-1">Cost Estimate</p>
-                  <p className="font-bold text-sm" style={{ color: '#0B3C5D' }}>
-                    {getDefaultVisaInfo(searchResult.visa?.visa_type).cost}
-                  </p>
-                </div>
-              </div>
-
-              {/* CTA Button - Link to Visa Page */}
-              <div className="text-center">
-                <Link
-                  to="/visa"
-                  className="px-8 py-2.5 rounded-lg font-semibold text-white transition-all hover:opacity-90 inline-flex items-center gap-2"
-                  style={{ backgroundColor: '#0B3C5D' }}
-                  data-testid="view-full-details-btn"
-                >
-                  Explore Visa Details
-                  <Plane className="w-4 h-4" />
-                </Link>
-              </div>
             </div>
           </div>
         </div>
@@ -1646,11 +1675,11 @@ const Seasons = () => {
             )}
           </div>
 
-          {/* ========== SEPARATOR - SERVICES ========== */}
+          {/* ========== SEPARATOR - TRAVEL INFORMATION ========== */}
           <div className="flex items-center gap-4 my-8">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
             <h2 className="text-lg font-bold tracking-widest" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
-              SERVICES
+              TRAVEL INFORMATION
             </h2>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
           </div>
