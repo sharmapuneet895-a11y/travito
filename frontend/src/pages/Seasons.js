@@ -5,7 +5,7 @@ import WorldMap from '../components/WorldMap';
 import CountryDetailModal from '../components/CountryDetailModal';
 import CostEstimator from '../components/CostEstimator';
 import BackToTop from '../components/BackToTop';
-import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Calculator, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun } from 'lucide-react';
+import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Calculator, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun, FileText, Clock, DollarSign, Plane, X } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -675,6 +675,10 @@ const Seasons = () => {
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { requireAuth, user } = useAuth();
   
+  // NEW: Search result state for visa info and alternate destinations
+  const [searchResult, setSearchResult] = useState(null);
+  const [visaData, setVisaData] = useState([]);
+  
   // Date state - default to current month
   const today = new Date();
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth()); // 0-11
@@ -708,7 +712,17 @@ const Seasons = () => {
       }
     };
 
+    const fetchVisaData = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/api/visa`);
+        setVisaData(response.data.data);
+      } catch (error) {
+        console.error('Error fetching visa data:', error);
+      }
+    };
+
     fetchSeasons();
+    fetchVisaData();
   }, []);
 
   // Process data when seasons data or selected month changes
@@ -788,8 +802,96 @@ const Seasons = () => {
   const handleCountrySelect = (country) => {
     setSearchQuery(country.country_name);
     setShowDropdown(false);
-    // Open the country detail modal
-    setSelectedCountry(country);
+    
+    // Get visa info for the selected country
+    const countryVisa = visaData.find(v => v.country_code === country.country_code);
+    
+    // Find alternate destinations for the same month with similar or better conditions
+    const alternates = processedData
+      .filter(c => 
+        c.country_code !== country.country_code && 
+        (c.current_season === 'peak' || c.current_season === 'shoulder')
+      )
+      .sort((a, b) => {
+        // Prioritize peak season countries
+        if (a.current_season === 'peak' && b.current_season !== 'peak') return -1;
+        if (b.current_season === 'peak' && a.current_season !== 'peak') return 1;
+        return 0;
+      })
+      .slice(0, 5)
+      .map(c => ({
+        ...c,
+        visa: visaData.find(v => v.country_code === c.country_code)
+      }));
+    
+    // Set search result with country info, visa data, and alternates
+    setSearchResult({
+      country: country,
+      visa: countryVisa || {
+        visa_type: 'visa_required',
+        requirements: 'Visa requirements may apply'
+      },
+      alternates: alternates
+    });
+  };
+
+  // Clear search results
+  const clearSearchResult = () => {
+    setSearchResult(null);
+    setSearchQuery('');
+  };
+
+  // Helper function to format visa type for display
+  const formatVisaType = (visaType) => {
+    switch (visaType) {
+      case 'visa_free': return 'Visa Free';
+      case 'visa_on_arrival': return 'Visa on Arrival';
+      case 'e_visa': return 'E-Visa';
+      case 'visa_required': return 'Visa Required';
+      default: return 'Visa Required';
+    }
+  };
+
+  // Helper function to get visa type color
+  const getVisaTypeColor = (visaType) => {
+    switch (visaType) {
+      case 'visa_free': return { bg: 'bg-green-100', text: 'text-green-700', border: 'border-green-200' };
+      case 'visa_on_arrival': return { bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-200' };
+      case 'e_visa': return { bg: 'bg-purple-100', text: 'text-purple-700', border: 'border-purple-200' };
+      case 'visa_required': return { bg: 'bg-orange-100', text: 'text-orange-700', border: 'border-orange-200' };
+      default: return { bg: 'bg-gray-100', text: 'text-gray-700', border: 'border-gray-200' };
+    }
+  };
+
+  // Default visa info based on visa type
+  const getDefaultVisaInfo = (visaType) => {
+    switch (visaType) {
+      case 'visa_free':
+        return {
+          documents: ['Valid passport', 'Return ticket', 'Hotel booking'],
+          processing: 'No processing required',
+          cost: 'Free'
+        };
+      case 'visa_on_arrival':
+        return {
+          documents: ['Valid passport', 'Passport photos', 'Hotel booking', 'Return ticket'],
+          processing: 'At airport (15-30 mins)',
+          cost: '$20 - $50'
+        };
+      case 'e_visa':
+        return {
+          documents: ['Valid passport', 'Passport photos', 'Travel itinerary', 'Bank statement'],
+          processing: '3-5 business days',
+          cost: '$30 - $80'
+        };
+      case 'visa_required':
+      default:
+        return {
+          documents: ['Valid passport', 'Visa application form', 'Passport photos', 'Bank statements', 'Travel insurance', 'Flight bookings'],
+          processing: '5-15 business days',
+          cost: '$50 - $200'
+        };
+    }
   };
 
   const handleCountryCardClick = (country) => {
@@ -913,6 +1015,210 @@ const Seasons = () => {
               </div>
             </div>
           </div>
+
+          {/* Search Results Section - Shows when a country is searched */}
+          {searchResult && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-xl p-6 mb-6 shadow-lg border-2"
+              style={{ borderColor: '#0B3C5D' }}
+              data-testid="search-results-section"
+            >
+              {/* Header with close button */}
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-bold" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
+                  Search Results for {searchResult.country.country_name}
+                </h2>
+                <button
+                  onClick={clearSearchResult}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                  data-testid="clear-search-btn"
+                >
+                  <X className="w-5 h-5" style={{ color: '#64748B' }} />
+                </button>
+              </div>
+
+              {/* Main Content Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Left Side: Selected Country Card + Alternate Destinations */}
+                <div className="space-y-4">
+                  {/* Selected Country Card */}
+                  <div 
+                    className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200 cursor-pointer hover:shadow-md transition-all"
+                    onClick={() => setSelectedCountry(searchResult.country)}
+                    data-testid={`search-result-country-${searchResult.country.country_code}`}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <img
+                        src={getFlag(searchResult.country.country_code)}
+                        alt={searchResult.country.country_name}
+                        className="w-12 h-8 object-cover rounded shadow-sm"
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                      />
+                      <div>
+                        <h3 className="font-bold text-lg" style={{ color: '#0B3C5D' }}>
+                          {searchResult.country.country_name}
+                        </h3>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${
+                          searchResult.country.current_season === 'peak' ? 'bg-green-100 text-green-700' :
+                          searchResult.country.current_season === 'shoulder' ? 'bg-blue-100 text-blue-700' :
+                          'bg-amber-100 text-amber-700'
+                        }`}>
+                          {searchResult.country.current_season === 'peak' ? 'Best Time to Visit' :
+                           searchResult.country.current_season === 'shoulder' ? 'Good Time' : 'Off Season'}
+                        </span>
+                      </div>
+                      {/* Wishlist button */}
+                      <button
+                        onClick={(e) => handleWishlistToggle(e, searchResult.country.country_code, searchResult.country.country_name)}
+                        className={`ml-auto p-2 rounded-full transition-all ${
+                          isInWishlist(searchResult.country.country_code) 
+                            ? 'bg-red-100 text-red-500' 
+                            : 'bg-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-400'
+                        }`}
+                        data-testid={`wishlist-search-${searchResult.country.country_code}`}
+                      >
+                        <Heart className={`w-5 h-5 ${isInWishlist(searchResult.country.country_code) ? 'fill-current' : ''}`} />
+                      </button>
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      Best months: <span className="font-medium">{searchResult.country.best_months?.join(', ') || 'N/A'}</span>
+                    </p>
+                  </div>
+
+                  {/* Alternate Destinations */}
+                  <div>
+                    <h4 className="font-semibold mb-3 flex items-center gap-2" style={{ color: '#0B3C5D' }}>
+                      <Plane className="w-4 h-4" style={{ color: '#FF7A00' }} />
+                      Alternative Destinations for {selectedMonthName}
+                    </h4>
+                    <div className="space-y-2">
+                      {searchResult.alternates.map((alt, idx) => {
+                        const altVisaColor = getVisaTypeColor(alt.visa?.visa_type);
+                        return (
+                          <div
+                            key={alt.country_code}
+                            onClick={() => setSelectedCountry(alt)}
+                            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-all border border-gray-200"
+                            data-testid={`alt-dest-${alt.country_code}`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className="text-sm font-bold text-gray-400">#{idx + 1}</span>
+                              <img
+                                src={getFlag(alt.country_code)}
+                                alt={alt.country_name}
+                                className="w-8 h-5 object-cover rounded shadow-sm"
+                                onError={(e) => { e.target.style.display = 'none'; }}
+                              />
+                              <div>
+                                <span className="font-medium text-sm" style={{ color: '#0B3C5D' }}>{alt.country_name}</span>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                  <span className={`text-xs px-1.5 py-0.5 rounded ${
+                                    alt.current_season === 'peak' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                                  }`}>
+                                    {alt.current_season === 'peak' ? 'Peak' : 'Good'}
+                                  </span>
+                                  <span className={`text-xs px-1.5 py-0.5 rounded ${altVisaColor.bg} ${altVisaColor.text}`}>
+                                    {formatVisaType(alt.visa?.visa_type)}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <button
+                              onClick={(e) => handleWishlistToggle(e, alt.country_code, alt.country_name)}
+                              className={`p-1.5 rounded-full transition-all ${
+                                isInWishlist(alt.country_code) 
+                                  ? 'bg-red-100 text-red-500' 
+                                  : 'bg-white text-gray-400 hover:bg-red-50 hover:text-red-400'
+                              }`}
+                            >
+                              <Heart className={`w-4 h-4 ${isInWishlist(alt.country_code) ? 'fill-current' : ''}`} />
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Side: Visa Information Card */}
+                <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-5 border border-orange-200" data-testid="visa-info-card">
+                  <h4 className="font-bold text-lg mb-4 flex items-center gap-2" style={{ color: '#0B3C5D' }}>
+                    <FileText className="w-5 h-5" style={{ color: '#FF7A00' }} />
+                    Visa Information for {searchResult.country.country_name}
+                  </h4>
+
+                  {/* Visa Type Badge */}
+                  <div className="mb-4">
+                    <span className={`text-lg font-bold px-4 py-2 rounded-full ${getVisaTypeColor(searchResult.visa?.visa_type).bg} ${getVisaTypeColor(searchResult.visa?.visa_type).text}`}>
+                      {formatVisaType(searchResult.visa?.visa_type)}
+                    </span>
+                  </div>
+
+                  {/* Visa Details */}
+                  <div className="space-y-4">
+                    {/* Documents Needed */}
+                    <div className="bg-white rounded-lg p-4 border border-gray-200">
+                      <div className="flex items-center gap-2 mb-2">
+                        <FileText className="w-4 h-4" style={{ color: '#FF7A00' }} />
+                        <span className="font-semibold" style={{ color: '#0B3C5D' }}>Documents Needed</span>
+                      </div>
+                      <ul className="text-sm text-gray-600 space-y-1">
+                        {getDefaultVisaInfo(searchResult.visa?.visa_type).documents.map((doc, i) => (
+                          <li key={i} className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-orange-400"></span>
+                            {doc}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Processing Time */}
+                    <div className="bg-white rounded-lg p-4 border border-gray-200">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Clock className="w-4 h-4" style={{ color: '#FF7A00' }} />
+                        <span className="font-semibold" style={{ color: '#0B3C5D' }}>Processing Time</span>
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        {getDefaultVisaInfo(searchResult.visa?.visa_type).processing}
+                      </p>
+                    </div>
+
+                    {/* Cost Estimate */}
+                    <div className="bg-white rounded-lg p-4 border border-gray-200">
+                      <div className="flex items-center gap-2 mb-2">
+                        <DollarSign className="w-4 h-4" style={{ color: '#FF7A00' }} />
+                        <span className="font-semibold" style={{ color: '#0B3C5D' }}>Cost Estimate</span>
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        {getDefaultVisaInfo(searchResult.visa?.visa_type).cost}
+                      </p>
+                    </div>
+
+                    {/* Requirements note */}
+                    {searchResult.visa?.requirements && (
+                      <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                        <p className="text-xs text-blue-700">
+                          <strong>Note:</strong> {searchResult.visa.requirements}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* CTA Button */}
+                    <button
+                      onClick={() => setSelectedCountry(searchResult.country)}
+                      className="w-full py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90"
+                      style={{ backgroundColor: '#FF7A00' }}
+                      data-testid="view-full-details-btn"
+                    >
+                      View Full Country Details
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
 
           {/* Current Selection Indicator + Cost Estimator Button */}
           <div className="bg-accent/10 rounded-xl p-4 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
