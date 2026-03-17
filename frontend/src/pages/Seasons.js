@@ -819,12 +819,12 @@ const Seasons = () => {
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-3 mb-4">
               <Calendar className="w-12 h-12" style={{ color: '#FF7A00' }} />
-              <h1 className="text-4xl md:text-5xl font-semibold section-title" style={{ color: '#0B3C5D' }} data-testid="seasons-page-title">
-                Best Seasons to Travel
+              <h1 className="text-4xl md:text-5xl font-bold" style={{ fontFamily: 'Poppins, sans-serif', color: '#0B3C5D' }} data-testid="seasons-page-title">
+                Plan your trip + Visa in One Place
               </h1>
             </div>
             <p className="text-lg max-w-3xl mx-auto leading-relaxed" style={{ color: '#64748B' }}>
-              Find the perfect time to visit your dream destination
+              Check best season to travel, Visa Requirements and compare options - all in minutes
             </p>
           </div>
 

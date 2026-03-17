@@ -17,6 +17,7 @@ import CountryDetail from './pages/CountryDetail';
 import Blog from './pages/Blog';
 import Wishlist from './pages/Wishlist';
 import UserProfile from './pages/UserProfile';
+import Contact from './pages/Contact';
 import '@/App.css';
 
 // Scroll to top on route change
@@ -53,6 +54,7 @@ function App() {
               <Route path="/blog" element={<Blog />} />
               <Route path="/wishlist" element={<Wishlist />} />
               <Route path="/profile" element={<UserProfile />} />
+              <Route path="/contact" element={<Contact />} />
             </Routes>
             <BackToTop />
           </BrowserRouter>
