@@ -5,7 +5,7 @@ import WorldMap from '../components/WorldMap';
 import BackToTop from '../components/BackToTop';
 import VisaEligibilityChecker from '../components/VisaEligibilityChecker';
 import DocumentChecklistGenerator from '../components/DocumentChecklistGenerator';
-import { FileText, Shield, ClipboardList, Sparkles, Info } from 'lucide-react';
+import { FileText, Shield, ClipboardList, Sparkles, Info, Clock, User, ChevronRight, Video, FileCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -31,6 +31,18 @@ const Visa = () => {
 
     fetchVisa();
   }, []);
+
+  // Scroll to section if hash is present
+  useEffect(() => {
+    if (window.location.hash === '#visa-options') {
+      setTimeout(() => {
+        const element = document.getElementById('visa-options');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 500);
+    }
+  }, [loading]);
 
   const legends = [
     { color: '#22C55E', label: 'Visa Free', description: 'No visa required for Indian passport holders' },
@@ -218,6 +230,75 @@ const Visa = () => {
                   Green countries are visa-free, while yellow countries require embassy applications.
                 </p>
               </div>
+            </div>
+          </div>
+
+          {/* ========== COMPARE VISA OPTIONS SECTION ========== */}
+          <div id="visa-options" className="mb-8">
+            {/* Section Separator */}
+            <div className="flex items-center gap-4 my-8">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+              <h2 className="text-xl font-bold italic" style={{ color: '#0B3C5D', fontFamily: 'serif' }}>
+                Compare Visa Options <span className="text-sm font-normal">(Coming Soon)</span>
+              </h2>
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+            </div>
+
+            <p className="text-center text-gray-600 italic mb-6">We're onboarding verified visa agents.</p>
+
+            {/* Visa Agents Table */}
+            <div className="bg-gradient-to-b from-blue-50 to-indigo-50 rounded-xl overflow-hidden border" style={{ borderColor: '#E2E8F0' }}>
+              {/* Table Header */}
+              <div className="grid grid-cols-4 gap-4 p-4 bg-blue-100/70 border-b" style={{ borderColor: '#D1D5DB' }}>
+                <div className="font-bold italic" style={{ color: '#0B3C5D', fontFamily: 'serif' }}>Agent</div>
+                <div className="font-bold italic" style={{ color: '#0B3C5D', fontFamily: 'serif' }}>Processing Time</div>
+                <div className="font-bold italic" style={{ color: '#0B3C5D', fontFamily: 'serif' }}>Service Fee</div>
+                <div className="font-bold italic" style={{ color: '#0B3C5D', fontFamily: 'serif' }}>Services</div>
+              </div>
+
+              {/* Sample Agent Row (Placeholder) */}
+              <div className="grid grid-cols-4 gap-4 p-4 bg-white/80 items-center">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                    <User className="w-6 h-6 text-gray-400" />
+                  </div>
+                  <div className="w-20 h-3 bg-gray-200 rounded"></div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-gray-400" />
+                  <span className="text-gray-600">2+ Days</span>
+                  <div className="w-12 h-3 bg-gray-200 rounded"></div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-600">₹3,000</span>
+                  <div className="w-12 h-3 bg-gray-200 rounded"></div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1 text-gray-600 text-sm">
+                    <FileCheck className="w-4 h-4 text-blue-600" />
+                    <span>Procesta, Step</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-gray-600 text-sm">
+                    <Video className="w-4 h-4 text-blue-600" />
+                    <span>Webinar</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA Button */}
+            <div className="text-center mt-6">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="px-8 py-3 rounded-lg font-bold text-white text-lg inline-flex items-center gap-2 shadow-lg"
+                style={{ backgroundColor: '#FF7A00' }}
+                disabled
+                data-testid="get-quotes-btn"
+              >
+                Get Quotes from Agents
+                <ChevronRight className="w-5 h-5" />
+              </motion.button>
             </div>
           </div>
         </motion.div>

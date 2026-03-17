@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import WorldMap from '../components/WorldMap';
 import CountryDetailModal from '../components/CountryDetailModal';
 import BackToTop from '../components/BackToTop';
-import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun, FileText, Clock, DollarSign, Plane, X, ChevronLeft, ChevronRight, Dumbbell } from 'lucide-react';
+import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun, FileText, Clock, IndianRupee, Plane, X, ChevronLeft, ChevronRight, Dumbbell } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -1505,7 +1505,7 @@ const Seasons = () => {
 
               {/* Cost Estimate */}
               <div className="bg-white rounded-lg p-4 border text-center" style={{ borderColor: '#E2E8F0' }}>
-                <DollarSign className="w-6 h-6 mx-auto mb-2" style={{ color: '#FF7A00' }} />
+                <IndianRupee className="w-6 h-6 mx-auto mb-2" style={{ color: '#FF7A00' }} />
                 <p className="text-xs text-gray-500 mb-1">Cost Estimate</p>
                 <p className="font-bold text-sm" style={{ color: '#0B3C5D' }}>
                   {searchResult ? getDefaultVisaInfo(searchResult.visa?.visa_type).cost : 'xxx'}
@@ -1516,12 +1516,12 @@ const Seasons = () => {
             {/* CTA Button - Link to Visa Page */}
             <div className="text-center">
               <Link
-                to="/visa"
+                to="/visa#visa-options"
                 className="px-8 py-2.5 rounded-lg font-semibold text-white transition-all hover:opacity-90 inline-flex items-center gap-2"
                 style={{ backgroundColor: '#0B3C5D' }}
                 data-testid="explore-visa-btn"
               >
-                Explore Visa Details
+                Explore Visa Options
                 <Plane className="w-4 h-4" />
               </Link>
             </div>
