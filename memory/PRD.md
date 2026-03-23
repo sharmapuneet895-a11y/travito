@@ -1,176 +1,116 @@
-# Travito - Travel Information Website
+# Travito.co.in - Product Requirements Document
 
-## Original Problem Statement
-Build a comprehensive travel information website called "Travito" (previously "Pass-e-port") for Indian travelers with features including:
-- Best Seasons to Travel (color-coded world map)
-- Visa Information for Indian passport holders
-- Live FOREX Rates relative to INR
-- Top Apps by country and category
-- Weather conditions by country
-- Power Plug information
-- Festivals & Local Dishes information
-- Travel Blog/Tips section
-- Safety & Emergency contact information
+## Overview
+Comprehensive travel information website for Indian travelers, providing visa intelligence, seasonal travel recommendations, and trip planning tools.
 
-## What's Been Implemented
+## Core Features
 
-### Latest Updates (March 17, 2026) - Session 7
-- [x] **Explore by Category Month Fix**: Destinations now properly update when month is changed in search bar (added key prop with month)
-- [x] **Compare Visa Options Redesign**: Prominent section on Visa page with:
-  - Gradient background image overlay
-  - "COMING SOON" badge
-  - 5 columns: Agent, Processing Time, Service Fee, Success Rate, Services
-  - Services shows: Documentation Check, Application Form Filling
-  - Visual success rate progress bars
-- [x] **Homepage Updates**:
-  - "Explore Visa Options" button (renamed from "Explore Visa Details")
-  - Links to /visa#visa-options with auto-scroll
-  - Rupee icon (₹) in Cost Estimate card (replaced dollar sign)
+### 1. Homepage (Seasons.js) - Main Hub ✅
+- Hero section with search functionality
+- Search by country + month
+- Auto-opening CountryDetailModal on search
+- VISA INTELLIGENCE section (above Top Destinations)
+- Explore by Category destinations
+- Mobile-responsive design with hamburger menu
 
-### Session 6 (March 17, 2026)
-- [x] **Syntax Error Fix**: Fixed JavaScript parsing error in Seasons.js (line 259) caused by orphaned data objects
-- [x] **Top Destinations Expanded**: All 12 months now have 10 destinations each (was 5)
-- [x] **Visa Map Color-Coding Fixed**: Map colors now match legend exactly:
-  - Green (#22C55E) = Visa Free
-  - Red (#E25A53) = Visa on Arrival
-  - Light Blue (#4B89AC) = E-Visa
-  - Yellow (#F2A900) = Visa Required
-  - Grey (#D6D6D6) = No Data
-- [x] **Testing**: 8/8 test cases passed (100% success rate)
+### 2. Country Detail Modal ✅
+- Auto-popup on search
+- Integrated AI chatbot (Travito Assistant) with formatted responses
+- Best Tourist Places section (categorized by Beach, Mountain, Culture, City)
+- Expand/collapse functionality
+- Visa, weather, safety, dishes, festivals, apps, plugs info
 
-### Session 5 (March 17, 2026)
-- [x] **Homepage UI Redesign (Complete)**:
-  - Hero section with mountain background image and overlay
-  - "Plan Your Trip + Visa in One Place" headline
-  - Horizontal search bar with: Destination input, Month selector, Year selector, Search button
-  - Search results show country cards in **horizontal scroll** with left/right arrows:
-    - "Your Choice" card (highlighted with orange border)
-    - 5 "Alternative" destination cards
-  - **VISA INTELLIGENCE separator** between Top Destinations and Visa section
-  - **Visa section always visible** below Top 5 Destinations:
-    - Default shows placeholders: "Visa on Arr / E-Visa / Visa Required" and "xxx"
-    - Updates with country-specific data when searched (Visa Type, Documents, Time, Cost)
-  - **"Explore Visa Details"** button now links to /visa page (was opening modal)
-  - **SEASONAL TRAVEL GUIDE separator** 
-  - **New category-based Seasonal Guide** with horizontal scroll:
-    - 8 categories: Beach, Mountain, Snowy, City, Cultural, Adventure, Nature, Fitness
-    - Left/right scroll arrows, shows destination recommendations on click
-  - **Removed**: Trip Cost Estimator
-- [x] **Testing**: 18/18 test cases passed for all UI changes
+### 3. VISA INTELLIGENCE Section ✅
+- Displays after searching for a country
+- Shows: Visa Type, Documents Needed, Processing Time, Cost Estimate
+- "Check Eligibility" button (pre-filled with searched country)
+- "Document Checklist" button (pre-filled with searched country)
+- "Explore Visa Options" button
 
-### Previous Updates (March 17, 2026)
-- [x] **User Registration System**: Simple auth modal collecting Name, Email, Mobile Number (no password/OTP)
-  - Auth gating on Wishlist, Visa Eligibility Checker, Document Checklist Generator
-  - User profile page at `/profile` with edit and delete account functionality
-  - Data persisted to MongoDB with ability to delete user data
-- [x] **Wishlist Icons on Seasons Page**: Added heart icons to Top 5 Destinations and Seasonal Travel Guide cards
-- [x] **Areas to Avoid**: Added "Areas to Avoid" section on Safety page and Country Detail Modal
-  - Red warning styling with AlertTriangle icons
-  - 38 countries updated with unsafe areas data (crime hotspots, no-go zones for tourists)
-  - Countries include: Mexico, Brazil, South Africa, India, USA, France, Colombia, Egypt, Thailand, Turkey, etc.
-- [x] **Safety Tips Enhanced**: Safety tips now displayed in both Safety page and Country Detail Modal
-- [x] **Expanded Seasonal Travel Guide**: 
-  - "Mild & Pleasant" category now has 8 destinations per month (was 4)
-  - "Monsoon Adventures" category now has 8 destinations per month (was 4)
+### 4. Document Checklist Generator ✅
+- AI-powered using GPT-5.2
+- Generates mandatory + supporting documents
+- Interactive checkboxes with progress tracking
+- Save to user profile functionality
+- Print functionality
+- Optimized prompt for ~25s response time
 
-### Updates (March 12, 2026) - Session 3
-- [x] **Forex Page Expanded**: Now shows 66 currencies (vs ~11 before) with search input and region filters (All, Asia, Europe, Americas, Middle East, Africa, Oceania)
-- [x] **Live/Estimated Badges**: Forex cards show "Live Rate" (12 currencies) or "Estimated" badges for transparency
-- [x] **Weather Temperature Fix**: Fixed contradiction where live temperature was shown for future months - now only displays for current month
-- [x] **Festival Dates**: Festival cards now display exact dates (e.g., "January 1", "Late January - February", "April 13-15")
-- [x] **Festival Date Data**: Added dates to 78 festivals in MongoDB with specific dates or "(varies by year)" fallback
-- [x] **Seasonal Travel Guide**: New feature on Seasons page that suggests destinations based on weather preference:
-  - Sunny & Warm: Beach and tropical destinations with temperature ranges
-  - Snow & Winter: Ski resorts and winter destinations
-  - Mild & Pleasant: Perfect sightseeing weather destinations
-  - Monsoon Adventures: Off-peak travel with fewer crowds and budget deals
-  - Includes Pro Tips for each weather type
-- [x] **Snowy Experience Filter Fix**: Fixed filter showing 0 results - added 'snow' category to 24 countries and updated best_months to include winter months (Dec, Jan, Feb, Mar). Now shows 14-24 countries depending on month.
+### 5. User Profile & Checklists ✅
+- Save/update/delete document checklists
+- View progress on saved checklists
+- Authentication via email/password
 
-### Updates (March 12, 2026) - Session 2
-- [x] **Snowy Experience Filter**: Added new category filter in Seasons page with snowflake icon, positioned after Mountain
-- [x] **Weather Page Month Selector**: Added 12-month selector to forecast anticipated weather for any month
-- [x] **Weather Map Color Coding**: Map now shows colors based on anticipated weather - Red=Hot, White=Snow/Cold, Blue=Rainy, Light Blue=Mild
-- [x] **Anticipated Weather Data**: Added weather patterns for 100+ countries with monthly hot/cold/snow/rainy/mild classification
-- [x] **Exchange Rate Fix**: Fixed inverted rate display in Country Detail Modal (now shows "1 USD = ₹84" correctly)
-- [x] **Expanded Currency Mappings**: Added 85+ country-currency pairs for better FOREX coverage
+### 6. Visa Eligibility Checker ✅
+- Extended country list (50+ countries)
+- Pre-selected country from search
 
-### Previous Updates (March 12, 2026) - Session 1
-- [x] **Top 5 Destinations**: New recommendation section on Seasons page showing top 5 destinations for the selected month with ratings, highlights, and categories
-- [x] **Cost Estimator Month Selector Fix**: All 12 months now visible in wrapped flex layout (no scroll needed)
-- [x] **Visa Tools Direct Access**: "Check Eligibility" and "Document Checklist" buttons now open modals directly without navigating away from Country Detail Modal
-- [x] **Crowd & Cost Insights**: Section in Country Detail Modal showing busiest/least busy months and expensive/budget-friendly travel times (60+ countries)
-- [x] **FOREX Interchange Symbol**: Exchange rate display now shows "1 THB ↔ ₹0.34" with visual interchange icon
-- [x] **App Deduplication**: Fixed duplicate apps issue in modal with case-insensitive filtering
-- [x] **Festival Name Fix**: Cards now properly display festival names using `festival_name || name` fallback
-- [x] **Seasonal Pricing**: Cost Estimator shows season indicators (Peak +25%, Off -20%, Shoulder regular)
+## API Endpoints
 
-### Previous Updates (March 11, 2026 - Session 2)
-- [x] **Map Improvements**: Larger map (scale=260, 1400x700), centered better with less white space
-- [x] **Zoom Controls**: Added +/- buttons and pinch-to-zoom (ZoomableGroup) for mobile
-- [x] **Festival Map Color Coding**: Red=Many(3+), Orange=Some(2), Blue=Few(1)
-- [x] **Festival Month Grouping**: normalizeMonth() properly groups by January, February, etc.
-- [x] **Country Flags**: Added iso3ToIso2 mapping for accurate flag display
-- [x] **Safety & Emergency in Modal**: Police/Ambulance/Fire numbers + Indian Embassy contact
-- [x] **Forex in Modal**: Exchange rate with currency code displayed
+### Core APIs
+- `GET /api/seasons` - Season/travel data
+- `GET /api/visa` - Visa requirements
+- `GET /api/tourist-places/{country_code}` - Tourist attractions
+- `POST /api/chatbot` - AI assistant
 
-### Core Features - COMPLETE
-- [x] Seasons page with category filter tabs (Beach, Mountain, City, Culture, Adventure, Nature)
-- [x] Visa information map for Indian travelers (194 countries)
-- [x] FOREX rates page with flag images and swap feature
-- [x] Top Apps page with comprehensive data
-- [x] Weather page with real-time data (Open-Meteo API)
-- [x] Power Plug information page
-- [x] Festivals & Local Dishes page (117 festivals, 90 dishes)
-- [x] Travel Blog with expandable articles
-- [x] Safety & Emergency page with 63 countries
-- [x] Cost Estimator with 70 countries + seasonal pricing
+### Visa Tools
+- `POST /api/visa/document-checklist` - AI checklist generator
+- `POST /api/visa/eligibility` - Eligibility checker
 
-### Data Coverage
-- **Visa**: 194 countries (Greenland added with Danish/Schengen visa)
-- **Seasons**: 199 countries with categories
-- **Festivals**: 117 festivals across many countries
-- **Dishes**: 90 dishes with veg/non-veg indicators
-- **Safety**: 63 countries with emergency numbers
-- **Cost Estimator**: 70 countries with Budget/Mid-Range/Luxury pricing + seasonal multipliers
-- **Travel Timing Data**: 60+ countries with busiest/least busy/expensive/budget-friendly months
+### User Management
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/user/{id}/document-checklists` - Get saved checklists
+- `POST /api/user/{id}/document-checklists` - Save checklist
+- `PUT /api/user/{id}/document-checklists/{id}` - Update checklist
+- `DELETE /api/user/{id}/document-checklists/{id}` - Delete checklist
 
-### Live API Integrations
-- **Weather**: Open-Meteo API (free, key-less) - LIVE
-- **FOREX**: Frankfurter API (free, key-less) - LIVE
-- **AI Features**: Emergent LLM (GPT-5.2) for visa eligibility and document checklist
+## Tech Stack
+- **Frontend**: React, Tailwind CSS, lucide-react icons
+- **Backend**: FastAPI, Pydantic
+- **Database**: MongoDB
+- **AI**: GPT-5.2 via emergentintegrations
 
-## Technical Architecture
+## Completed Work (March 2026)
+- [x] AI Chatbot integration with GPT-5.2
+- [x] Tourist Places section in modal
+- [x] Auto-opening country modal on search
+- [x] Relocated visa tools to homepage VISA INTELLIGENCE section
+- [x] Mobile-responsive design
+- [x] Branding update to Travito.co.in
+- [x] Document checklist save/load functionality
+- [x] Optimized checklist generation (~25s response)
 
-### Key Components Updated (March 17, 2026)
-- `/app/frontend/src/pages/Seasons.js` - Complete homepage redesign:
-  - New hero section with mountain background (lines 913-1010)
-  - Horizontal search bar with Search button
-  - 6-column country cards grid (Your Choice + 5 Alternatives)
-  - 4-column horizontal visa info section
-  - handleSearchClick() function for Search button
+## Pending Issues
+| Priority | Issue | Status |
+|----------|-------|--------|
+| P2 | Weather page shows contradictory temps for future months | NOT STARTED |
+| P2 | Festival dates not visible in collapsed view | NOT STARTED |
+| P2 | Somaliland not colored on visa map | NOT STARTED |
 
-### Key Components Updated (March 12, 2026)
-- `/app/frontend/src/components/CountryDetailModal.js` - Added travelTimingData, Crowd & Cost Insights, FOREX interchange symbol, app deduplication, visa tool modals (VisaEligibilityChecker, DocumentChecklistGenerator)
-- `/app/frontend/src/components/CostEstimator.js` - Added MONTHS array, seasonalMultipliers, month selector with flex-wrap layout, getSeasonMultiplier()
-- `/app/frontend/src/pages/Festivals.js` - Fixed festival name display with fallback
-- `/app/frontend/src/pages/Seasons.js` - Added topDestinationsData and Top 5 Destinations section
+## Upcoming Features
+| Priority | Feature | Description |
+|----------|---------|-------------|
+| P1 | Compare Countries | Side-by-side comparison of travel details |
+| P2 | Trip Planner | Day-by-day itinerary builder |
+| P2 | India-Specific Map | Borders from Indian perspective |
 
-### ISO3 to ISO2 Flag Mapping
-Countries use ISO3 codes (THA, JPN, USA) but flagcdn.com uses ISO2 (th, jp, us). Added mapping for 80+ countries.
-
-## Future Enhancements (Backlog)
-- [ ] Compare Countries feature (P1) - Side-by-side comparison of travel details
-- [ ] Weather page temperature contradiction fix (P1) - Future months showing current temps
-- [ ] Somaliland visa map coloring (P2) - Verify if it's a distinct entity in map library
-- [ ] Festival dates visible on collapsed cards (P2)
-- [ ] Trip Planner feature (P2)
-- [ ] India-specific map data source (P2)
-- [ ] Travel Budget Tracker
-
-## Known Issues
-- React key collision warning in CountryDetailModal (LOW priority - doesn't affect functionality)
-- Weather page may intermittently show "Loading weather data..." even when API returns data (frontend rendering issue)
-
-## Live Preview
-https://visa-forex-explorer.preview.emergentagent.com
+## File Structure
+```
+/app/
+├── backend/
+│   ├── server.py          # Main API server
+│   └── .env               # EMERGENT_LLM_KEY, MONGO_URL
+└── frontend/
+    └── src/
+        ├── components/
+        │   ├── CountryDetailModal.js
+        │   ├── DocumentChecklistGenerator.js
+        │   ├── Navigation.js
+        │   └── VisaEligibilityChecker.js
+        ├── pages/
+        │   ├── Seasons.js (Homepage)
+        │   ├── UserProfile.js
+        │   └── Visa.js
+        └── context/
+            └── AuthContext.js
+```

@@ -804,44 +804,20 @@ async def generate_document_checklist(request: DocumentChecklistRequest):
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
             session_id=f"docs-check-{uuid.uuid4()}",
-            system_message="""You are an expert visa documentation consultant for Indian passport holders.
-            Generate a comprehensive document checklist for visa applications.
-            
-            Categorize documents as:
-            1. Mandatory Documents - Absolutely required, application will be rejected without these
-            2. Supporting Documents - Strengthen the application, highly recommended
-            
-            For each document, provide:
-            - name: Document name
-            - description: Brief description of what's needed
-            - tip: Specific tip for Indian applicants
-            
-            Also provide general tips for the specific country and visa type.
-            
-            Respond ONLY in valid JSON format with this structure:
-            {
-                "mandatory_documents": [
-                    {"name": "...", "description": "...", "tip": "..."},
-                    ...
-                ],
-                "supporting_documents": [
-                    {"name": "...", "description": "...", "tip": "..."},
-                    ...
-                ],
-                "tips": ["tip1", "tip2", ...]
-            }"""
+            system_message="""You are a visa documentation consultant for Indian passport holders. Generate a concise document checklist.
+
+Respond in JSON format:
+{
+  "mandatory_documents": [{"name": "...", "description": "...", "tip": "..."}],
+  "supporting_documents": [{"name": "...", "description": "...", "tip": "..."}],
+  "tips": ["tip1", "tip2"]
+}
+
+Keep descriptions brief (max 15 words). Include 5-7 mandatory docs, 4-5 supporting docs, and 3-4 tips."""
         ).with_model("openai", "gpt-5.2")
         
         # Format the request
-        request_text = f"""
-        Generate a document checklist for:
-        - Destination Country: {request.country}
-        - Visa Type: {request.visa_type}
-        - Purpose of Visit: {request.purpose}
-        - Applicant Nationality: Indian
-        
-        Provide a comprehensive checklist tailored to Indian passport holders applying for this visa.
-        """
+        request_text = f"""Document checklist for {request.visa_type} visa to {request.country} for Indian passport holder. Purpose: {request.purpose}. Be concise."""
         
         user_message = UserMessage(text=request_text)
         response = await chat.send_message(user_message)

@@ -55,12 +55,20 @@ const DocumentChecklistGenerator = ({ isOpen, onClose, preSelectedCountry }) => 
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/visa/document-checklist`, formData);
+      const response = await axios.post(`${BACKEND_URL}/api/visa/document-checklist`, formData, {
+        timeout: 120000 // 2 minute timeout for AI generation
+      });
       setResult(response.data);
       setCheckedItems({});
     } catch (error) {
       console.error('Error generating checklist:', error);
-      alert('Failed to generate checklist. Please try again.');
+      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        alert('The request is taking longer than expected. Please try again.');
+      } else if (error.response?.status === 503) {
+        alert('AI service is temporarily unavailable. Please try again in a moment.');
+      } else {
+        alert('Failed to generate checklist. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -248,6 +256,11 @@ const DocumentChecklistGenerator = ({ isOpen, onClose, preSelectedCountry }) => 
                     </>
                   )}
                 </button>
+                {loading && (
+                  <p className="text-sm text-gray-500 text-center mt-2">
+                    AI is creating your personalized checklist. This may take 15-30 seconds...
+                  </p>
+                )}
               </div>
             ) : (
               <div className="space-y-6">
