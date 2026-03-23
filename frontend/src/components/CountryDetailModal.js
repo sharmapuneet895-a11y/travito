@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2, Shield, Phone, DollarSign, ArrowRightLeft, Users, TrendingUp, TrendingDown, CheckCircle, ClipboardList, MapPinOff, AlertTriangle, Palmtree, Mountain, Landmark, Building2 } from 'lucide-react';
+import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2, Shield, Phone, DollarSign, ArrowRightLeft, Users, TrendingUp, TrendingDown, CheckCircle, ClipboardList, MapPinOff, AlertTriangle, Palmtree, Mountain, Landmark, Building2, MessageCircle, Send } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
 import VisaEligibilityChecker from './VisaEligibilityChecker';
@@ -435,6 +435,14 @@ const CountryDetailModal = ({ country, onClose }) => {
   });
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { requireAuth, user } = useAuth();
+  
+  // Chatbot state
+  const [chatMessage, setChatMessage] = useState('');
+  const [chatHistory, setChatHistory] = useState([]);
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatSessionId, setChatSessionId] = useState(null);
+  const [showChat, setShowChat] = useState(false);
+  const chatEndRef = useRef(null);
 
   const inWishlist = isInWishlist(country.country_code);
   const currentMonth = MONTH_ABBREV[new Date().getMonth()];
@@ -545,6 +553,42 @@ const CountryDetailModal = ({ country, onClose }) => {
     };
     fetchAllData();
   }, [country]);
+
+  // Send chat message
+  const sendChatMessage = async () => {
+    if (!chatMessage.trim()) return;
+    
+    const userMsg = chatMessage.trim();
+    setChatMessage('');
+    setChatHistory(prev => [...prev, { role: 'user', content: userMsg }]);
+    setChatLoading(true);
+    
+    try {
+      const response = await axios.post(`${BACKEND_URL}/api/chat`, {
+        message: userMsg,
+        country: country.country_name,
+        session_id: chatSessionId
+      });
+      
+      setChatSessionId(response.data.session_id);
+      setChatHistory(prev => [...prev, { role: 'assistant', content: response.data.response }]);
+    } catch (error) {
+      console.error('Chat error:', error);
+      setChatHistory(prev => [...prev, { 
+        role: 'assistant', 
+        content: 'Sorry, I encountered an error. Please try again.' 
+      }]);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  // Scroll chat to bottom when new messages arrive
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatHistory]);
 
   const handleWishlistToggle = () => {
     if (inWishlist) {
@@ -1059,24 +1103,93 @@ const CountryDetailModal = ({ country, onClose }) => {
             </div>
           )}
 
-          {/* Footer */}
-          <div className="sticky bottom-0 bg-white border-t border-border p-4 flex justify-between items-center">
-            <button
-              onClick={handleWishlistToggle}
-              className={`px-6 py-2 rounded-full font-medium transition-all ${
-                inWishlist 
-                  ? 'bg-red-100 text-red-600 hover:bg-red-200' 
-                  : 'bg-primary text-white hover:bg-primary/90'
-              }`}
-            >
-              {inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
-            </button>
-            <button
-              onClick={onClose}
-              className="px-6 py-2 bg-gray-100 text-gray-700 rounded-full font-medium hover:bg-gray-200 transition-all"
-            >
-              Close
-            </button>
+          {/* Footer with Chat */}
+          <div className="sticky bottom-0 bg-white border-t border-border">
+            {/* Chat Messages Panel */}
+            {showChat && chatHistory.length > 0 && (
+              <div className="max-h-48 overflow-y-auto p-3 space-y-2 bg-gray-50 border-b">
+                {chatHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[85%] px-3 py-2 rounded-xl text-sm ${
+                        msg.role === 'user'
+                          ? 'bg-orange-500 text-white rounded-br-md'
+                          : 'bg-white text-gray-700 rounded-bl-md shadow-sm border border-gray-200'
+                      }`}
+                    >
+                      {msg.content}
+                    </div>
+                  </div>
+                ))}
+                {chatLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-white px-3 py-2 rounded-xl rounded-bl-md shadow-sm border border-gray-200">
+                      <div className="flex gap-1">
+                        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div ref={chatEndRef} />
+              </div>
+            )}
+            
+            {/* Chat Input & Actions */}
+            <div className="p-4">
+              {/* Travito Assistant Input */}
+              <div className="flex items-center gap-2 mb-3">
+                <div className="flex-1 flex items-center gap-2 bg-gray-50 rounded-full px-4 py-2 border border-gray-200">
+                  <MessageCircle className="w-5 h-5 text-orange-500 flex-shrink-0" />
+                  <input
+                    type="text"
+                    value={chatMessage}
+                    onChange={(e) => { setChatMessage(e.target.value); setShowChat(true); }}
+                    onKeyDown={(e) => e.key === 'Enter' && sendChatMessage()}
+                    onFocus={() => setShowChat(true)}
+                    placeholder={`Ask me anything about ${country.country_name}...`}
+                    className="flex-1 bg-transparent text-sm focus:outline-none"
+                    data-testid="modal-chat-input"
+                  />
+                  <button
+                    onClick={sendChatMessage}
+                    disabled={!chatMessage.trim() || chatLoading}
+                    className="w-8 h-8 rounded-full flex items-center justify-center transition-all disabled:opacity-50"
+                    style={{ backgroundColor: '#FF7A00' }}
+                    data-testid="modal-chat-send"
+                  >
+                    <Send className="w-4 h-4 text-white" />
+                  </button>
+                </div>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex justify-between items-center">
+                <button
+                  onClick={handleWishlistToggle}
+                  className={`px-6 py-2 rounded-full font-medium transition-all flex items-center gap-2 ${
+                    inWishlist 
+                      ? 'bg-red-100 text-red-600 hover:bg-red-200' 
+                      : 'bg-primary text-white hover:bg-primary/90'
+                  }`}
+                  data-testid="modal-wishlist-btn"
+                >
+                  <Heart className={`w-4 h-4 ${inWishlist ? 'fill-red-500' : ''}`} />
+                  {inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                </button>
+                <button
+                  onClick={onClose}
+                  className="px-6 py-2 bg-gray-100 text-gray-700 rounded-full font-medium hover:bg-gray-200 transition-all"
+                  data-testid="modal-close-btn"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
           </div>
         </motion.div>
       </motion.div>

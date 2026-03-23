@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import WorldMap from '../components/WorldMap';
 import CountryDetailModal from '../components/CountryDetailModal';
 import BackToTop from '../components/BackToTop';
-import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun, FileText, Clock, IndianRupee, Plane, X, ChevronLeft, ChevronRight, Dumbbell, MessageCircle, Send } from 'lucide-react';
+import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun, FileText, Clock, IndianRupee, Plane, X, ChevronLeft, ChevronRight, Dumbbell } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -811,13 +811,8 @@ const Seasons = () => {
   const [searchResult, setSearchResult] = useState(null);
   const [visaData, setVisaData] = useState([]);
   
-  // Chatbot state
+  // Chatbot state - kept for clearSearchResult  
   const [chatOpen, setChatOpen] = useState(false);
-  const [chatMessage, setChatMessage] = useState('');
-  const [chatHistory, setChatHistory] = useState([]);
-  const [chatLoading, setChatLoading] = useState(false);
-  const [chatSessionId, setChatSessionId] = useState(null);
-  const chatEndRef = useRef(null);
   
   // Tourist places state
   const [touristPlaces, setTouristPlaces] = useState(null);
@@ -978,6 +973,9 @@ const Seasons = () => {
       alternates: alternates
     });
     
+    // Automatically open the country detail modal
+    setSelectedCountry(country);
+    
     // Fetch tourist places for the country
     try {
       const response = await axios.get(`${BACKEND_URL}/api/tourist-places/${country.country_code}`);
@@ -986,10 +984,6 @@ const Seasons = () => {
       console.error('Error fetching tourist places:', error);
       setTouristPlaces(null);
     }
-    
-    // Reset chat for new country
-    setChatHistory([]);
-    setChatSessionId(null);
   };
 
   // Clear search results
@@ -997,45 +991,8 @@ const Seasons = () => {
     setSearchResult(null);
     setSearchQuery('');
     setTouristPlaces(null);
-    setChatHistory([]);
     setChatOpen(false);
   };
-
-  // Send chat message
-  const sendChatMessage = async () => {
-    if (!chatMessage.trim() || !searchResult) return;
-    
-    const userMsg = chatMessage.trim();
-    setChatMessage('');
-    setChatHistory(prev => [...prev, { role: 'user', content: userMsg }]);
-    setChatLoading(true);
-    
-    try {
-      const response = await axios.post(`${BACKEND_URL}/api/chat`, {
-        message: userMsg,
-        country: searchResult.country.country_name,
-        session_id: chatSessionId
-      });
-      
-      setChatSessionId(response.data.session_id);
-      setChatHistory(prev => [...prev, { role: 'assistant', content: response.data.response }]);
-    } catch (error) {
-      console.error('Chat error:', error);
-      setChatHistory(prev => [...prev, { 
-        role: 'assistant', 
-        content: 'Sorry, I encountered an error. Please try again.' 
-      }]);
-    } finally {
-      setChatLoading(false);
-    }
-  };
-
-  // Scroll chat to bottom when new messages arrive
-  useEffect(() => {
-    if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [chatHistory]);
 
   // Update search results when month changes (recalculate alternates)
   useEffect(() => {
@@ -1444,140 +1401,6 @@ const Seasons = () => {
             </div>
           </div>
         </div>
-      )}
-
-      {/* Chatbot Floating Button & Panel */}
-      {searchResult && (
-        <>
-          {/* Floating Chat Button */}
-          {!chatOpen && (
-            <motion.button
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              whileHover={{ scale: 1.1 }}
-              onClick={() => setChatOpen(true)}
-              className="fixed bottom-6 right-6 w-14 h-14 rounded-full shadow-xl flex items-center justify-center z-50"
-              style={{ backgroundColor: '#FF7A00' }}
-              data-testid="chat-open-btn"
-            >
-              <MessageCircle className="w-6 h-6 text-white" />
-            </motion.button>
-          )}
-
-          {/* Chat Panel */}
-          {chatOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: 100, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 100, scale: 0.9 }}
-              className="fixed bottom-6 right-6 w-96 h-[500px] bg-white rounded-2xl shadow-2xl flex flex-col z-50 overflow-hidden border"
-              style={{ borderColor: '#E2E8F0' }}
-              data-testid="chat-panel"
-            >
-              {/* Chat Header */}
-              <div className="px-4 py-3 flex items-center justify-between" style={{ backgroundColor: '#0B3C5D' }}>
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                    <MessageCircle className="w-4 h-4 text-white" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-white text-sm">Travito Assistant</h4>
-                    <p className="text-xs text-white/70">Ask about {searchResult.country.country_name}</p>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => setChatOpen(false)}
-                  className="text-white/70 hover:text-white"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Chat Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3" style={{ backgroundColor: '#F5F7FA' }}>
-                {chatHistory.length === 0 && (
-                  <div className="text-center py-8">
-                    <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mx-auto mb-3">
-                      <MessageCircle className="w-8 h-8 text-orange-500" />
-                    </div>
-                    <p className="text-gray-600 text-sm">
-                      Hi! I'm Travito. Ask me anything about {searchResult.country.country_name}!
-                    </p>
-                    <div className="mt-4 flex flex-wrap gap-2 justify-center">
-                      {['Best places to visit?', 'Local food to try?', 'Safety tips?'].map((q, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => {
-                            setChatMessage(q);
-                            setTimeout(() => sendChatMessage(), 100);
-                          }}
-                          className="text-xs px-3 py-1.5 bg-white rounded-full border hover:bg-orange-50 transition-all"
-                          style={{ borderColor: '#E2E8F0' }}
-                        >
-                          {q}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {chatHistory.map((msg, idx) => (
-                  <div
-                    key={idx}
-                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div
-                      className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm ${
-                        msg.role === 'user'
-                          ? 'bg-orange-500 text-white rounded-br-md'
-                          : 'bg-white text-gray-700 rounded-bl-md shadow-sm border'
-                      }`}
-                      style={msg.role !== 'user' ? { borderColor: '#E2E8F0' } : {}}
-                    >
-                      {msg.content}
-                    </div>
-                  </div>
-                ))}
-                {chatLoading && (
-                  <div className="flex justify-start">
-                    <div className="bg-white px-4 py-2.5 rounded-2xl rounded-bl-md shadow-sm border" style={{ borderColor: '#E2E8F0' }}>
-                      <div className="flex gap-1">
-                        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                <div ref={chatEndRef} />
-              </div>
-
-              {/* Chat Input */}
-              <div className="p-3 border-t bg-white" style={{ borderColor: '#E2E8F0' }}>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={chatMessage}
-                    onChange={(e) => setChatMessage(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && sendChatMessage()}
-                    placeholder={`Ask me anything about ${searchResult.country.country_name}...`}
-                    className="flex-1 px-4 py-2.5 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-                    style={{ border: '1px solid #E2E8F0' }}
-                    data-testid="chat-input"
-                  />
-                  <button
-                    onClick={sendChatMessage}
-                    disabled={!chatMessage.trim() || chatLoading}
-                    className="w-10 h-10 rounded-full flex items-center justify-center transition-all disabled:opacity-50"
-                    style={{ backgroundColor: '#FF7A00' }}
-                    data-testid="chat-send-btn"
-                  >
-                    <Send className="w-4 h-4 text-white" />
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </>
       )}
 
       {/* Main Content Area */}
