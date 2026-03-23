@@ -238,6 +238,13 @@ class DocumentChecklistResponse(BaseModel):
     supporting_documents: List[Dict[str, str]]
     tips: List[str]
 
+class SaveDocumentChecklistRequest(BaseModel):
+    country: str
+    visa_type: str
+    checklist: Dict  # Contains mandatory_documents, supporting_documents, tips
+    checked_items: Dict  # Items user has checked off
+    progress: int  # Progress percentage
+
 # ===== USER AUTHENTICATION MODELS =====
 class UserRegisterRequest(BaseModel):
     name: str
@@ -1083,16 +1090,21 @@ async def get_user_document_checklists(user_id: str):
 
 
 @api_router.post("/user/{user_id}/document-checklists")
-async def save_document_checklist(user_id: str, result: DocumentChecklistResult):
-    """Save a document checklist result"""
+async def save_document_checklist(user_id: str, request: SaveDocumentChecklistRequest):
+    """Save a document checklist with progress"""
     user = await db.users.find_one({"user_id": user_id})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
     checklist_entry = {
-        "country": result.country,
-        "visa_type": result.visa_type,
-        "generated_at": result.generated_at or datetime.now(timezone.utc).isoformat()
+        "id": str(uuid.uuid4()),
+        "country": request.country,
+        "visa_type": request.visa_type,
+        "checklist": request.checklist,
+        "checked_items": request.checked_items,
+        "progress": request.progress,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat()
     }
     
     await db.users.update_one(
@@ -1100,7 +1112,7 @@ async def save_document_checklist(user_id: str, result: DocumentChecklistResult)
         {"$push": {"document_checklists": checklist_entry}}
     )
     
-    return {"message": "Document checklist saved"}
+    return {"message": "Document checklist saved", "id": checklist_entry["id"]}
 
 
 @api_router.delete("/user/{user_id}/document-checklists")
@@ -1111,6 +1123,38 @@ async def clear_document_checklists(user_id: str):
         {"$set": {"document_checklists": []}}
     )
     return {"message": "Document checklist history cleared"}
+
+
+@api_router.put("/user/{user_id}/document-checklists/{checklist_id}")
+async def update_document_checklist(user_id: str, checklist_id: str, request: SaveDocumentChecklistRequest):
+    """Update a specific document checklist"""
+    result = await db.users.update_one(
+        {"user_id": user_id, "document_checklists.id": checklist_id},
+        {"$set": {
+            "document_checklists.$.checked_items": request.checked_items,
+            "document_checklists.$.progress": request.progress,
+            "document_checklists.$.updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Checklist not found")
+    
+    return {"message": "Checklist updated"}
+
+
+@api_router.delete("/user/{user_id}/document-checklists/{checklist_id}")
+async def delete_document_checklist(user_id: str, checklist_id: str):
+    """Delete a specific document checklist"""
+    result = await db.users.update_one(
+        {"user_id": user_id},
+        {"$pull": {"document_checklists": {"id": checklist_id}}}
+    )
+    
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Checklist not found")
+    
+    return {"message": "Checklist deleted"}
 
 
 # ========== TRAVEL CHATBOT ENDPOINT ==========

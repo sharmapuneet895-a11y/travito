@@ -22,11 +22,25 @@ const VisaEligibilityChecker = ({ isOpen, onClose }) => {
   });
 
   const countries = [
-    'United States', 'United Kingdom', 'Canada', 'Australia', 'Germany', 
-    'France', 'Italy', 'Spain', 'Japan', 'Singapore', 'UAE', 'Thailand',
-    'Malaysia', 'New Zealand', 'Switzerland', 'Netherlands', 'Sweden',
-    'South Korea', 'China', 'Turkey', 'Greece', 'Portugal'
-  ];
+    // Popular Destinations
+    'United States', 'United Kingdom', 'Canada', 'Australia', 'New Zealand',
+    // Europe
+    'Germany', 'France', 'Italy', 'Spain', 'Portugal', 'Netherlands', 'Belgium',
+    'Switzerland', 'Austria', 'Sweden', 'Norway', 'Denmark', 'Finland', 'Ireland',
+    'Greece', 'Czech Republic', 'Poland', 'Hungary', 'Croatia', 'Schengen',
+    // Asia
+    'Japan', 'Singapore', 'Thailand', 'Malaysia', 'Indonesia', 'Vietnam', 'Philippines',
+    'South Korea', 'China', 'Hong Kong', 'Taiwan', 'Sri Lanka', 'Nepal', 'Maldives',
+    'Cambodia', 'Myanmar', 'Laos',
+    // Middle East
+    'UAE', 'Saudi Arabia', 'Qatar', 'Oman', 'Bahrain', 'Kuwait', 'Jordan', 'Israel', 'Turkey',
+    // Africa
+    'South Africa', 'Egypt', 'Morocco', 'Kenya', 'Tanzania', 'Mauritius', 'Seychelles',
+    // Americas
+    'Mexico', 'Brazil', 'Argentina', 'Chile', 'Peru', 'Colombia', 'Costa Rica',
+    // Russia & Central Asia
+    'Russia', 'Kazakhstan', 'Uzbekistan'
+  ].sort();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

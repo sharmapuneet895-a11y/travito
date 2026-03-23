@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
-import { X, FileText, CheckSquare, Loader2, AlertCircle, Lightbulb, Download, Printer } from 'lucide-react';
+import { X, FileText, CheckSquare, Loader2, AlertCircle, Lightbulb, Download, Printer, Save, Check } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const DocumentChecklistGenerator = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [result, setResult] = useState(null);
   const [checkedItems, setCheckedItems] = useState({});
+  const { user, requireAuth } = useAuth();
   const [formData, setFormData] = useState({
     country: '',
     visa_type: 'tourist',
@@ -16,11 +20,25 @@ const DocumentChecklistGenerator = ({ isOpen, onClose }) => {
   });
 
   const countries = [
-    'United States', 'United Kingdom', 'Canada', 'Australia', 'Germany', 
-    'France', 'Italy', 'Spain', 'Japan', 'Singapore', 'UAE', 'Thailand',
-    'Malaysia', 'New Zealand', 'Switzerland', 'Netherlands', 'Sweden',
-    'South Korea', 'China', 'Turkey', 'Greece', 'Portugal', 'Schengen'
-  ];
+    // Popular Destinations
+    'United States', 'United Kingdom', 'Canada', 'Australia', 'New Zealand',
+    // Europe
+    'Germany', 'France', 'Italy', 'Spain', 'Portugal', 'Netherlands', 'Belgium',
+    'Switzerland', 'Austria', 'Sweden', 'Norway', 'Denmark', 'Finland', 'Ireland',
+    'Greece', 'Czech Republic', 'Poland', 'Hungary', 'Croatia', 'Schengen',
+    // Asia
+    'Japan', 'Singapore', 'Thailand', 'Malaysia', 'Indonesia', 'Vietnam', 'Philippines',
+    'South Korea', 'China', 'Hong Kong', 'Taiwan', 'Sri Lanka', 'Nepal', 'Maldives',
+    'Cambodia', 'Myanmar', 'Laos',
+    // Middle East
+    'UAE', 'Saudi Arabia', 'Qatar', 'Oman', 'Bahrain', 'Kuwait', 'Jordan', 'Israel', 'Turkey',
+    // Africa
+    'South Africa', 'Egypt', 'Morocco', 'Kenya', 'Tanzania', 'Mauritius', 'Seychelles',
+    // Americas
+    'Mexico', 'Brazil', 'Argentina', 'Chile', 'Peru', 'Colombia', 'Costa Rica',
+    // Russia & Central Asia
+    'Russia', 'Kazakhstan', 'Uzbekistan'
+  ].sort();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -57,9 +75,39 @@ const DocumentChecklistGenerator = ({ isOpen, onClose }) => {
     window.print();
   };
 
+  const handleSave = async () => {
+    if (!user) {
+      requireAuth(() => handleSave());
+      return;
+    }
+    
+    setSaving(true);
+    try {
+      await axios.post(`${BACKEND_URL}/api/user/${user.user_id}/document-checklists`, {
+        country: result.country,
+        visa_type: result.visa_type,
+        checklist: {
+          mandatory_documents: result.mandatory_documents,
+          supporting_documents: result.supporting_documents,
+          tips: result.tips
+        },
+        checked_items: checkedItems,
+        progress: getProgress()
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (error) {
+      console.error('Error saving checklist:', error);
+      alert('Failed to save checklist. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const resetForm = () => {
     setResult(null);
     setCheckedItems({});
+    setSaved(false);
     setFormData({
       country: '',
       visa_type: 'tourist',
@@ -204,13 +252,34 @@ const DocumentChecklistGenerator = ({ isOpen, onClose }) => {
                     </h3>
                     <p className="text-sm text-muted-foreground">For Indian Passport Holders</p>
                   </div>
-                  <button
-                    onClick={handlePrint}
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all"
-                  >
-                    <Printer className="w-4 h-4" />
-                    Print
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleSave}
+                      disabled={saving || saved}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                        saved 
+                          ? 'bg-green-100 text-green-700' 
+                          : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                      } ${saving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      data-testid="save-checklist-btn"
+                    >
+                      {saving ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : saved ? (
+                        <Check className="w-4 h-4" />
+                      ) : (
+                        <Save className="w-4 h-4" />
+                      )}
+                      {saving ? 'Saving...' : saved ? 'Saved!' : 'Save'}
+                    </button>
+                    <button
+                      onClick={handlePrint}
+                      className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all"
+                    >
+                      <Printer className="w-4 h-4" />
+                      Print
+                    </button>
+                  </div>
                 </div>
                 
                 {/* Mandatory Documents */}
