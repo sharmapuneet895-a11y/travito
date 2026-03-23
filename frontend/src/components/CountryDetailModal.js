@@ -620,6 +620,105 @@ const CountryDetailModal = ({ country, onClose }) => {
     }
   };
 
+  // Format chat response with better styling
+  const formatChatResponse = (content) => {
+    if (!content) return null;
+    
+    // Split content into lines
+    const lines = content.split('\n');
+    
+    return lines.map((line, lineIdx) => {
+      // Empty line
+      if (!line.trim()) {
+        return <div key={lineIdx} className="h-2" />;
+      }
+      
+      // Numbered list items (1. 2. 3. etc)
+      const numberedMatch = line.match(/^(\d+)\.\s*\*?\*?([^*]+)\*?\*?:?\s*(.*)/);
+      if (numberedMatch) {
+        const [, num, title, desc] = numberedMatch;
+        return (
+          <div key={lineIdx} className="flex gap-2 mb-2">
+            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-orange-400 to-amber-500 text-white text-xs font-bold flex items-center justify-center shadow-sm">
+              {num}
+            </span>
+            <div className="flex-1">
+              <span className="font-semibold text-gray-800">{title.trim()}</span>
+              {desc && <span className="text-gray-600"> - {desc.trim()}</span>}
+            </div>
+          </div>
+        );
+      }
+      
+      // Bullet points (- or • or *)
+      const bulletMatch = line.match(/^[-•*]\s*(.*)/);
+      if (bulletMatch) {
+        const text = bulletMatch[1];
+        // Check if it has bold text (**text**)
+        const boldMatch = text.match(/\*\*([^*]+)\*\*:?\s*(.*)/);
+        if (boldMatch) {
+          return (
+            <div key={lineIdx} className="flex gap-2 mb-1.5 pl-2">
+              <span className="text-orange-500 mt-0.5">•</span>
+              <div>
+                <span className="font-semibold text-gray-800">{boldMatch[1]}</span>
+                {boldMatch[2] && <span className="text-gray-600"> {boldMatch[2]}</span>}
+              </div>
+            </div>
+          );
+        }
+        return (
+          <div key={lineIdx} className="flex gap-2 mb-1.5 pl-2">
+            <span className="text-orange-500 mt-0.5">•</span>
+            <span className="text-gray-700">{text}</span>
+          </div>
+        );
+      }
+      
+      // Headers/Categories (text ending with :)
+      if (line.trim().endsWith(':') && line.length < 50) {
+        return (
+          <div key={lineIdx} className="mt-3 mb-2">
+            <span className="font-bold text-sm uppercase tracking-wide" style={{ color: '#0B3C5D' }}>
+              {line.replace(':', '')}
+            </span>
+            <div className="h-0.5 w-12 bg-gradient-to-r from-orange-400 to-amber-300 rounded mt-1" />
+          </div>
+        );
+      }
+      
+      // Bold text anywhere in line (**text**)
+      const parts = line.split(/(\*\*[^*]+\*\*)/g);
+      const formattedParts = parts.map((part, partIdx) => {
+        const boldContent = part.match(/\*\*([^*]+)\*\*/);
+        if (boldContent) {
+          return (
+            <span key={partIdx} className="font-semibold text-gray-800 bg-amber-50 px-1 rounded">
+              {boldContent[1]}
+            </span>
+          );
+        }
+        return <span key={partIdx}>{part}</span>;
+      });
+      
+      // Check for tip/note lines
+      if (line.toLowerCase().includes('tip:') || line.toLowerCase().includes('note:')) {
+        return (
+          <div key={lineIdx} className="bg-blue-50 border-l-3 border-blue-400 pl-3 py-1.5 rounded-r my-2 text-sm">
+            <span className="text-blue-700">{formattedParts}</span>
+          </div>
+        );
+      }
+      
+      // Regular paragraph
+      return (
+        <p key={lineIdx} className="text-gray-700 mb-1.5 leading-relaxed">
+          {formattedParts}
+        </p>
+      );
+    });
+  };
+
   return (
     <AnimatePresence>
       <motion.div
@@ -1120,30 +1219,45 @@ const CountryDetailModal = ({ country, onClose }) => {
           <div className="sticky bottom-0 bg-white border-t border-border">
             {/* Chat Messages Panel */}
             {showChat && chatHistory.length > 0 && (
-              <div className="max-h-48 overflow-y-auto p-3 space-y-2 bg-gray-50 border-b">
+              <div className="max-h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-slate-50 to-white border-b">
                 {chatHistory.map((msg, idx) => (
                   <div
                     key={idx}
                     className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
-                    <div
-                      className={`max-w-[85%] px-3 py-2 rounded-xl text-sm ${
-                        msg.role === 'user'
-                          ? 'bg-orange-500 text-white rounded-br-md'
-                          : 'bg-white text-gray-700 rounded-bl-md shadow-sm border border-gray-200'
-                      }`}
-                    >
-                      {msg.content}
-                    </div>
+                    {msg.role === 'user' ? (
+                      <div className="max-w-[85%] px-4 py-2.5 rounded-2xl rounded-br-md bg-gradient-to-r from-orange-500 to-amber-500 text-white text-sm shadow-md">
+                        {msg.content}
+                      </div>
+                    ) : (
+                      <div className="max-w-[90%] bg-white rounded-2xl rounded-bl-md shadow-md border border-gray-100 overflow-hidden">
+                        {/* AI Response Header */}
+                        <div className="px-4 py-2 bg-gradient-to-r from-slate-100 to-gray-50 border-b border-gray-100 flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-r from-orange-400 to-amber-500 flex items-center justify-center">
+                            <MessageCircle className="w-3.5 h-3.5 text-white" />
+                          </div>
+                          <span className="text-xs font-semibold text-gray-600">Travito Assistant</span>
+                        </div>
+                        {/* AI Response Content */}
+                        <div className="px-4 py-3 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
+                          {formatChatResponse(msg.content)}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
                 {chatLoading && (
                   <div className="flex justify-start">
-                    <div className="bg-white px-3 py-2 rounded-xl rounded-bl-md shadow-sm border border-gray-200">
-                      <div className="flex gap-1">
-                        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                    <div className="bg-white px-4 py-3 rounded-2xl rounded-bl-md shadow-md border border-gray-100">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-gradient-to-r from-orange-400 to-amber-500 flex items-center justify-center">
+                          <MessageCircle className="w-3.5 h-3.5 text-white" />
+                        </div>
+                        <div className="flex gap-1">
+                          <span className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                          <span className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                          <span className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                        </div>
                       </div>
                     </div>
                   </div>
