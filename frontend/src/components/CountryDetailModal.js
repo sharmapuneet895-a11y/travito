@@ -527,7 +527,7 @@ const CountryDetailModal = ({ country, onClose }) => {
         setCountryData({
           seasons: seasonsRes.data.data?.find(d => d.country_code === code || d.country_name === name),
           visa: visaRes.data.data?.find(d => d.country_code === code || d.country_name === name),
-          weather: null,
+          weather: null, // Will be loaded separately
           plugs: plugsRes.data.data?.find(d => d.country_code === code || d.country_name === name),
           festivals: festivalsRes.data.data?.filter(d => d.country_code === code || d.country_name === name) || [],
           dishes: allDishes,
@@ -536,17 +536,25 @@ const CountryDetailModal = ({ country, onClose }) => {
           forex: countryForex
         });
         setLoading(false);
-        
-        // Load weather separately (slow endpoint)
-        try {
-          const weatherRes = await axios.get(`${BACKEND_URL}/api/weather/realtime`);
-          setCountryData(prev => ({
-            ...prev,
-            weather: weatherRes.data.data?.find(d => d.country_code === code || d.country_name === name)
-          }));
-        } catch (e) {
-          console.log('Weather data unavailable');
-        }
+
+        // Load weather separately (slow endpoint - don't block UI)
+        axios.get(`${BACKEND_URL}/api/weather/realtime`)
+          .then(weatherRes => {
+            const weatherMatch = weatherRes.data.data?.find(d => 
+              d.country_code === code || 
+              d.country_name?.toLowerCase() === name?.toLowerCase()
+            );
+            setCountryData(prev => ({
+              ...prev,
+              weather: weatherMatch || { weather_type: 'unavailable', avg_temp: '--', description: 'Weather data unavailable' }
+            }));
+          })
+          .catch(() => {
+            setCountryData(prev => ({
+              ...prev,
+              weather: { weather_type: 'unavailable', avg_temp: '--', description: 'Weather data unavailable' }
+            }));
+          });
       } catch (error) {
         console.error('Error fetching country data:', error);
         setLoading(false);
@@ -983,7 +991,7 @@ const CountryDetailModal = ({ country, onClose }) => {
                   <Cloud className="w-5 h-5 text-cyan-500" />
                   <h3 className="font-semibold text-primary">Current Weather</h3>
                 </div>
-                {countryData.weather ? (
+                {countryData.weather && countryData.weather.weather_type !== 'unknown' && countryData.weather.weather_type !== 'unavailable' ? (
                   <div>
                     <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getWeatherColor(countryData.weather.weather_type)}`}>
                       {countryData.weather.weather_type?.toUpperCase()}
@@ -997,10 +1005,12 @@ const CountryDetailModal = ({ country, onClose }) => {
                       </span>
                     )}
                   </div>
+                ) : countryData.weather ? (
+                  <p className="text-sm text-muted-foreground">Weather data unavailable for this location</p>
                 ) : (
                   <div className="flex items-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin text-cyan-500" />
-                    <p className="text-sm text-cyan-600 font-medium">Updating live data...</p>
+                    <p className="text-sm text-cyan-600 font-medium">Fetching live weather...</p>
                   </div>
                 )}
               </div>

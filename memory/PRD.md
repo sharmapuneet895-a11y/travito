@@ -81,6 +81,8 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - [x] Optimized checklist generation (~25s response)
 - [x] Fixed wishlist count not updating in profile (now uses WishlistContext)
 - [x] Fixed saved checklists display in profile (added always-visible section with empty state)
+- [x] Fixed weather data loading in country card (async non-blocking load)
+- [x] Verified visa map color coding working correctly
 
 ## Pending Issues
 | Priority | Issue | Status |
