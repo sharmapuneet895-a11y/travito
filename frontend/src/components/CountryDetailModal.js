@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2, Shield, Phone, DollarSign, ArrowRightLeft, Users, TrendingUp, TrendingDown, CheckCircle, ClipboardList, MapPinOff, AlertTriangle } from 'lucide-react';
+import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2, Shield, Phone, DollarSign, ArrowRightLeft, Users, TrendingUp, TrendingDown, CheckCircle, ClipboardList, MapPinOff, AlertTriangle, Palmtree, Mountain, Landmark, Building2 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
 import VisaEligibilityChecker from './VisaEligibilityChecker';
@@ -179,6 +179,216 @@ const travelTimingData = {
   'CUB': { busiest: ['Dec', 'Jan', 'Feb'], leastBusy: ['May', 'Sep', 'Oct'], expensive: ['Dec', 'Jan', 'Feb'], cheap: ['May', 'Sep', 'Oct'] },
   'FJI': { busiest: ['Jul', 'Aug', 'Sep'], leastBusy: ['Jan', 'Feb', 'Mar'], expensive: ['Jul', 'Aug', 'Sep'], cheap: ['Jan', 'Feb', 'Mar'] },
   'MUS': { busiest: ['Dec', 'Jan', 'Jul'], leastBusy: ['Feb', 'May', 'Sep'], expensive: ['Dec', 'Jan'], cheap: ['May', 'Sep', 'Oct'] },
+};
+
+// Tourist places data for countries - categorized by type
+const touristPlacesData = {
+  'JPN': {
+    beach: ['Okinawa Islands', 'Miyako Island', 'Ishigaki Island'],
+    mountain: ['Mount Fuji', 'Japanese Alps', 'Mount Takao'],
+    culture: ['Kyoto Temples', 'Nara Deer Park', 'Hiroshima Peace Memorial'],
+    city: ['Tokyo', 'Osaka', 'Yokohama']
+  },
+  'THA': {
+    beach: ['Phuket', 'Krabi', 'Koh Samui'],
+    mountain: ['Doi Inthanon', 'Chiang Mai Mountains', 'Khao Sok'],
+    culture: ['Grand Palace Bangkok', 'Ayutthaya', 'Chiang Rai Temples'],
+    city: ['Bangkok', 'Chiang Mai', 'Pattaya']
+  },
+  'ITA': {
+    beach: ['Amalfi Coast', 'Sardinia', 'Cinque Terre'],
+    mountain: ['Dolomites', 'Italian Alps', 'Mount Etna'],
+    culture: ['Rome Colosseum', 'Florence', 'Venice'],
+    city: ['Rome', 'Milan', 'Naples']
+  },
+  'FRA': {
+    beach: ['French Riviera', 'Corsica', 'Biarritz'],
+    mountain: ['French Alps', 'Mont Blanc', 'Pyrenees'],
+    culture: ['Louvre Paris', 'Versailles', 'Mont Saint-Michel'],
+    city: ['Paris', 'Nice', 'Lyon']
+  },
+  'ESP': {
+    beach: ['Costa Brava', 'Ibiza', 'Canary Islands'],
+    mountain: ['Sierra Nevada', 'Pyrenees', 'Picos de Europa'],
+    culture: ['Alhambra Granada', 'Sagrada Familia', 'Toledo'],
+    city: ['Barcelona', 'Madrid', 'Seville']
+  },
+  'USA': {
+    beach: ['Miami Beach', 'Hawaii', 'California Coast'],
+    mountain: ['Rocky Mountains', 'Grand Canyon', 'Yosemite'],
+    culture: ['Smithsonian DC', 'New Orleans', 'Santa Fe'],
+    city: ['New York', 'Los Angeles', 'San Francisco']
+  },
+  'IND': {
+    beach: ['Goa', 'Kerala Backwaters', 'Andaman Islands'],
+    mountain: ['Himalayas', 'Ladakh', 'Manali'],
+    culture: ['Taj Mahal', 'Varanasi', 'Jaipur'],
+    city: ['Mumbai', 'Delhi', 'Bangalore']
+  },
+  'AUS': {
+    beach: ['Gold Coast', 'Bondi Beach', 'Great Barrier Reef'],
+    mountain: ['Blue Mountains', 'Cradle Mountain', 'Uluru'],
+    culture: ['Sydney Opera House', 'Aboriginal Heritage', 'Melbourne Arts'],
+    city: ['Sydney', 'Melbourne', 'Brisbane']
+  },
+  'GRC': {
+    beach: ['Santorini', 'Mykonos', 'Crete'],
+    mountain: ['Mount Olympus', 'Meteora', 'Samaria Gorge'],
+    culture: ['Acropolis Athens', 'Delphi', 'Ancient Olympia'],
+    city: ['Athens', 'Thessaloniki', 'Rhodes']
+  },
+  'MEX': {
+    beach: ['Cancun', 'Playa del Carmen', 'Los Cabos'],
+    mountain: ['Copper Canyon', 'Sierra Madre', 'Nevado de Toluca'],
+    culture: ['Chichen Itza', 'Teotihuacan', 'Oaxaca'],
+    city: ['Mexico City', 'Guadalajara', 'Monterrey']
+  },
+  'BRA': {
+    beach: ['Copacabana', 'Fernando de Noronha', 'Florianopolis'],
+    mountain: ['Serra dos Órgãos', 'Chapada Diamantina', 'Itatiaia'],
+    culture: ['Christ the Redeemer', 'Salvador Pelourinho', 'Ouro Preto'],
+    city: ['Rio de Janeiro', 'São Paulo', 'Brasília']
+  },
+  'IDN': {
+    beach: ['Bali Beaches', 'Gili Islands', 'Raja Ampat'],
+    mountain: ['Mount Bromo', 'Mount Rinjani', 'Kawah Ijen'],
+    culture: ['Borobudur Temple', 'Ubud', 'Yogyakarta'],
+    city: ['Jakarta', 'Bali', 'Bandung']
+  },
+  'VNM': {
+    beach: ['Ha Long Bay', 'Phu Quoc', 'Nha Trang'],
+    mountain: ['Sapa', 'Dalat', 'Fansipan'],
+    culture: ['Hoi An', 'Hue Imperial City', 'Cu Chi Tunnels'],
+    city: ['Ho Chi Minh City', 'Hanoi', 'Da Nang']
+  },
+  'TUR': {
+    beach: ['Antalya', 'Bodrum', 'Fethiye'],
+    mountain: ['Cappadocia', 'Mount Ararat', 'Pamukkale'],
+    culture: ['Hagia Sophia', 'Ephesus', 'Troy'],
+    city: ['Istanbul', 'Ankara', 'Izmir']
+  },
+  'EGY': {
+    beach: ['Sharm El Sheikh', 'Hurghada', 'Red Sea'],
+    mountain: ['Mount Sinai', 'Western Desert', 'White Desert'],
+    culture: ['Pyramids of Giza', 'Luxor Temple', 'Valley of Kings'],
+    city: ['Cairo', 'Alexandria', 'Aswan']
+  },
+  'UAE': {
+    beach: ['Jumeirah Beach', 'Abu Dhabi Corniche', 'Fujairah'],
+    mountain: ['Jebel Jais', 'Hatta Mountains', 'Al Hajar'],
+    culture: ['Sheikh Zayed Mosque', 'Dubai Old Town', 'Sharjah Heritage'],
+    city: ['Dubai', 'Abu Dhabi', 'Sharjah']
+  },
+  'NZL': {
+    beach: ['Bay of Islands', 'Abel Tasman', 'Coromandel'],
+    mountain: ['Milford Sound', 'Mount Cook', 'Tongariro'],
+    culture: ['Maori Heritage', 'Hobbiton', 'Wellington Museums'],
+    city: ['Auckland', 'Wellington', 'Queenstown']
+  },
+  'ZAF': {
+    beach: ['Cape Town Beaches', 'Durban', 'Garden Route'],
+    mountain: ['Table Mountain', 'Drakensberg', 'Blyde River Canyon'],
+    culture: ['Robben Island', 'Apartheid Museum', 'Cape Malay Quarter'],
+    city: ['Cape Town', 'Johannesburg', 'Durban']
+  },
+  'CHE': {
+    beach: ['Lake Geneva', 'Lake Zurich', 'Lake Lucerne'],
+    mountain: ['Matterhorn', 'Jungfrau', 'Swiss Alps'],
+    culture: ['Old Town Bern', 'Lucerne', 'Zurich Museums'],
+    city: ['Zurich', 'Geneva', 'Bern']
+  },
+  'PRT': {
+    beach: ['Algarve', 'Nazaré', 'Madeira'],
+    mountain: ['Serra da Estrela', 'Peneda-Gerês', 'Sintra Hills'],
+    culture: ['Lisbon Belém', 'Porto Ribeira', 'Évora'],
+    city: ['Lisbon', 'Porto', 'Faro']
+  },
+  'SGP': {
+    beach: ['Sentosa Beach', 'East Coast Park', 'Changi Beach'],
+    mountain: ['Bukit Timah', 'MacRitchie Reservoir', 'Southern Ridges'],
+    culture: ['Chinatown', 'Little India', 'Kampong Glam'],
+    city: ['Marina Bay', 'Orchard Road', 'Clarke Quay']
+  },
+  'MYS': {
+    beach: ['Langkawi', 'Perhentian Islands', 'Tioman Island'],
+    mountain: ['Cameron Highlands', 'Mount Kinabalu', 'Genting Highlands'],
+    culture: ['Malacca Heritage', 'George Town', 'Kuala Lumpur Temples'],
+    city: ['Kuala Lumpur', 'Penang', 'Johor Bahru']
+  },
+  'GBR': {
+    beach: ['Cornwall', 'Brighton', 'Scottish Highlands Coast'],
+    mountain: ['Lake District', 'Scottish Highlands', 'Snowdonia'],
+    culture: ['British Museum', 'Stonehenge', 'Edinburgh Castle'],
+    city: ['London', 'Edinburgh', 'Manchester']
+  },
+  'DEU': {
+    beach: ['Baltic Sea Coast', 'North Sea Islands', 'Lake Constance'],
+    mountain: ['Bavarian Alps', 'Black Forest', 'Saxon Switzerland'],
+    culture: ['Brandenburg Gate', 'Neuschwanstein', 'Cologne Cathedral'],
+    city: ['Berlin', 'Munich', 'Frankfurt']
+  },
+  'CAN': {
+    beach: ['Vancouver Island', 'Prince Edward Island', 'Tofino'],
+    mountain: ['Rocky Mountains', 'Banff', 'Whistler'],
+    culture: ['Old Quebec', 'CN Tower', 'Parliament Hill'],
+    city: ['Toronto', 'Vancouver', 'Montreal']
+  },
+  'NPL': {
+    beach: ['Phewa Lake', 'Begnas Lake', 'Rara Lake'],
+    mountain: ['Everest Base Camp', 'Annapurna', 'Langtang'],
+    culture: ['Kathmandu Durbar', 'Boudhanath', 'Pashupatinath'],
+    city: ['Kathmandu', 'Pokhara', 'Bhaktapur']
+  },
+  'LKA': {
+    beach: ['Mirissa', 'Unawatuna', 'Arugam Bay'],
+    mountain: ['Ella', 'Adam\'s Peak', 'Horton Plains'],
+    culture: ['Sigiriya', 'Temple of Tooth', 'Galle Fort'],
+    city: ['Colombo', 'Kandy', 'Galle']
+  },
+  'MDV': {
+    beach: ['Male Atoll', 'Baa Atoll', 'Ari Atoll'],
+    mountain: ['N/A - Island Nation', 'Coral Reefs', 'Underwater Mounts'],
+    culture: ['Male Friday Mosque', 'National Museum', 'Local Islands'],
+    city: ['Male', 'Hulhumale', 'Addu City']
+  },
+  'KOR': {
+    beach: ['Busan Beaches', 'Jeju Island', 'Gangneung'],
+    mountain: ['Seoraksan', 'Hallasan', 'Jirisan'],
+    culture: ['Gyeongbokgung', 'Bukchon Hanok', 'DMZ'],
+    city: ['Seoul', 'Busan', 'Incheon']
+  },
+  'HKG': {
+    beach: ['Repulse Bay', 'Stanley Beach', 'Shek O'],
+    mountain: ['Victoria Peak', 'Lantau Peak', 'Dragon\'s Back'],
+    culture: ['Man Mo Temple', 'Wong Tai Sin', 'Chi Lin Nunnery'],
+    city: ['Central', 'Kowloon', 'Tsim Sha Tsui']
+  },
+  'RUS': {
+    beach: ['Sochi', 'Crimea', 'Kaliningrad'],
+    mountain: ['Caucasus', 'Altai', 'Kamchatka'],
+    culture: ['Red Square', 'Hermitage', 'Trans-Siberian'],
+    city: ['Moscow', 'St. Petersburg', 'Kazan']
+  },
+  'MAR': {
+    beach: ['Essaouira', 'Agadir', 'Tangier'],
+    mountain: ['Atlas Mountains', 'Toubkal', 'Sahara Desert'],
+    culture: ['Marrakech Medina', 'Fes El Bali', 'Chefchaouen'],
+    city: ['Marrakech', 'Casablanca', 'Fes']
+  },
+  'KEN': {
+    beach: ['Diani Beach', 'Lamu Island', 'Watamu'],
+    mountain: ['Mount Kenya', 'Hell\'s Gate', 'Aberdare'],
+    culture: ['Maasai Mara', 'Nairobi National Museum', 'Fort Jesus'],
+    city: ['Nairobi', 'Mombasa', 'Kisumu']
+  }
+};
+
+// Default tourist places for countries not in the list
+const defaultTouristPlaces = {
+  beach: ['Coastal Areas', 'Beach Resorts', 'Island Getaways'],
+  mountain: ['Mountain Ranges', 'Hill Stations', 'Nature Parks'],
+  culture: ['Historic Sites', 'Museums', 'Traditional Villages'],
+  city: ['Capital City', 'Major Urban Centers', 'Cultural Hubs']
 };
 
 // ISO3 to ISO2 country code mapping for flags
@@ -494,6 +704,79 @@ const CountryDetailModal = ({ country, onClose }) => {
                   </div>
                 </div>
               )}
+
+              {/* Best Tourist Places */}
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200">
+                <div className="flex items-center gap-2 mb-4">
+                  <MapPinOff className="w-5 h-5 text-amber-600" />
+                  <h3 className="font-bold text-gray-800" style={{ fontFamily: "'Poppins', sans-serif" }}>Best Tourist Places</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Beach */}
+                  <div className="bg-white/80 rounded-lg p-3 border border-cyan-100">
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <Palmtree className="w-4 h-4 text-cyan-600" />
+                      <span className="text-xs font-semibold text-cyan-700">Beach</span>
+                    </div>
+                    <ul className="space-y-1">
+                      {(touristPlacesData[country.country_code] || defaultTouristPlaces).beach.map((place, idx) => (
+                        <li key={idx} className="text-xs text-gray-600 flex items-start gap-1">
+                          <span className="text-cyan-400 mt-0.5">•</span>
+                          <span>{place}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Mountain */}
+                  <div className="bg-white/80 rounded-lg p-3 border border-green-100">
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <Mountain className="w-4 h-4 text-green-600" />
+                      <span className="text-xs font-semibold text-green-700">Mountain</span>
+                    </div>
+                    <ul className="space-y-1">
+                      {(touristPlacesData[country.country_code] || defaultTouristPlaces).mountain.map((place, idx) => (
+                        <li key={idx} className="text-xs text-gray-600 flex items-start gap-1">
+                          <span className="text-green-400 mt-0.5">•</span>
+                          <span>{place}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Culture */}
+                  <div className="bg-white/80 rounded-lg p-3 border border-purple-100">
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <Landmark className="w-4 h-4 text-purple-600" />
+                      <span className="text-xs font-semibold text-purple-700">Culture</span>
+                    </div>
+                    <ul className="space-y-1">
+                      {(touristPlacesData[country.country_code] || defaultTouristPlaces).culture.map((place, idx) => (
+                        <li key={idx} className="text-xs text-gray-600 flex items-start gap-1">
+                          <span className="text-purple-400 mt-0.5">•</span>
+                          <span>{place}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* City */}
+                  <div className="bg-white/80 rounded-lg p-3 border border-slate-200">
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <Building2 className="w-4 h-4 text-slate-600" />
+                      <span className="text-xs font-semibold text-slate-700">Best Cities</span>
+                    </div>
+                    <ul className="space-y-1">
+                      {(touristPlacesData[country.country_code] || defaultTouristPlaces).city.map((place, idx) => (
+                        <li key={idx} className="text-xs text-gray-600 flex items-start gap-1">
+                          <span className="text-slate-400 mt-0.5">•</span>
+                          <span>{place}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
 
               {/* Visa Info */}
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100">
