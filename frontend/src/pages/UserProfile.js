@@ -3,12 +3,14 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 import { User, Mail, Phone, Trash2, Edit2, Save, X, LogOut, Heart, FileText, Shield, AlertTriangle, ChevronDown, ChevronUp, CheckCircle, Clock, RefreshCw } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useWishlist } from '../context/WishlistContext';
 import { useNavigate } from 'react-router-dom';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const UserProfile = () => {
   const { user, isLoggedIn, updateUser, deleteAccount, logout, setShowAuthModal } = useAuth();
+  const { wishlist } = useWishlist();
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -322,7 +324,7 @@ const UserProfile = () => {
                 </div>
                 <div className="text-left">
                   <p className="text-white font-medium">Wishlist</p>
-                  <p className="text-gray-400 text-sm">{user.wishlist?.length || 0} countries</p>
+                  <p className="text-gray-400 text-sm">{wishlist?.length || 0} countries</p>
                 </div>
               </button>
 
@@ -355,22 +357,23 @@ const UserProfile = () => {
           </div>
 
           {/* Saved Document Checklists */}
-          {savedChecklists.length > 0 && (
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-emerald-400" />
-                  Saved Checklists
-                </h2>
-                <button
-                  onClick={fetchSavedChecklists}
-                  className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-all"
-                  disabled={checklistLoading}
-                >
-                  <RefreshCw className={`w-4 h-4 ${checklistLoading ? 'animate-spin' : ''}`} />
-                </button>
-              </div>
-              
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                <FileText className="w-5 h-5 text-emerald-400" />
+                Saved Checklists
+              </h2>
+              <button
+                onClick={fetchSavedChecklists}
+                className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+                disabled={checklistLoading}
+                data-testid="refresh-checklists-btn"
+              >
+                <RefreshCw className={`w-4 h-4 ${checklistLoading ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
+            
+            {savedChecklists.length > 0 ? (
               <div className="space-y-3">
                 {savedChecklists.map((checklist) => (
                   <div
@@ -511,8 +514,14 @@ const UserProfile = () => {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="text-center py-8">
+                <FileText className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                <p className="text-gray-400">No saved checklists yet</p>
+                <p className="text-gray-500 text-sm mt-1">Generate a document checklist from the homepage to save it here</p>
+              </div>
+            )}
+          </div>
 
           {/* Delete Account */}
           <div className="bg-red-500/10 backdrop-blur-lg rounded-2xl p-6 border border-red-500/20">

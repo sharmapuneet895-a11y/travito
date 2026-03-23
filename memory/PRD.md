@@ -79,6 +79,8 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - [x] Branding update to Travito.co.in
 - [x] Document checklist save/load functionality
 - [x] Optimized checklist generation (~25s response)
+- [x] Fixed wishlist count not updating in profile (now uses WishlistContext)
+- [x] Fixed saved checklists display in profile (added always-visible section with empty state)
 
 ## Pending Issues
 | Priority | Issue | Status |
