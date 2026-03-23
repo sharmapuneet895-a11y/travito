@@ -5,7 +5,9 @@ import { Link } from 'react-router-dom';
 import WorldMap from '../components/WorldMap';
 import CountryDetailModal from '../components/CountryDetailModal';
 import BackToTop from '../components/BackToTop';
-import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun, FileText, Clock, IndianRupee, Plane, X, ChevronLeft, ChevronRight, Dumbbell } from 'lucide-react';
+import VisaEligibilityChecker from '../components/VisaEligibilityChecker';
+import DocumentChecklistGenerator from '../components/DocumentChecklistGenerator';
+import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun, FileText, Clock, IndianRupee, Plane, X, ChevronLeft, ChevronRight, Dumbbell, CheckCircle, ClipboardList } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -817,6 +819,10 @@ const Seasons = () => {
   // Tourist places state
   const [touristPlaces, setTouristPlaces] = useState(null);
   
+  // Visa tools state
+  const [showEligibilityChecker, setShowEligibilityChecker] = useState(false);
+  const [showDocumentChecklist, setShowDocumentChecklist] = useState(false);
+  
   // Date state - default to current month
   const today = new Date();
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth()); // 0-11
@@ -1112,26 +1118,26 @@ const Seasons = () => {
         className="relative bg-cover bg-center"
         style={{ 
           backgroundImage: `linear-gradient(to right, rgba(11, 60, 93, 0.85), rgba(11, 60, 93, 0.6)), url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80')`,
-          minHeight: '320px'
+          minHeight: '280px'
         }}
       >
-        <div className="max-w-7xl mx-auto px-6 py-10">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-10">
           {/* Hero Content */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3" style={{ fontFamily: 'Poppins, sans-serif' }} data-testid="seasons-page-title">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 md:mb-3" style={{ fontFamily: 'Poppins, sans-serif' }} data-testid="seasons-page-title">
               Plan Your Trip + Visa in One Place
             </h1>
-            <p className="text-base md:text-lg text-white/90 mb-6 max-w-xl">
+            <p className="text-sm sm:text-base md:text-lg text-white/90 mb-4 md:mb-6 max-w-xl">
               Check Best Seasons, Visa requirements and compare options - all in minutes
             </p>
 
             {/* Search Box */}
-            <div className="bg-white rounded-xl p-4 md:p-5 shadow-xl max-w-4xl">
-              <div className="flex flex-col md:flex-row gap-3 items-end">
+            <div className="bg-white rounded-xl p-3 sm:p-4 md:p-5 shadow-xl max-w-4xl">
+              <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-end">
                 {/* Destination Input */}
                 <div className="flex-1 relative">
                   <label className="block text-xs font-semibold mb-1.5" style={{ color: '#0B3C5D' }}>
@@ -1472,17 +1478,37 @@ const Seasons = () => {
               </div>
             </div>
 
-            {/* CTA Button - Link to Visa Page */}
-            <div className="text-center">
+            {/* CTA Buttons - Link to Visa Page + Eligibility + Checklist */}
+            <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-3">
               <Link
                 to="/visa#visa-options"
-                className="px-8 py-2.5 rounded-lg font-semibold text-white transition-all hover:opacity-90 inline-flex items-center gap-2"
+                className="px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-semibold text-white text-sm sm:text-base transition-all hover:opacity-90 inline-flex items-center justify-center gap-2"
                 style={{ backgroundColor: '#0B3C5D' }}
                 data-testid="explore-visa-btn"
               >
                 Explore Visa Options
                 <Plane className="w-4 h-4" />
               </Link>
+              {searchResult && (
+                <>
+                  <button
+                    onClick={() => setShowEligibilityChecker(true)}
+                    className="px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-semibold text-sm sm:text-base transition-all hover:opacity-90 inline-flex items-center justify-center gap-2 bg-blue-500 text-white"
+                    data-testid="visa-eligibility-btn"
+                  >
+                    <CheckCircle className="w-4 h-4" />
+                    Check Eligibility
+                  </button>
+                  <button
+                    onClick={() => setShowDocumentChecklist(true)}
+                    className="px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-semibold text-sm sm:text-base transition-all hover:opacity-90 inline-flex items-center justify-center gap-2 bg-indigo-500 text-white"
+                    data-testid="document-checklist-btn"
+                  >
+                    <ClipboardList className="w-4 h-4" />
+                    Document Checklist
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
@@ -1835,6 +1861,20 @@ const Seasons = () => {
           onClose={() => setSelectedCountry(null)}
         />
       )}
+
+      {/* Visa Eligibility Checker Modal */}
+      <VisaEligibilityChecker
+        isOpen={showEligibilityChecker}
+        onClose={() => setShowEligibilityChecker(false)}
+        preSelectedCountry={searchResult?.country?.country_name}
+      />
+
+      {/* Document Checklist Generator Modal */}
+      <DocumentChecklistGenerator
+        isOpen={showDocumentChecklist}
+        onClose={() => setShowDocumentChecklist(false)}
+        preSelectedCountry={searchResult?.country?.country_name}
+      />
 
       <BackToTop />
     </div>

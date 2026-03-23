@@ -1346,11 +1346,13 @@ const CountryDetailModal = ({ country, onClose }) => {
       {/* Visa Tools Modals */}
       <VisaEligibilityChecker 
         isOpen={showEligibilityChecker} 
-        onClose={() => setShowEligibilityChecker(false)} 
+        onClose={() => setShowEligibilityChecker(false)}
+        preSelectedCountry={country.country_name}
       />
       <DocumentChecklistGenerator 
         isOpen={showDocumentChecklist} 
-        onClose={() => setShowDocumentChecklist(false)} 
+        onClose={() => setShowDocumentChecklist(false)}
+        preSelectedCountry={country.country_name}
       />
     </AnimatePresence>
   );

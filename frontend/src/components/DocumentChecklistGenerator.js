@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-const DocumentChecklistGenerator = ({ isOpen, onClose }) => {
+const DocumentChecklistGenerator = ({ isOpen, onClose, preSelectedCountry }) => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -14,10 +14,17 @@ const DocumentChecklistGenerator = ({ isOpen, onClose }) => {
   const [checkedItems, setCheckedItems] = useState({});
   const { user, requireAuth } = useAuth();
   const [formData, setFormData] = useState({
-    country: '',
+    country: preSelectedCountry || '',
     visa_type: 'tourist',
     purpose: 'tourism'
   });
+
+  // Update country when preSelectedCountry changes
+  React.useEffect(() => {
+    if (preSelectedCountry) {
+      setFormData(prev => ({ ...prev, country: preSelectedCountry }));
+    }
+  }, [preSelectedCountry]);
 
   const countries = [
     // Popular Destinations

@@ -3,19 +3,13 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import WorldMap from '../components/WorldMap';
 import BackToTop from '../components/BackToTop';
-import VisaEligibilityChecker from '../components/VisaEligibilityChecker';
-import DocumentChecklistGenerator from '../components/DocumentChecklistGenerator';
-import { FileText, Shield, ClipboardList, Sparkles, Info, Clock, User, ChevronRight, FileCheck } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { FileText, Info, Clock, User, ChevronRight, FileCheck, ClipboardList, Sparkles } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Visa = () => {
   const [visaData, setVisaData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showEligibilityChecker, setShowEligibilityChecker] = useState(false);
-  const [showDocumentChecklist, setShowDocumentChecklist] = useState(false);
-  const { requireAuth } = useAuth();
 
   useEffect(() => {
     const fetchVisa = async () => {
@@ -137,69 +131,6 @@ const Visa = () => {
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* AI-Powered Tools CTAs */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            {/* Visa Eligibility Checker */}
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white cursor-pointer shadow-lg"
-              onClick={() => requireAuth(() => setShowEligibilityChecker(true))}
-              data-testid="visa-eligibility-cta"
-            >
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-white/20 rounded-xl">
-                  <Shield className="w-8 h-8" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-xl font-bold">Visa Eligibility Checker</h3>
-                    <span className="px-2 py-0.5 bg-yellow-400 text-yellow-900 text-xs font-bold rounded-full flex items-center gap-1">
-                      <Sparkles className="w-3 h-3" />
-                      AI
-                    </span>
-                  </div>
-                  <p className="text-blue-100 text-sm mb-4">
-                    Get AI-powered assessment of your visa approval chances with personalized suggestions.
-                  </p>
-                  <div className="flex items-center gap-2 text-sm font-medium">
-                    <span>Check Your Eligibility</span>
-                    <span>→</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Document Checklist Generator */}
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-2xl p-6 text-white cursor-pointer shadow-lg"
-              onClick={() => requireAuth(() => setShowDocumentChecklist(true))}
-              data-testid="document-checklist-cta"
-            >
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-white/20 rounded-xl">
-                  <ClipboardList className="w-8 h-8" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-xl font-bold">Document Checklist Generator</h3>
-                    <span className="px-2 py-0.5 bg-yellow-400 text-yellow-900 text-xs font-bold rounded-full flex items-center gap-1">
-                      <Sparkles className="w-3 h-3" />
-                      AI
-                    </span>
-                  </div>
-                  <p className="text-emerald-100 text-sm mb-4">
-                    Generate a comprehensive, country-specific document checklist with expert tips.
-                  </p>
-                  <div className="flex items-center gap-2 text-sm font-medium">
-                    <span>Generate Checklist</span>
-                    <span>→</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
           </div>
 
           {/* Map */}
@@ -363,16 +294,6 @@ const Visa = () => {
           </div>
         </motion.div>
       </div>
-
-      {/* Modals */}
-      <VisaEligibilityChecker 
-        isOpen={showEligibilityChecker} 
-        onClose={() => setShowEligibilityChecker(false)} 
-      />
-      <DocumentChecklistGenerator 
-        isOpen={showDocumentChecklist} 
-        onClose={() => setShowDocumentChecklist(false)} 
-      />
 
       <BackToTop />
     </div>

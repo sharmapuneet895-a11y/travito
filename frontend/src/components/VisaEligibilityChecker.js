@@ -5,12 +5,12 @@ import { X, CheckCircle, AlertCircle, Loader2, TrendingUp, FileText, Lightbulb, 
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-const VisaEligibilityChecker = ({ isOpen, onClose }) => {
+const VisaEligibilityChecker = ({ isOpen, onClose, preSelectedCountry }) => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [formData, setFormData] = useState({
-    country: '',
+    country: preSelectedCountry || '',
     age: '',
     education: 'bachelors',
     monthly_income: '',
@@ -20,6 +20,13 @@ const VisaEligibilityChecker = ({ isOpen, onClose }) => {
     visa_type: 'tourist',
     employment_status: 'employed'
   });
+
+  // Update country when preSelectedCountry changes
+  React.useEffect(() => {
+    if (preSelectedCountry) {
+      setFormData(prev => ({ ...prev, country: preSelectedCountry }));
+    }
+  }, [preSelectedCountry]);
 
   const countries = [
     // Popular Destinations
