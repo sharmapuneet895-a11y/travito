@@ -43,7 +43,7 @@ const TRAVEL_GUIDE_CATEGORIES = [
 const SERVICES_DATA = [
   { id: 'forex', label: 'FOREX', description: 'Live currency rates', link: '/forex', image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&q=80', color: 'from-green-500 to-emerald-600' },
   { id: 'weather', label: 'Weather', description: 'Real-time forecasts', link: '/weather', image: 'https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=400&q=80', color: 'from-blue-400 to-cyan-500' },
-  { id: 'powerplug', label: 'Power Plug', description: 'Electrical standards', link: '/power-plug', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80', color: 'from-yellow-400 to-orange-500' },
+  { id: 'powerplug', label: 'Power Plug', description: 'Electrical standards', link: '/plugs', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80', color: 'from-yellow-400 to-orange-500' },
   { id: 'festivals', label: 'Festival & Local Dishes', description: 'Culture & cuisine', link: '/festivals', image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&q=80', color: 'from-pink-500 to-rose-600' },
   { id: 'apps', label: 'Top Apps', description: 'Essential travel apps', link: '/apps', image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&q=80', color: 'from-purple-500 to-violet-600' },
 ];
@@ -1411,70 +1411,8 @@ const Seasons = () => {
           transition={{ duration: 0.6 }}
         >
 
-          {/* Top Destinations This Month */}
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-200" data-testid="top-destinations-section">
-            <div className="flex items-center gap-2 mb-4">
-              <Sun className="w-6 h-6 text-amber-500" />
-              <h3 className="text-xl font-bold text-primary">Top Destinations for {selectedMonthName}</h3>
-              <span className="px-2 py-0.5 bg-amber-200 text-amber-800 text-xs font-bold rounded-full">RECOMMENDED</span>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              {topDestinationsData[selectedMonthAbbrev]?.map((dest, idx) => {
-                const categoryData = CATEGORIES.find(c => c.id === dest.category);
-                const inWishlist = isInWishlist(dest.code);
-                return (
-                  <motion.div
-                    key={dest.code}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.1 }}
-                    onClick={() => {
-                      const country = processedData.find(c => c.country_code === dest.code);
-                      if (country) setSelectedCountry(country);
-                    }}
-                    className="bg-white rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all border border-amber-100 group relative"
-                    data-testid={`top-dest-${dest.code}`}
-                  >
-                    {/* Wishlist Button */}
-                    <button
-                      onClick={(e) => handleWishlistToggle(e, dest.code, dest.name)}
-                      className={`absolute top-2 right-2 p-1.5 rounded-full transition-all z-10 ${
-                        inWishlist 
-                          ? 'bg-red-100 text-red-500' 
-                          : 'bg-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-400'
-                      }`}
-                      data-testid={`wishlist-top-dest-${dest.code}`}
-                    >
-                      <Heart className={`w-4 h-4 ${inWishlist ? 'fill-current' : ''}`} />
-                    </button>
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="text-2xl font-bold text-amber-500">#{idx + 1}</span>
-                      <img
-                        src={getFlag(dest.code)}
-                        alt={dest.name}
-                        className="w-8 h-6 object-cover rounded shadow-sm"
-                        onError={(e) => { e.target.style.display = 'none'; }}
-                      />
-                    </div>
-                    <h4 className="font-bold text-primary group-hover:text-amber-600 transition-colors">{dest.name}</h4>
-                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{dest.highlight}</p>
-                    <div className="flex items-center justify-between mt-3">
-                      <div className="flex items-center gap-1">
-                        <span className="text-amber-500 text-sm">★</span>
-                        <span className="text-sm font-semibold text-amber-700">{dest.rating}</span>
-                      </div>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${categoryData?.bgColor || 'bg-gray-100'} ${categoryData?.textColor || 'text-gray-600'}`}>
-                        {dest.category}
-                      </span>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-
           {/* ========== SEPARATOR - VISA INTELLIGENCE ========== */}
-          <div className="flex items-center gap-4 my-8">
+          <div className="flex items-center gap-4 mb-8">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
             <h2 className="text-lg font-bold tracking-widest" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
               VISA INTELLIGENCE
@@ -1545,6 +1483,77 @@ const Seasons = () => {
                 Explore Visa Options
                 <Plane className="w-4 h-4" />
               </Link>
+            </div>
+          </div>
+
+          {/* ========== SEPARATOR - TOP DESTINATIONS ========== */}
+          <div className="flex items-center gap-4 my-8">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+            <h2 className="text-lg font-bold tracking-widest" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
+              TOP DESTINATIONS
+            </h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+          </div>
+
+          {/* Top Destinations This Month */}
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-200 mb-8" data-testid="top-destinations-section">
+            <div className="flex items-center gap-2 mb-4">
+              <Sun className="w-6 h-6 text-amber-500" />
+              <h3 className="text-xl font-bold text-primary">Top Destinations for {selectedMonthName}</h3>
+              <span className="px-2 py-0.5 bg-amber-200 text-amber-800 text-xs font-bold rounded-full">RECOMMENDED</span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              {topDestinationsData[selectedMonthAbbrev]?.map((dest, idx) => {
+                const categoryData = CATEGORIES.find(c => c.id === dest.category);
+                const inWishlist = isInWishlist(dest.code);
+                return (
+                  <motion.div
+                    key={dest.code}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                    onClick={() => {
+                      const country = processedData.find(c => c.country_code === dest.code);
+                      if (country) setSelectedCountry(country);
+                    }}
+                    className="bg-white rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all border border-amber-100 group relative"
+                    data-testid={`top-dest-${dest.code}`}
+                  >
+                    {/* Wishlist Button */}
+                    <button
+                      onClick={(e) => handleWishlistToggle(e, dest.code, dest.name)}
+                      className={`absolute top-2 right-2 p-1.5 rounded-full transition-all z-10 ${
+                        inWishlist 
+                          ? 'bg-red-100 text-red-500' 
+                          : 'bg-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-400'
+                      }`}
+                      data-testid={`wishlist-top-dest-${dest.code}`}
+                    >
+                      <Heart className={`w-4 h-4 ${inWishlist ? 'fill-current' : ''}`} />
+                    </button>
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-2xl font-bold text-amber-500">#{idx + 1}</span>
+                      <img
+                        src={getFlag(dest.code)}
+                        alt={dest.name}
+                        className="w-8 h-6 object-cover rounded shadow-sm"
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                      />
+                    </div>
+                    <h4 className="font-bold text-primary group-hover:text-amber-600 transition-colors">{dest.name}</h4>
+                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{dest.highlight}</p>
+                    <div className="flex items-center justify-between mt-3">
+                      <div className="flex items-center gap-1">
+                        <span className="text-amber-500 text-sm">★</span>
+                        <span className="text-sm font-semibold text-amber-700">{dest.rating}</span>
+                      </div>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${categoryData?.bgColor || 'bg-gray-100'} ${categoryData?.textColor || 'text-gray-600'}`}>
+                        {dest.category}
+                      </span>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
 

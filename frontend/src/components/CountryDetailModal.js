@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2, Shield, Phone, DollarSign, ArrowRightLeft, Users, TrendingUp, TrendingDown, CheckCircle, ClipboardList, MapPinOff, AlertTriangle, Palmtree, Mountain, Landmark, Building2, MessageCircle, Send } from 'lucide-react';
+import { X, Heart, Calendar, FileText, Cloud, Zap, PartyPopper, Utensils, Smartphone, Loader2, Shield, Phone, DollarSign, ArrowRightLeft, Users, TrendingUp, TrendingDown, CheckCircle, ClipboardList, MapPinOff, AlertTriangle, Palmtree, Mountain, Landmark, Building2, MessageCircle, Send, Maximize2, Minimize2, Trash2 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
 import VisaEligibilityChecker from './VisaEligibilityChecker';
@@ -442,6 +442,7 @@ const CountryDetailModal = ({ country, onClose }) => {
   const [chatLoading, setChatLoading] = useState(false);
   const [chatSessionId, setChatSessionId] = useState(null);
   const [showChat, setShowChat] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const chatEndRef = useRef(null);
 
   const inWishlist = isInWishlist(country.country_code);
@@ -632,7 +633,11 @@ const CountryDetailModal = ({ country, onClose }) => {
           initial={{ opacity: 0, scale: 0.9, y: 50 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 50 }}
-          className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+          className={`bg-white rounded-2xl overflow-y-auto transition-all duration-300 ${
+            isExpanded 
+              ? 'w-full h-full max-w-none max-h-none rounded-none' 
+              : 'max-w-4xl w-full max-h-[90vh]'
+          }`}
           onClick={(e) => e.stopPropagation()}
           data-testid="country-detail-modal"
         >
@@ -657,6 +662,14 @@ const CountryDetailModal = ({ country, onClose }) => {
                 data-testid="wishlist-toggle-btn"
               >
                 <Heart className={`w-6 h-6 ${inWishlist ? 'fill-current' : ''}`} />
+              </button>
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="p-2 bg-gray-100 rounded-full hover:bg-blue-100 hover:text-blue-600 transition-all"
+                data-testid="expand-modal-btn"
+                title={isExpanded ? 'Collapse' : 'Expand'}
+              >
+                {isExpanded ? <Minimize2 className="w-6 h-6 text-gray-700" /> : <Maximize2 className="w-6 h-6 text-gray-700" />}
               </button>
               <button
                 onClick={onClose}
@@ -1155,6 +1168,28 @@ const CountryDetailModal = ({ country, onClose }) => {
                     className="flex-1 bg-transparent text-sm focus:outline-none"
                     data-testid="modal-chat-input"
                   />
+                  {/* Clear Chat Button */}
+                  {chatHistory.length > 0 && (
+                    <button
+                      onClick={() => { setChatHistory([]); setChatSessionId(null); }}
+                      className="p-1.5 rounded-full hover:bg-red-100 text-gray-400 hover:text-red-500 transition-all"
+                      title="Clear chat"
+                      data-testid="modal-chat-clear"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+                  {/* Collapse Chat Button */}
+                  {showChat && chatHistory.length > 0 && (
+                    <button
+                      onClick={() => setShowChat(false)}
+                      className="p-1.5 rounded-full hover:bg-gray-200 text-gray-400 hover:text-gray-600 transition-all"
+                      title="Collapse chat"
+                      data-testid="modal-chat-collapse"
+                    >
+                      <Minimize2 className="w-4 h-4" />
+                    </button>
+                  )}
                   <button
                     onClick={sendChatMessage}
                     disabled={!chatMessage.trim() || chatLoading}
