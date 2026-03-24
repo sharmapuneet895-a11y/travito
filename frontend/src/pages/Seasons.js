@@ -1161,7 +1161,7 @@ const Seasons = () => {
               Compare Visa Options & Plan Your Trip in Minutes
             </h1>
             <p className="text-sm sm:text-base md:text-lg text-white/90 mb-4 md:mb-6 max-w-xl">
-              Compare Visa Options, Understand Requirements and Apply the smartest way - All in one place
+              Understand Visa Requirements and Apply the smartest way - All in one place
             </p>
 
             {/* Search Box */}
