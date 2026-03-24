@@ -1129,10 +1129,10 @@ const Seasons = () => {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 md:mb-3" style={{ fontFamily: 'Poppins, sans-serif' }} data-testid="seasons-page-title">
-              Plan Your Trip + Visa in One Place
+              Compare Visa Options & Plan Your Trip in Minutes
             </h1>
             <p className="text-sm sm:text-base md:text-lg text-white/90 mb-4 md:mb-6 max-w-xl">
-              Check Best Seasons, Visa requirements and compare options - all in minutes
+              Get visa requirements, cost, processing time & trusted agents - all in one place
             </p>
 
             {/* Search Box */}

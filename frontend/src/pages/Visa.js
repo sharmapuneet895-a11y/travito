@@ -74,11 +74,12 @@ const Visa = () => {
             <div className="flex items-center justify-center gap-3 mb-4">
               <FileText className="w-10 h-10 text-white" />
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white" style={{ fontFamily: 'Poppins, sans-serif' }} data-testid="visa-page-title">
-                Compare Visa Options & Plan Your Trip in Minutes
+                Visa Information for Indians
               </h1>
             </div>
             <p className="text-base md:text-lg text-white/90 max-w-3xl mx-auto leading-relaxed">
-              Get visa requirements, cost, processing time & trusted agents - all in one place
+              Check visa requirements for Indian passport holders. Explore the map to find visa-free destinations, 
+              visa on arrival options, and countries requiring e-visa or embassy applications.
             </p>
             
             {/* Quick Stats */}
