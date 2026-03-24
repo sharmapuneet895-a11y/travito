@@ -793,6 +793,99 @@ async def check_visa_eligibility(request: VisaEligibilityRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+class VisaPricingRequest(BaseModel):
+    country: str
+    country_code: str
+
+
+@api_router.post("/visa/pricing")
+async def get_visa_pricing(request: VisaPricingRequest):
+    """AI-powered visa pricing based on destination"""
+    if not EMERGENT_LLM_KEY:
+        # Return default pricing if AI not available
+        return get_default_pricing(request.country)
+    
+    try:
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"visa-pricing-{uuid.uuid4()}",
+            system_message="""You are a visa pricing expert for Indian passport holders. Provide realistic visa pricing and processing times.
+
+Respond ONLY in valid JSON format:
+{
+  "express": {"price": 7999, "processing_days": "3-4"},
+  "self_apply": {"price": 4500, "processing_days": "10-15"},
+  "assisted": {"price": 5999, "processing_days": "5-7"}
+}
+
+Base pricing on actual visa fees + service charges. Express is premium/urgent, self_apply is embassy fee only, assisted is with agent help. Prices in INR."""
+        ).with_model("openai", "gpt-5.2")
+        
+        request_text = f"Visa pricing for Indian passport holder traveling to {request.country}. Provide realistic INR prices."
+        
+        user_message = UserMessage(text=request_text)
+        response = await chat.send_message(user_message)
+        
+        import json
+        response_text = response.strip()
+        if response_text.startswith("```"):
+            response_text = response_text.split("```")[1]
+            if response_text.startswith("json"):
+                response_text = response_text[4:]
+        response_text = response_text.strip()
+        
+        result = json.loads(response_text)
+        
+        return {
+            "success": True,
+            "country": request.country,
+            "pricing": result
+        }
+        
+    except Exception as e:
+        logging.error(f"Visa pricing error: {e}")
+        return get_default_pricing(request.country)
+
+
+def get_default_pricing(country: str):
+    """Default pricing based on region"""
+    # Premium destinations (USA, UK, EU, etc.)
+    premium_countries = ["United States", "United Kingdom", "Canada", "Australia", "Germany", "France", "Italy", "Japan", "Singapore"]
+    # Mid-tier destinations
+    mid_countries = ["Thailand", "Malaysia", "UAE", "Sri Lanka", "Vietnam", "Indonesia", "Philippines"]
+    
+    if country in premium_countries:
+        return {
+            "success": True,
+            "country": country,
+            "pricing": {
+                "express": {"price": 8999, "processing_days": "3-4"},
+                "self_apply": {"price": 5800, "processing_days": "10-15"},
+                "assisted": {"price": 6999, "processing_days": "5-7"}
+            }
+        }
+    elif country in mid_countries:
+        return {
+            "success": True,
+            "country": country,
+            "pricing": {
+                "express": {"price": 4999, "processing_days": "2-3"},
+                "self_apply": {"price": 2500, "processing_days": "7-10"},
+                "assisted": {"price": 3999, "processing_days": "4-5"}
+            }
+        }
+    else:
+        return {
+            "success": True,
+            "country": country,
+            "pricing": {
+                "express": {"price": 6999, "processing_days": "3-4"},
+                "self_apply": {"price": 4000, "processing_days": "8-12"},
+                "assisted": {"price": 5500, "processing_days": "5-7"}
+            }
+        }
+
+
 @api_router.post("/visa/document-checklist")
 async def generate_document_checklist(request: DocumentChecklistRequest):
     """AI-powered document checklist generator"""

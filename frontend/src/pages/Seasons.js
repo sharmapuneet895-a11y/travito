@@ -7,7 +7,7 @@ import CountryDetailModal from '../components/CountryDetailModal';
 import BackToTop from '../components/BackToTop';
 import VisaEligibilityChecker from '../components/VisaEligibilityChecker';
 import DocumentChecklistGenerator from '../components/DocumentChecklistGenerator';
-import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun, FileText, Clock, IndianRupee, Plane, X, ChevronLeft, ChevronRight, Dumbbell, CheckCircle, ClipboardList } from 'lucide-react';
+import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun, FileText, Clock, IndianRupee, Plane, X, ChevronLeft, ChevronRight, Dumbbell, CheckCircle, ClipboardList, Loader2 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -823,6 +823,10 @@ const Seasons = () => {
   const [showEligibilityChecker, setShowEligibilityChecker] = useState(false);
   const [showDocumentChecklist, setShowDocumentChecklist] = useState(false);
   
+  // AI-powered visa pricing state
+  const [visaPricing, setVisaPricing] = useState(null);
+  const [pricingLoading, setPricingLoading] = useState(false);
+  
   // Date state - default to current month
   const today = new Date();
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth()); // 0-11
@@ -978,6 +982,26 @@ const Seasons = () => {
       },
       alternates: alternates
     });
+    
+    // Fetch AI-powered visa pricing
+    setPricingLoading(true);
+    try {
+      const pricingResponse = await axios.post(`${BACKEND_URL}/api/visa/pricing`, {
+        country: country.country_name,
+        country_code: country.country_code
+      });
+      setVisaPricing(pricingResponse.data.pricing);
+    } catch (error) {
+      console.error('Error fetching visa pricing:', error);
+      // Set default pricing
+      setVisaPricing({
+        express: { price: 6999, processing_days: "3-4" },
+        self_apply: { price: 5800, processing_days: "5-10" },
+        assisted: { price: 6500, processing_days: "4-7" }
+      });
+    } finally {
+      setPricingLoading(false);
+    }
     
     // Scroll to VISA INTELLIGENCE section instead of opening modal
     setTimeout(() => {
@@ -1272,7 +1296,7 @@ const Seasons = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {/* Step 1 */}
-            <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all border border-gray-100 group">
+            <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all border border-gray-800/20 group">
               <div className="absolute top-3 left-3 z-10">
                 <span className="w-7 h-7 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-md">
                   1
@@ -1297,7 +1321,7 @@ const Seasons = () => {
             </div>
 
             {/* Step 2 */}
-            <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all border border-gray-100 group">
+            <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all border border-gray-800/20 group">
               <div className="absolute top-3 left-3 z-10">
                 <span className="w-7 h-7 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-md">
                   2
@@ -1322,7 +1346,7 @@ const Seasons = () => {
             </div>
 
             {/* Step 3 */}
-            <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all border border-gray-100 group">
+            <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all border border-gray-800/20 group">
               <div className="absolute top-3 left-3 z-10">
                 <span className="w-7 h-7 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-md">
                   3
@@ -1617,6 +1641,12 @@ const Seasons = () => {
                 <h3 className="text-lg font-bold text-center mb-5" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
                   Visa Options for {searchResult.country.country_name}
                 </h3>
+                {pricingLoading ? (
+                  <div className="flex justify-center items-center py-8">
+                    <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
+                    <span className="ml-2 text-gray-600">Fetching best prices...</span>
+                  </div>
+                ) : (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {/* Best Option - Express eVisa */}
                   <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-5 border-2 border-orange-400 relative shadow-lg hover:shadow-xl transition-all" data-testid="visa-option-best">
@@ -1627,10 +1657,12 @@ const Seasons = () => {
                     </div>
                     <div className="text-center mt-2">
                       <h4 className="text-lg font-bold text-orange-600 mb-1">Express eVisa</h4>
-                      <p className="text-2xl font-bold" style={{ color: '#0B3C5D' }}>₹6,999</p>
+                      <p className="text-2xl font-bold" style={{ color: '#0B3C5D' }}>
+                        ₹{visaPricing?.express?.price?.toLocaleString() || '6,999'}
+                      </p>
                       <div className="flex items-center justify-center gap-1 text-gray-600 text-sm mt-1">
                         <Clock className="w-4 h-4" />
-                        <span>Processing Time: <strong>4 days</strong></span>
+                        <span>Processing Time: <strong>{visaPricing?.express?.processing_days || '3-4'} days</strong></span>
                       </div>
                     </div>
                     <div className="mt-4 space-y-2">
@@ -1648,9 +1680,9 @@ const Seasons = () => {
                       </div>
                     </div>
                     <div className="mt-4 pt-3 border-t border-orange-200">
-                      <p className="text-xs text-orange-600 font-semibold text-center">
-                        Best for: Urgent travel plans
-                      </p>
+                      <button className="w-full py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg text-sm transition-all">
+                        Apply Now
+                      </button>
                     </div>
                   </div>
 
@@ -1663,7 +1695,13 @@ const Seasons = () => {
                     </div>
                     <div className="text-center mt-2">
                       <h4 className="text-lg font-bold text-green-600 mb-1">Self Apply</h4>
-                      <p className="text-2xl font-bold" style={{ color: '#0B3C5D' }}>₹5,800</p>
+                      <p className="text-2xl font-bold" style={{ color: '#0B3C5D' }}>
+                        ₹{visaPricing?.self_apply?.price?.toLocaleString() || '5,800'}
+                      </p>
+                      <div className="flex items-center justify-center gap-1 text-gray-600 text-sm mt-1">
+                        <Clock className="w-4 h-4" />
+                        <span>Processing Time: <strong>{visaPricing?.self_apply?.processing_days || '5-10'} days</strong></span>
+                      </div>
                     </div>
                     <div className="mt-4 space-y-2">
                       <div className="flex items-center gap-2 text-sm text-gray-700">
@@ -1695,7 +1733,13 @@ const Seasons = () => {
                     </div>
                     <div className="text-center mt-2">
                       <h4 className="text-lg font-bold text-blue-600 mb-1">Assisted</h4>
-                      <p className="text-2xl font-bold" style={{ color: '#0B3C5D' }}>₹6,500</p>
+                      <p className="text-2xl font-bold" style={{ color: '#0B3C5D' }}>
+                        ₹{visaPricing?.assisted?.price?.toLocaleString() || '6,500'}
+                      </p>
+                      <div className="flex items-center justify-center gap-1 text-gray-600 text-sm mt-1">
+                        <Clock className="w-4 h-4" />
+                        <span>Processing Time: <strong>{visaPricing?.assisted?.processing_days || '4-7'} days</strong></span>
+                      </div>
                     </div>
                     <div className="mt-4 space-y-2">
                       <div className="flex items-center gap-2 text-sm text-gray-700">
@@ -1718,6 +1762,7 @@ const Seasons = () => {
                     </div>
                   </div>
                 </div>
+                )}
               </div>
             )}
           </div>
