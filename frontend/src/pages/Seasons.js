@@ -979,8 +979,13 @@ const Seasons = () => {
       alternates: alternates
     });
     
-    // Automatically open the country detail modal
-    setSelectedCountry(country);
+    // Scroll to VISA INTELLIGENCE section instead of opening modal
+    setTimeout(() => {
+      const visaSection = document.getElementById('visa-intelligence-section');
+      if (visaSection) {
+        visaSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
     
     // Fetch tourist places for the country
     try {
@@ -1141,7 +1146,7 @@ const Seasons = () => {
                 {/* Destination Input */}
                 <div className="flex-1 relative">
                   <label className="block text-xs font-semibold mb-1.5" style={{ color: '#0B3C5D' }}>
-                    Select Destination
+                    Select Destination & Explore Visa Intelligence
                   </label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: '#94A3B8' }} />
@@ -1418,7 +1423,7 @@ const Seasons = () => {
         >
 
           {/* ========== SEPARATOR - VISA INTELLIGENCE ========== */}
-          <div className="flex items-center gap-4 mb-8">
+          <div id="visa-intelligence-section" className="flex items-center gap-4 mb-8 scroll-mt-24">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
             <h2 className="text-lg font-bold tracking-widest" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
               VISA INTELLIGENCE
