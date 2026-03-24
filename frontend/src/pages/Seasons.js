@@ -1261,63 +1261,84 @@ const Seasons = () => {
       {/* ========== HOW IT WORKS SECTION ========== */}
       <div className="bg-gradient-to-b from-gray-50 to-white py-12 border-b" style={{ borderColor: '#E2E8F0' }}>
         <div className="max-w-5xl mx-auto px-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-10" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
+          <h2 className="text-xl md:text-2xl font-bold text-center mb-10" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
             How Travito Works
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {/* Step 1 */}
-            <div className="relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all border border-gray-100 text-center group">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <span className="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-md">
+            <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all border border-gray-100 group">
+              <div className="absolute top-3 left-3 z-10">
+                <span className="w-7 h-7 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-md">
                   1
                 </span>
               </div>
-              <div className="w-16 h-16 mx-auto mb-4 mt-2 bg-gradient-to-br from-orange-100 to-amber-100 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <MapPin className="w-8 h-8 text-orange-500" />
+              <div className="h-32 overflow-hidden">
+                <img 
+                  src="https://images.pexels.com/photos/1078850/pexels-photo-1078850.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+                  alt="Choose destination"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 h-32 bg-gradient-to-t from-black/40 to-transparent"></div>
               </div>
-              <h3 className="text-lg font-bold mb-2" style={{ color: '#0B3C5D' }}>
-                Choose Your Destination
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Select where you want to travel
-              </p>
+              <div className="p-5 text-center">
+                <h3 className="text-base font-bold mb-1.5" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
+                  Choose Your Destination
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  Select where you want to travel
+                </p>
+              </div>
             </div>
 
             {/* Step 2 */}
-            <div className="relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all border border-gray-100 text-center group">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <span className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-md">
+            <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all border border-gray-100 group">
+              <div className="absolute top-3 left-3 z-10">
+                <span className="w-7 h-7 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-md">
                   2
                 </span>
               </div>
-              <div className="w-16 h-16 mx-auto mb-4 mt-2 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <FileText className="w-8 h-8 text-blue-500" />
+              <div className="h-32 overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1639034741369-1e0c771adaeb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MjJ8MHwxfHNlYXJjaHwyfHx2aXNhJTIwcGFzc3BvcnQlMjBkb2N1bWVudHMlMjBjb21wYXJpc29ufGVufDB8fHx8MTc3NDM3NjIwNXww&ixlib=rb-4.1.0&q=85"
+                  alt="Compare visa options"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 h-32 bg-gradient-to-t from-black/40 to-transparent"></div>
               </div>
-              <h3 className="text-lg font-bold mb-2" style={{ color: '#0B3C5D' }}>
-                Compare Visa Options
-              </h3>
-              <p className="text-gray-600 text-sm">
-                See fastest, cheapest & safest ways
-              </p>
+              <div className="p-5 text-center">
+                <h3 className="text-base font-bold mb-1.5" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
+                  Compare Visa Options
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  See fastest, cheapest & safest ways
+                </p>
+              </div>
             </div>
 
             {/* Step 3 */}
-            <div className="relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all border border-gray-100 text-center group">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <span className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-md">
+            <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all border border-gray-100 group">
+              <div className="absolute top-3 left-3 z-10">
+                <span className="w-7 h-7 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-md">
                   3
                 </span>
               </div>
-              <div className="w-16 h-16 mx-auto mb-4 mt-2 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <CheckCircle className="w-8 h-8 text-green-500" />
+              <div className="h-32 overflow-hidden">
+                <img 
+                  src="https://images.pexels.com/photos/4173229/pexels-photo-4173229.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+                  alt="Apply with confidence"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                />
+                <div className="absolute inset-0 h-32 bg-gradient-to-t from-black/40 to-transparent"></div>
               </div>
-              <h3 className="text-lg font-bold mb-2" style={{ color: '#0B3C5D' }}>
-                Apply with Confidence
-              </h3>
-              <p className="text-gray-600 text-sm">
-                DIY or get expert help
-              </p>
+              <div className="p-5 text-center">
+                <h3 className="text-base font-bold mb-1.5" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
+                  Apply with Confidence
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  DIY or get expert help
+                </p>
+              </div>
             </div>
           </div>
         </div>
