@@ -182,10 +182,10 @@ const Visa = () => {
                   COMING SOON
                 </div>
                 <h2 className="text-3xl md:text-4xl font-bold text-white mb-3" style={{ fontFamily: 'Poppins, sans-serif' }}>
-                  Compare Visa Options
+                  Compare Visa Options & Plan Your Trip in Minutes
                 </h2>
                 <p className="text-blue-100 text-lg max-w-2xl mx-auto">
-                  We're onboarding verified visa agents to help you with hassle-free visa processing
+                  Get visa requirements, cost, processing time & trusted agents - all in one place
                 </p>
               </div>
 
