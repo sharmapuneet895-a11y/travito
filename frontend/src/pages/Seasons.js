@@ -1564,10 +1564,10 @@ const Seasons = () => {
                   </div>
 
                   {/* Budget Option */}
-                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 border border-green-300 shadow hover:shadow-lg transition-all" data-testid="visa-option-budget">
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 border border-green-300 relative shadow hover:shadow-lg transition-all" data-testid="visa-option-budget">
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                       <span className="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                        Best Value
+                        Budget
                       </span>
                     </div>
                     <div className="text-center mt-2">
@@ -1600,10 +1600,10 @@ const Seasons = () => {
                   </div>
 
                   {/* Balanced Option */}
-                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-300 shadow hover:shadow-lg transition-all" data-testid="visa-option-balanced">
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-300 relative shadow hover:shadow-lg transition-all" data-testid="visa-option-balanced">
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                       <span className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                        Recommended
+                        Balanced
                       </span>
                     </div>
                     <div className="text-center mt-2">
