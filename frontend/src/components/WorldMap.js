@@ -311,6 +311,7 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
 
       {/* Disclaimer - positioned on map's bottom right ocean area */}
       <div 
+        className="hidden sm:block"
         style={{ 
           position: 'absolute',
           bottom: '15px',
@@ -331,6 +332,13 @@ const WorldMap = ({ data, mode, onCountryClick }) => {
       >
         * Map boundaries are for illustrative purposes only<br/>
         and may not reflect official international borders.
+      </div>
+      {/* Mobile disclaimer - smaller and below map */}
+      <div 
+        className="sm:hidden text-center py-2 px-3 text-xs text-gray-500 italic"
+        data-testid="map-disclaimer-mobile"
+      >
+        * Map for illustrative purposes only
       </div>
 
       {tooltipContent && (

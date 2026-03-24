@@ -191,8 +191,8 @@ const Visa = () => {
 
               {/* Visa Agents Table */}
               <div className="bg-white/95 backdrop-blur-sm rounded-xl overflow-hidden shadow-lg">
-                {/* Table Header */}
-                <div className="grid grid-cols-5 gap-4 p-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+                {/* Desktop Table Header - hidden on mobile */}
+                <div className="hidden md:grid grid-cols-5 gap-4 p-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
                   <div className="font-bold text-sm">Agent</div>
                   <div className="font-bold text-sm">Processing Time</div>
                   <div className="font-bold text-sm">Service Fee</div>
@@ -200,8 +200,13 @@ const Visa = () => {
                   <div className="font-bold text-sm">Services</div>
                 </div>
 
-                {/* Sample Agent Row (Placeholder) */}
-                <div className="grid grid-cols-5 gap-4 p-4 items-center border-b border-gray-100">
+                {/* Mobile Header */}
+                <div className="md:hidden p-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-center font-bold">
+                  Visa Agent Details
+                </div>
+
+                {/* Sample Agent Row (Placeholder) - Desktop */}
+                <div className="hidden md:grid grid-cols-5 gap-4 p-4 items-center border-b border-gray-100">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg flex items-center justify-center">
                       <User className="w-6 h-6 text-blue-500" />
@@ -237,8 +242,39 @@ const Visa = () => {
                   </div>
                 </div>
 
-                {/* Second Sample Row */}
-                <div className="grid grid-cols-5 gap-4 p-4 items-center bg-gray-50/50">
+                {/* Mobile Agent Card 1 */}
+                <div className="md:hidden p-4 border-b border-gray-100">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-lg flex items-center justify-center">
+                      <User className="w-6 h-6 text-blue-500" />
+                    </div>
+                    <div>
+                      <div className="w-24 h-3 bg-gray-200 rounded mb-1"></div>
+                      <div className="w-16 h-2 bg-gray-100 rounded"></div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-blue-500" />
+                      <span className="text-gray-700">2-5 Days</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-700 font-bold">₹3,000</span>
+                      <span className="text-gray-400 text-xs"> onwards</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-green-600 font-bold">95%</span>
+                      <span className="text-gray-500 text-xs">success</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-gray-600">
+                      <FileCheck className="w-3 h-3 text-blue-500" />
+                      <span className="text-xs">Full Service</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Second Sample Row - Desktop */}
+                <div className="hidden md:grid grid-cols-5 gap-4 p-4 items-center bg-gray-50/50">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-emerald-100 rounded-lg flex items-center justify-center">
                       <User className="w-6 h-6 text-green-500" />
@@ -270,6 +306,37 @@ const Visa = () => {
                     <div className="flex items-center gap-1">
                       <ClipboardList className="w-3 h-3 text-green-500" />
                       <span>Application Form Filling</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mobile Agent Card 2 */}
+                <div className="md:hidden p-4 bg-gray-50/50">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-emerald-100 rounded-lg flex items-center justify-center">
+                      <User className="w-6 h-6 text-green-500" />
+                    </div>
+                    <div>
+                      <div className="w-20 h-3 bg-gray-200 rounded mb-1"></div>
+                      <div className="w-14 h-2 bg-gray-100 rounded"></div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-green-500" />
+                      <span className="text-gray-700">3-7 Days</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-700 font-bold">₹2,500</span>
+                      <span className="text-gray-400 text-xs"> onwards</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-green-600 font-bold">92%</span>
+                      <span className="text-gray-500 text-xs">success</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-gray-600">
+                      <FileCheck className="w-3 h-3 text-green-500" />
+                      <span className="text-xs">Full Service</span>
                     </div>
                   </div>
                 </div>
