@@ -1137,7 +1137,7 @@ const Seasons = () => {
               Compare Visa Options & Plan Your Trip in Minutes
             </h1>
             <p className="text-sm sm:text-base md:text-lg text-white/90 mb-4 md:mb-6 max-w-xl">
-              Get visa requirements, cost, processing time & trusted agents - all in one place
+              Compare Visa Options, Understand Requirements and Apply the smartest way - All in one place
             </p>
 
             {/* Search Box */}
@@ -1261,9 +1261,14 @@ const Seasons = () => {
       {/* ========== HOW IT WORKS SECTION ========== */}
       <div className="bg-gradient-to-b from-gray-50 to-white py-12 border-b" style={{ borderColor: '#E2E8F0' }}>
         <div className="max-w-5xl mx-auto px-6">
-          <h2 className="text-xl md:text-2xl font-bold text-center mb-10" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
-            How Travito Works
-          </h2>
+          {/* Section Separator */}
+          <div className="flex items-center gap-4 mb-10">
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+            <h2 className="text-lg font-bold tracking-widest" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
+              HOW TRAVITO WORKS
+            </h2>
+            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+          </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {/* Step 1 */}
@@ -1649,7 +1654,7 @@ const Seasons = () => {
                     </div>
                   </div>
 
-                  {/* Budget Option */}
+                  {/* Self Apply Option */}
                   <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 border border-green-300 relative shadow hover:shadow-lg transition-all" data-testid="visa-option-budget">
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                       <span className="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">
@@ -1657,35 +1662,31 @@ const Seasons = () => {
                       </span>
                     </div>
                     <div className="text-center mt-2">
-                      <h4 className="text-lg font-bold text-green-600 mb-1">Standard Visa</h4>
-                      <p className="text-2xl font-bold" style={{ color: '#0B3C5D' }}>₹3,499</p>
-                      <div className="flex items-center justify-center gap-1 text-gray-600 text-sm mt-1">
-                        <Clock className="w-4 h-4" />
-                        <span>Processing Time: <strong>10-15 days</strong></span>
-                      </div>
+                      <h4 className="text-lg font-bold text-green-600 mb-1">Self Apply</h4>
+                      <p className="text-2xl font-bold" style={{ color: '#0B3C5D' }}>₹5,800</p>
                     </div>
                     <div className="mt-4 space-y-2">
                       <div className="flex items-center gap-2 text-sm text-gray-700">
                         <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span>Most affordable</span>
+                        <span>Cheapest method</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-700">
                         <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span>Complete documentation support</span>
+                        <span>Full control</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-700">
                         <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span>Email tracking updates</span>
+                        <span>Takes more time</span>
                       </div>
                     </div>
                     <div className="mt-4 pt-3 border-t border-green-200">
-                      <p className="text-xs text-green-600 font-semibold text-center">
-                        Best for: Budget-conscious travelers
-                      </p>
+                      <button className="w-full py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg text-sm transition-all">
+                        View Guide
+                      </button>
                     </div>
                   </div>
 
-                  {/* Balanced Option */}
+                  {/* Assisted Option */}
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-300 relative shadow hover:shadow-lg transition-all" data-testid="visa-option-balanced">
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                       <span className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">
@@ -1693,31 +1694,27 @@ const Seasons = () => {
                       </span>
                     </div>
                     <div className="text-center mt-2">
-                      <h4 className="text-lg font-bold text-blue-600 mb-1">Priority Visa</h4>
-                      <p className="text-2xl font-bold" style={{ color: '#0B3C5D' }}>₹4,999</p>
-                      <div className="flex items-center justify-center gap-1 text-gray-600 text-sm mt-1">
-                        <Clock className="w-4 h-4" />
-                        <span>Processing Time: <strong>7 days</strong></span>
-                      </div>
+                      <h4 className="text-lg font-bold text-blue-600 mb-1">Assisted</h4>
+                      <p className="text-2xl font-bold" style={{ color: '#0B3C5D' }}>₹6,500</p>
                     </div>
                     <div className="mt-4 space-y-2">
                       <div className="flex items-center gap-2 text-sm text-gray-700">
                         <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span>Balanced price & speed</span>
+                        <span>Expert guidance</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-700">
                         <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span>Priority queue processing</span>
+                        <span>Medium processing time</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-700">
                         <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span>Dedicated support agent</span>
+                        <span>Lower rejection risk</span>
                       </div>
                     </div>
                     <div className="mt-4 pt-3 border-t border-blue-200">
-                      <p className="text-xs text-blue-600 font-semibold text-center">
-                        Best for: Flexible travel dates
-                      </p>
+                      <button className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg text-sm transition-all">
+                        Get Assistance
+                      </button>
                     </div>
                   </div>
                 </div>
