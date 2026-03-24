@@ -74,3 +74,21 @@ a[href*="emergent.sh"][style*="position: fixed"] {
   visibility: hidden !important;
   opacity: 0 !important;
 }
+
+/* Heartbeat animation for destination input */
+@keyframes heartbeat {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 122, 0, 0.4); }
+  14% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(255, 122, 0, 0.2); }
+  28% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 122, 0, 0); }
+  42% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(255, 122, 0, 0.2); }
+  56% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 122, 0, 0); }
+  70% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(255, 122, 0, 0.2); }
+  84% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 122, 0, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 122, 0, 0); }
+}
+
+.destination-heartbeat {
+  animation: heartbeat 2.5s ease-in-out;
+  border: 2px solid #FF7A00 !important;
+  background: linear-gradient(135deg, #FFF7ED 0%, #FFFFFF 100%);
+}

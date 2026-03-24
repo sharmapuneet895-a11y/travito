@@ -1145,11 +1145,15 @@ const Seasons = () => {
               <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-end">
                 {/* Destination Input */}
                 <div className="flex-1 relative">
-                  <label className="block text-xs font-semibold mb-1.5" style={{ color: '#0B3C5D' }}>
+                  <label className="block text-xs font-semibold mb-1.5 flex items-center gap-2" style={{ color: '#0B3C5D' }}>
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                    </span>
                     Select Destination & Explore Visa Intelligence
                   </label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: '#94A3B8' }} />
+                  <div className="relative destination-heartbeat rounded-lg">
+                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-orange-500" />
                     <input
                       type="text"
                       value={searchQuery}
@@ -1160,8 +1164,8 @@ const Seasons = () => {
                       }}
                       onFocus={() => setShowDropdown(true)}
                       placeholder="Where do you want to go?"
-                      className="w-full pl-9 pr-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-                      style={{ border: '1px solid #E2E8F0', color: '#0B3C5D' }}
+                      className="w-full pl-9 pr-4 py-3 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400 bg-transparent"
+                      style={{ color: '#0B3C5D' }}
                       data-testid="country-search"
                     />
                   </div>
