@@ -1519,6 +1519,124 @@ const Seasons = () => {
                 </>
               )}
             </div>
+
+            {/* Visa Options Cards - Only show when destination is selected */}
+            {searchResult && (
+              <div className="mt-8">
+                <h3 className="text-lg font-bold text-center mb-5" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
+                  Visa Options for {searchResult.country.country_name}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Best Option - Express eVisa */}
+                  <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-5 border-2 border-orange-400 relative shadow-lg hover:shadow-xl transition-all" data-testid="visa-option-best">
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                        Most Popular
+                      </span>
+                    </div>
+                    <div className="text-center mt-2">
+                      <h4 className="text-lg font-bold text-orange-600 mb-1">Express eVisa</h4>
+                      <p className="text-2xl font-bold" style={{ color: '#0B3C5D' }}>₹6,999</p>
+                      <div className="flex items-center justify-center gap-1 text-gray-600 text-sm mt-1">
+                        <Clock className="w-4 h-4" />
+                        <span>Processing Time: <strong>4 days</strong></span>
+                      </div>
+                    </div>
+                    <div className="mt-4 space-y-2">
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <span>Fast approval</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <span>Minimal effort</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <span>High success rate</span>
+                      </div>
+                    </div>
+                    <div className="mt-4 pt-3 border-t border-orange-200">
+                      <p className="text-xs text-orange-600 font-semibold text-center">
+                        Best for: Urgent travel plans
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Budget Option */}
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 border border-green-300 shadow hover:shadow-lg transition-all" data-testid="visa-option-budget">
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                        Best Value
+                      </span>
+                    </div>
+                    <div className="text-center mt-2">
+                      <h4 className="text-lg font-bold text-green-600 mb-1">Standard Visa</h4>
+                      <p className="text-2xl font-bold" style={{ color: '#0B3C5D' }}>₹3,499</p>
+                      <div className="flex items-center justify-center gap-1 text-gray-600 text-sm mt-1">
+                        <Clock className="w-4 h-4" />
+                        <span>Processing Time: <strong>10-15 days</strong></span>
+                      </div>
+                    </div>
+                    <div className="mt-4 space-y-2">
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <span>Most affordable</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <span>Complete documentation support</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <span>Email tracking updates</span>
+                      </div>
+                    </div>
+                    <div className="mt-4 pt-3 border-t border-green-200">
+                      <p className="text-xs text-green-600 font-semibold text-center">
+                        Best for: Budget-conscious travelers
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Balanced Option */}
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-300 shadow hover:shadow-lg transition-all" data-testid="visa-option-balanced">
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                        Recommended
+                      </span>
+                    </div>
+                    <div className="text-center mt-2">
+                      <h4 className="text-lg font-bold text-blue-600 mb-1">Priority Visa</h4>
+                      <p className="text-2xl font-bold" style={{ color: '#0B3C5D' }}>₹4,999</p>
+                      <div className="flex items-center justify-center gap-1 text-gray-600 text-sm mt-1">
+                        <Clock className="w-4 h-4" />
+                        <span>Processing Time: <strong>7 days</strong></span>
+                      </div>
+                    </div>
+                    <div className="mt-4 space-y-2">
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <span>Balanced price & speed</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <span>Priority queue processing</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <span>Dedicated support agent</span>
+                      </div>
+                    </div>
+                    <div className="mt-4 pt-3 border-t border-blue-200">
+                      <p className="text-xs text-blue-600 font-semibold text-center">
+                        Best for: Flexible travel dates
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* ========== SEPARATOR - TOP DESTINATIONS ========== */}
