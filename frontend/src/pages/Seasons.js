@@ -1740,8 +1740,11 @@ const Seasons = () => {
                       </div>
                     </div>
                     <div className="mt-4 pt-3 border-t border-green-200">
-                      <button className="w-full py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg text-sm transition-all">
-                        View Guide
+                      <button 
+                        onClick={() => setShowDocumentChecklist(true)}
+                        className="w-full py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg text-sm transition-all"
+                      >
+                        View Document Checklist
                       </button>
                     </div>
                   </div>
