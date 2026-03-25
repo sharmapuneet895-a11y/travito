@@ -1003,14 +1003,6 @@ const Seasons = () => {
       setPricingLoading(false);
     }
     
-    // Scroll to VISA INTELLIGENCE section instead of opening modal
-    setTimeout(() => {
-      const visaSection = document.getElementById('visa-intelligence-section');
-      if (visaSection) {
-        visaSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 100);
-    
     // Fetch tourist places for the country
     try {
       const response = await axios.get(`${BACKEND_URL}/api/tourist-places/${country.country_code}`);
@@ -1018,6 +1010,25 @@ const Seasons = () => {
     } catch (error) {
       console.error('Error fetching tourist places:', error);
       setTouristPlaces(null);
+    }
+  };
+
+  // Handle search button click or Enter key - scrolls to visa intelligence
+  const handleSearch = () => {
+    if (searchResult) {
+      setTimeout(() => {
+        const visaSection = document.getElementById('visa-intelligence-section');
+        if (visaSection) {
+          visaSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  };
+
+  // Handle Enter key press in search input
+  const handleSearchKeyPress = (e) => {
+    if (e.key === 'Enter' && searchResult) {
+      handleSearch();
     }
   };
 
@@ -1136,7 +1147,17 @@ const Seasons = () => {
       );
       if (country) {
         handleCountrySelect(country);
+        // Scroll to VISA INTELLIGENCE section after selecting
+        setTimeout(() => {
+          const visaSection = document.getElementById('visa-intelligence-section');
+          if (visaSection) {
+            visaSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 200);
       }
+    } else if (searchResult) {
+      // If already have a result, just scroll
+      handleSearch();
     }
   };
 
@@ -1158,10 +1179,10 @@ const Seasons = () => {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 md:mb-3" style={{ fontFamily: 'Poppins, sans-serif' }} data-testid="seasons-page-title">
-              Compare Visa Options & Plan Your Trip in Minutes
+              Compare the best Visa options
             </h1>
             <p className="text-sm sm:text-base md:text-lg text-white/90 mb-4 md:mb-6 max-w-xl">
-              Understand Visa Requirements and Apply the smartest way - All in one place
+              Understand Visa requirements for your destination and apply the smartest way - All in one place
             </p>
 
             {/* Search Box */}
@@ -1187,6 +1208,7 @@ const Seasons = () => {
                         setSearchResult(null);
                       }}
                       onFocus={() => setShowDropdown(true)}
+                      onKeyPress={handleSearchKeyPress}
                       placeholder="Where do you want to go?"
                       className="w-full pl-9 pr-4 py-3 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400 bg-transparent"
                       style={{ color: '#0B3C5D' }}
