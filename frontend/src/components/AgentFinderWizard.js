@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { X, ChevronRight, ChevronLeft, Check, Star, MapPin, Clock, Shield, Phone, MessageCircle, Search, Filter, CheckCircle, Users, Award, ThumbsUp, Zap, HelpCircle, Building } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, Check, Star, MapPin, Clock, Shield, Phone, MessageCircle, Search, Filter, CheckCircle, Users, Award, ThumbsUp, Zap, HelpCircle, Building, Maximize2, Minimize2 } from 'lucide-react';
 
 const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pricing }) => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [filters, setFilters] = useState({
     city: 'All Cities',
@@ -561,72 +562,71 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
   );
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-2 md:p-4">
+      <div className={`bg-white rounded-xl overflow-hidden shadow-2xl transition-all duration-300 ${
+        isFullscreen ? 'w-full h-full max-w-none max-h-none rounded-none' : 'max-w-4xl w-full max-h-[90vh]'
+      }`}>
         {/* Header */}
-        <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-4 text-white">
-          <div className="flex items-center justify-between mb-3">
+        <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-3 text-white">
+          <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <Users className="w-6 h-6" />
+              <Users className="w-5 h-5" />
               <div>
-                <h2 className="font-bold text-lg">{country?.country_name} {visaType.charAt(0).toUpperCase() + visaType.slice(1)} Visa</h2>
-                <p className="text-xs text-white/80">Find & Compare Verified Agents</p>
+                <h2 className="font-bold">{country?.country_name} - Find Agents</h2>
+                <p className="text-[10px] text-white/80">Compare Verified Visa Agents</p>
               </div>
             </div>
-            <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition-all">
-              <X className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-1">
+              <button 
+                onClick={() => setIsFullscreen(!isFullscreen)} 
+                className="p-1.5 hover:bg-white/20 rounded-full transition-all"
+                title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+              >
+                {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+              </button>
+              <button onClick={onClose} className="p-1.5 hover:bg-white/20 rounded-full transition-all">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* Quick Info */}
-          <div className="flex flex-wrap gap-4 text-xs mb-3">
-            <div className="flex items-center gap-1">
-              <Clock className="w-4 h-4" />
-              <span>{pricing?.express?.processing_days || '3-4'} Days</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <span>₹{pricing?.express?.price?.toLocaleString() || '6,999'} - ₹12,000</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Building className="w-4 h-4" />
-              <span>VFS Global</span>
-            </div>
+          <div className="flex flex-wrap gap-3 text-xs mb-2">
+            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {pricing?.express?.processing_days || '3-4'} Days</span>
+            <span>₹6,000 - ₹12,000</span>
+            <span className="flex items-center gap-1"><Building className="w-3 h-3" /> VFS Global</span>
           </div>
 
           {/* Progress Steps */}
           <div className="flex items-center justify-between">
             {steps.map((step, idx) => (
               <div key={step.num} className="flex items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-                  currentStep >= step.num 
-                    ? 'bg-white text-orange-600' 
-                    : 'bg-white/30 text-white'
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                  currentStep >= step.num ? 'bg-white text-orange-600' : 'bg-white/30 text-white'
                 }`}>
-                  {currentStep > step.num ? <Check className="w-4 h-4" /> : step.num}
+                  {currentStep > step.num ? <Check className="w-3 h-3" /> : step.num}
                 </div>
                 {idx < steps.length - 1 && (
-                  <div className={`w-6 md:w-12 h-1 mx-1 rounded ${
-                    currentStep > step.num ? 'bg-white' : 'bg-white/30'
-                  }`} />
+                  <div className={`w-4 md:w-10 h-0.5 mx-0.5 rounded ${currentStep > step.num ? 'bg-white' : 'bg-white/30'}`} />
                 )}
               </div>
             ))}
           </div>
           <div className="flex justify-between mt-1">
             {steps.map((step) => (
-              <p key={step.num} className="text-xs text-white/80 text-center flex-1 hidden md:block">{step.title}</p>
+              <p key={step.num} className="text-[9px] text-white/80 text-center flex-1">{step.title}</p>
             ))}
           </div>
         </div>
 
         {/* Verified Banner */}
-        <div className="bg-green-50 border-b border-green-200 px-4 py-2 flex items-center justify-center gap-2">
-          <Shield className="w-4 h-4 text-green-600" />
-          <span className="text-sm text-green-700">All our agents are background-verified and performance-monitored for your safety.</span>
+        <div className="bg-green-50 border-b border-green-200 px-3 py-1.5 flex items-center justify-center gap-2">
+          <Shield className="w-3 h-3 text-green-600" />
+          <span className="text-xs text-green-700">All agents are verified and performance-monitored</span>
         </div>
 
         {/* Content */}
-        <div className="p-4 overflow-y-auto max-h-[calc(90vh-280px)]">
+        <div className={`p-4 overflow-y-auto ${isFullscreen ? 'max-h-[calc(100vh-200px)]' : 'max-h-[calc(90vh-240px)]'}`}>
           {currentStep === 1 && renderStep1()}
           {currentStep === 2 && renderStep2()}
           {currentStep === 3 && renderStep3()}
@@ -635,21 +635,18 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t bg-gray-50 flex items-center justify-between">
+        <div className="p-3 border-t bg-gray-50 flex items-center justify-between">
           <button
             onClick={() => setCurrentStep(prev => Math.max(1, prev - 1))}
             disabled={currentStep === 1}
-            className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all ${
-              currentStep === 1 
-                ? 'text-gray-400 cursor-not-allowed' 
-                : 'text-gray-700 hover:bg-gray-200'
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1 transition-all ${
+              currentStep === 1 ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-200'
             }`}
           >
-            <ChevronLeft className="w-4 h-4" />
-            Back
+            <ChevronLeft className="w-4 h-4" /> Back
           </button>
 
-          <span className="text-sm text-gray-500">Step {currentStep} of {totalSteps}</span>
+          <span className="text-xs text-gray-500">{currentStep}/{totalSteps}</span>
 
           {currentStep < totalSteps ? (
             <button
@@ -660,16 +657,12 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
                 }
                 setCurrentStep(prev => Math.min(totalSteps, prev + 1));
               }}
-              className="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium flex items-center gap-2 transition-all"
+              className="px-4 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-medium flex items-center gap-1 transition-all"
             >
-              {currentStep === 1 ? 'Select & Continue' : 'Continue'}
-              <ChevronRight className="w-4 h-4" />
+              {currentStep === 1 ? 'Select' : 'Next'} <ChevronRight className="w-4 h-4" />
             </button>
           ) : (
-            <button
-              onClick={onClose}
-              className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-all"
-            >
+            <button onClick={onClose} className="px-4 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-medium">
               Done
             </button>
           )}

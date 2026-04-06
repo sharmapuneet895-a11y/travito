@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { X, ChevronRight, ChevronLeft, Check, FileText, Calendar, Clock, Shield, Phone, CheckCircle, User, HelpCircle, MessageCircle, Building, Loader2, Star, Users, ClipboardCheck, Headphones } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, Check, FileText, Calendar, Clock, Shield, Phone, CheckCircle, User, HelpCircle, MessageCircle, Building, Loader2, Star, Users, ClipboardCheck, Headphones, Maximize2, Minimize2 } from 'lucide-react';
 
 const AssistedServiceWizard = ({ isOpen, onClose, country, visaType = 'tourist', pricing }) => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -482,69 +483,66 @@ const AssistedServiceWizard = ({ isOpen, onClose, country, visaType = 'tourist',
   );
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-2 md:p-4">
+      <div className={`bg-white rounded-xl overflow-hidden shadow-2xl transition-all duration-300 ${
+        isFullscreen ? 'w-full h-full max-w-none max-h-none rounded-none' : 'max-w-4xl w-full max-h-[90vh]'
+      }`}>
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 text-white">
-          <div className="flex items-center justify-between mb-3">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-3 text-white">
+          <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <Shield className="w-6 h-6" />
+              <Shield className="w-5 h-5" />
               <div>
-                <h2 className="font-bold text-lg">{country?.country_name} {visaType.charAt(0).toUpperCase() + visaType.slice(1)} Visa</h2>
-                <p className="text-xs text-white/80">Assisted Application Service</p>
+                <h2 className="font-bold">{country?.country_name} - Assisted Service</h2>
+                <p className="text-[10px] text-white/80">Expert Help for Your Visa</p>
               </div>
             </div>
-            <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition-all">
-              <X className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-1">
+              <button 
+                onClick={() => setIsFullscreen(!isFullscreen)} 
+                className="p-1.5 hover:bg-white/20 rounded-full transition-all"
+                title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+              >
+                {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+              </button>
+              <button onClick={onClose} className="p-1.5 hover:bg-white/20 rounded-full transition-all">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* Quick Info */}
-          <div className="flex flex-wrap gap-4 text-xs mb-3">
-            <div className="flex items-center gap-1">
-              <Clock className="w-4 h-4" />
-              <span>{pricing?.assisted?.processing_days || '5-7'} Days</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <span>₹{(pricing?.assisted?.price || 4999).toLocaleString()}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <span>90 Days Max Stay</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Building className="w-4 h-4" />
-              <span>VFS Global</span>
-            </div>
+          <div className="flex flex-wrap gap-3 text-xs mb-2">
+            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {pricing?.assisted?.processing_days || '5-7'} Days</span>
+            <span>₹{(pricing?.assisted?.price || 4999).toLocaleString()}</span>
+            <span>90 Days Max</span>
+            <span className="flex items-center gap-1"><Building className="w-3 h-3" /> VFS Global</span>
           </div>
 
           {/* Progress Steps */}
           <div className="flex items-center justify-between">
             {steps.map((step, idx) => (
               <div key={step.num} className="flex items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-                  currentStep >= step.num 
-                    ? 'bg-white text-blue-600' 
-                    : 'bg-white/30 text-white'
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                  currentStep >= step.num ? 'bg-white text-blue-600' : 'bg-white/30 text-white'
                 }`}>
-                  {currentStep > step.num ? <Check className="w-4 h-4" /> : step.num}
+                  {currentStep > step.num ? <Check className="w-3 h-3" /> : step.num}
                 </div>
                 {idx < steps.length - 1 && (
-                  <div className={`w-6 md:w-12 h-1 mx-1 rounded ${
-                    currentStep > step.num ? 'bg-white' : 'bg-white/30'
-                  }`} />
+                  <div className={`w-4 md:w-10 h-0.5 mx-0.5 rounded ${currentStep > step.num ? 'bg-white' : 'bg-white/30'}`} />
                 )}
               </div>
             ))}
           </div>
           <div className="flex justify-between mt-1">
             {steps.map((step) => (
-              <p key={step.num} className="text-xs text-white/80 text-center flex-1 hidden md:block">{step.title}</p>
+              <p key={step.num} className="text-[9px] text-white/80 text-center flex-1">{step.title}</p>
             ))}
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-4 overflow-y-auto max-h-[calc(90vh-220px)]">
+        <div className={`p-4 overflow-y-auto ${isFullscreen ? 'max-h-[calc(100vh-180px)]' : 'max-h-[calc(90vh-200px)]'}`}>
           {currentStep === 1 && renderStep1()}
           {currentStep === 2 && renderStep2()}
           {currentStep === 3 && renderStep3()}
@@ -553,35 +551,28 @@ const AssistedServiceWizard = ({ isOpen, onClose, country, visaType = 'tourist',
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t bg-gray-50 flex items-center justify-between">
+        <div className="p-3 border-t bg-gray-50 flex items-center justify-between">
           <button
             onClick={() => setCurrentStep(prev => Math.max(1, prev - 1))}
             disabled={currentStep === 1}
-            className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all ${
-              currentStep === 1 
-                ? 'text-gray-400 cursor-not-allowed' 
-                : 'text-gray-700 hover:bg-gray-200'
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1 transition-all ${
+              currentStep === 1 ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-200'
             }`}
           >
-            <ChevronLeft className="w-4 h-4" />
-            Back
+            <ChevronLeft className="w-4 h-4" /> Back
           </button>
 
-          <span className="text-sm text-gray-500">Step {currentStep} of {totalSteps}</span>
+          <span className="text-xs text-gray-500">{currentStep}/{totalSteps}</span>
 
           {currentStep < totalSteps ? (
             <button
               onClick={() => setCurrentStep(prev => Math.min(totalSteps, prev + 1))}
-              className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium flex items-center gap-2 transition-all"
+              className="px-4 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center gap-1 transition-all"
             >
-              Continue
-              <ChevronRight className="w-4 h-4" />
+              Next <ChevronRight className="w-4 h-4" />
             </button>
           ) : (
-            <button
-              onClick={onClose}
-              className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-all"
-            >
+            <button onClick={onClose} className="px-4 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-medium">
               Done
             </button>
           )}
