@@ -26,8 +26,22 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - "Check Eligibility" button (pre-filled with searched country)
 - "Document Checklist" button (pre-filled with searched country)
 - "Explore Visa Options" button
+- **Visa Options Cards** (3 cards with dynamic AI pricing):
+  - Express eVisa (Most Popular) - Fast processing
+  - Self Apply (Budget) - Opens DIY Visa Wizard
+  - Assisted (Balanced) - Expert guidance
 
-### 4. Document Checklist Generator ✅
+### 4. DIY Visa Wizard ✅ (NEW - Dec 2025)
+- 5-step guided workflow for self-application:
+  1. **Check Requirements** - Eligibility form (citizenship, purpose, entry date)
+  2. **Document Checklist** - Interactive checklist with progress tracking
+  3. **Form Guidance** - Tips for filling official application forms
+  4. **Book Appointment** - VFS Global center selection with dates
+  5. **Track Application** - Timeline and completion status
+- Triggered from "Self Apply" card's "Apply Now" button
+- Country and visa type pre-populated from search context
+
+### 5. Document Checklist Generator ✅
 - AI-powered using GPT-5.2
 - Generates mandatory + supporting documents
 - Interactive checkboxes with progress tracking
@@ -35,12 +49,12 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - Print functionality
 - Optimized prompt for ~25s response time
 
-### 5. User Profile & Checklists ✅
+### 6. User Profile & Checklists ✅
 - Save/update/delete document checklists
 - View progress on saved checklists
 - Authentication via email/password
 
-### 6. Visa Eligibility Checker ✅
+### 7. Visa Eligibility Checker ✅
 - Extended country list (50+ countries)
 - Pre-selected country from search
 
@@ -84,6 +98,16 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - [x] Fixed weather data loading in country card (async non-blocking load)
 - [x] Verified visa map color coding working correctly
 
+## Completed Work (December 2025)
+- [x] Added "How Travito Works" 3-step visual cards below hero
+- [x] Implemented dynamic AI Visa Pricing (`/api/visa/pricing`)
+- [x] Added 3 Visa Option cards (Express eVisa, Self Apply, Assisted)
+- [x] Added Visa Type dropdown to search bar
+- [x] Simplified search flow (button/Enter required, removed alternatives)
+- [x] **DIY Visa Wizard Integration** - 5-step guided self-application flow
+- [x] Made Compare Visa Options table mobile-responsive
+- [x] Google Site Verification HTML added
+
 ## Pending Issues
 | Priority | Issue | Status |
 |----------|-------|--------|
@@ -102,19 +126,21 @@ Comprehensive travel information website for Indian travelers, providing visa in
 ```
 /app/
 ├── backend/
-│   ├── server.py          # Main API server
+│   ├── server.py          # Main API server (includes /api/visa/pricing)
 │   └── .env               # EMERGENT_LLM_KEY, MONGO_URL
 └── frontend/
     └── src/
         ├── components/
         │   ├── CountryDetailModal.js
+        │   ├── DIYVisaWizard.js      # NEW - 5-step visa application wizard
         │   ├── DocumentChecklistGenerator.js
         │   ├── Navigation.js
         │   └── VisaEligibilityChecker.js
         ├── pages/
-        │   ├── Seasons.js (Homepage)
+        │   ├── Seasons.js (Homepage + Visa Intelligence + Visa Options)
         │   ├── UserProfile.js
         │   └── Visa.js
         └── context/
-            └── AuthContext.js
+            ├── AuthContext.js
+            └── WishlistContext.js
 ```
