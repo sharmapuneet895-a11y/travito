@@ -7,7 +7,7 @@ import CountryDetailModal from '../components/CountryDetailModal';
 import BackToTop from '../components/BackToTop';
 import VisaEligibilityChecker from '../components/VisaEligibilityChecker';
 import DocumentChecklistGenerator from '../components/DocumentChecklistGenerator';
-import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun, FileText, Clock, IndianRupee, Plane, X, ChevronLeft, ChevronRight, Dumbbell, CheckCircle, ClipboardList, Loader2 } from 'lucide-react';
+import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun, FileText, Clock, IndianRupee, Plane, X, ChevronLeft, ChevronRight, ChevronDown, Dumbbell, CheckCircle, ClipboardList, Loader2 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -827,6 +827,19 @@ const Seasons = () => {
   const [visaPricing, setVisaPricing] = useState(null);
   const [pricingLoading, setPricingLoading] = useState(false);
   
+  // Visa type selection state
+  const [selectedVisaType, setSelectedVisaType] = useState('tourist');
+  const visaTypes = [
+    { value: 'tourist', label: 'Tourist Visa' },
+    { value: 'business', label: 'Business Visa' },
+    { value: 'student', label: 'Student Visa' },
+    { value: 'work', label: 'Work Visa' },
+    { value: 'transit', label: 'Transit Visa' },
+    { value: 'medical', label: 'Medical Visa' },
+    { value: 'conference', label: 'Conference Visa' },
+    { value: 'journalist', label: 'Journalist Visa' }
+  ];
+  
   // Date state - default to current month
   const today = new Date();
   const [selectedMonth, setSelectedMonth] = useState(today.getMonth()); // 0-11
@@ -1188,6 +1201,30 @@ const Seasons = () => {
             {/* Search Box */}
             <div className="bg-white rounded-xl p-3 sm:p-4 md:p-5 shadow-xl max-w-4xl">
               <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-end">
+                {/* Visa Type Dropdown */}
+                <div className="md:w-40">
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: '#0B3C5D' }}>
+                    Visa Type
+                  </label>
+                  <div className="relative">
+                    <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: '#94A3B8' }} />
+                    <select
+                      value={selectedVisaType}
+                      onChange={(e) => setSelectedVisaType(e.target.value)}
+                      className="w-full pl-9 pr-4 py-3 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400 appearance-none cursor-pointer"
+                      style={{ border: '1px solid #E2E8F0', color: '#0B3C5D', backgroundColor: 'white' }}
+                      data-testid="visa-type-select"
+                    >
+                      {visaTypes.map((type) => (
+                        <option key={type.value} value={type.value}>
+                          {type.label}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 pointer-events-none" style={{ color: '#94A3B8' }} />
+                  </div>
+                </div>
+
                 {/* Destination Input */}
                 <div className="flex-1 relative">
                   <label className="block text-xs font-semibold mb-1.5 flex items-center gap-2" style={{ color: '#0B3C5D' }}>
@@ -1788,6 +1825,18 @@ const Seasons = () => {
                   </div>
                 </div>
                 )}
+
+                {/* View Country Details Button */}
+                <div className="mt-6 text-center">
+                  <button
+                    onClick={() => setSelectedCountry(searchResult.country)}
+                    className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl text-sm transition-all shadow-lg hover:shadow-xl inline-flex items-center gap-2"
+                    data-testid="view-country-details-btn"
+                  >
+                    <Compass className="w-5 h-5" />
+                    View Complete {searchResult.country.country_name} Travel Guide
+                  </button>
+                </div>
               </div>
             )}
           </div>
