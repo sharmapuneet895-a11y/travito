@@ -7,7 +7,6 @@ import CountryDetailModal from '../components/CountryDetailModal';
 import BackToTop from '../components/BackToTop';
 import VisaEligibilityChecker from '../components/VisaEligibilityChecker';
 import DocumentChecklistGenerator from '../components/DocumentChecklistGenerator';
-import DIYVisaWizard from '../components/DIYVisaWizard';
 import AgentFinderWizard from '../components/AgentFinderWizard';
 import AssistedServiceWizard from '../components/AssistedServiceWizard';
 import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun, FileText, Clock, IndianRupee, Plane, X, ChevronLeft, ChevronRight, ChevronDown, Dumbbell, CheckCircle, ClipboardList, Loader2 } from 'lucide-react';
@@ -825,7 +824,6 @@ const Seasons = () => {
   // Visa tools state
   const [showEligibilityChecker, setShowEligibilityChecker] = useState(false);
   const [showDocumentChecklist, setShowDocumentChecklist] = useState(false);
-  const [showDIYWizard, setShowDIYWizard] = useState(false);
   const [showAgentFinder, setShowAgentFinder] = useState(false);
   const [showAssistedService, setShowAssistedService] = useState(false);
   
@@ -1347,97 +1345,6 @@ const Seasons = () => {
         </div>
       </div>
 
-      {/* ========== HOW IT WORKS SECTION ========== */}
-      <div className="bg-gradient-to-b from-gray-50 to-white py-12 border-b" style={{ borderColor: '#E2E8F0' }}>
-        <div className="max-w-5xl mx-auto px-6">
-          {/* Section Separator */}
-          <div className="flex items-center gap-4 mb-10">
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-            <h2 className="text-lg font-bold tracking-widest" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
-              HOW TRAVITO WORKS
-            </h2>
-            <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            {/* Step 1 */}
-            <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all border border-gray-800/20 group">
-              <div className="absolute top-3 left-3 z-10">
-                <span className="w-7 h-7 bg-orange-500 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-md">
-                  1
-                </span>
-              </div>
-              <div className="h-32 overflow-hidden">
-                <img 
-                  src="https://images.pexels.com/photos/1078850/pexels-photo-1078850.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
-                  alt="Choose destination"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 h-32 bg-gradient-to-t from-black/40 to-transparent"></div>
-              </div>
-              <div className="p-5 text-center">
-                <h3 className="text-base font-bold mb-1.5" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
-                  Choose Your Destination
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  Select where you want to travel
-                </p>
-              </div>
-            </div>
-
-            {/* Step 2 */}
-            <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all border border-gray-800/20 group">
-              <div className="absolute top-3 left-3 z-10">
-                <span className="w-7 h-7 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-md">
-                  2
-                </span>
-              </div>
-              <div className="h-32 overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1639034741369-1e0c771adaeb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA2MjJ8MHwxfHNlYXJjaHwyfHx2aXNhJTIwcGFzc3BvcnQlMjBkb2N1bWVudHMlMjBjb21wYXJpc29ufGVufDB8fHx8MTc3NDM3NjIwNXww&ixlib=rb-4.1.0&q=85"
-                  alt="Compare visa options"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 h-32 bg-gradient-to-t from-black/40 to-transparent"></div>
-              </div>
-              <div className="p-5 text-center">
-                <h3 className="text-base font-bold mb-1.5" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
-                  Compare Visa Options
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  See fastest, cheapest & safest ways
-                </p>
-              </div>
-            </div>
-
-            {/* Step 3 */}
-            <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all border border-gray-800/20 group">
-              <div className="absolute top-3 left-3 z-10">
-                <span className="w-7 h-7 bg-green-500 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-md">
-                  3
-                </span>
-              </div>
-              <div className="h-32 overflow-hidden">
-                <img 
-                  src="https://images.pexels.com/photos/4173229/pexels-photo-4173229.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
-                  alt="Apply with confidence"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 h-32 bg-gradient-to-t from-black/40 to-transparent"></div>
-              </div>
-              <div className="p-5 text-center">
-                <h3 className="text-base font-bold mb-1.5" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
-                  Apply with Confidence
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  DIY or get expert help
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
 
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto px-6 py-8">
@@ -1459,12 +1366,9 @@ const Seasons = () => {
           {/* Always Visible Visa Section */}
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border mb-8" style={{ borderColor: '#E2E8F0' }} data-testid="visa-section-always">
             <div className="text-center mb-5">
-              <h3 className="text-xl font-bold" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
-                Confused About Visa? We Simplify It.
-              </h3>
               <p className="text-sm text-gray-600">
                 {searchResult 
-                  ? `Everything you need to know before you travel to ${searchResult.country.country_name}` 
+                  ? `Visa details for ${searchResult.country.country_name}` 
                   : 'Enter destination and travel dates for details'}
               </p>
             </div>
@@ -1508,7 +1412,7 @@ const Seasons = () => {
               </div>
             </div>
 
-            {/* CTA Buttons - Link to Visa Page + Eligibility + Checklist */}
+            {/* CTA Buttons - Link to Visa Page */}
             <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-3">
               <Link
                 to="/visa#visa-options"
@@ -1519,26 +1423,6 @@ const Seasons = () => {
                 Explore Visa Options
                 <Plane className="w-4 h-4" />
               </Link>
-              {searchResult && (
-                <>
-                  <button
-                    onClick={() => setShowEligibilityChecker(true)}
-                    className="px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-semibold text-sm sm:text-base transition-all hover:opacity-90 inline-flex items-center justify-center gap-2 bg-blue-500 text-white"
-                    data-testid="visa-eligibility-btn"
-                  >
-                    <CheckCircle className="w-4 h-4" />
-                    Check Eligibility
-                  </button>
-                  <button
-                    onClick={() => setShowDocumentChecklist(true)}
-                    className="px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-semibold text-sm sm:text-base transition-all hover:opacity-90 inline-flex items-center justify-center gap-2 bg-indigo-500 text-white"
-                    data-testid="document-checklist-btn"
-                  >
-                    <ClipboardList className="w-4 h-4" />
-                    Document Checklist
-                  </button>
-                </>
-              )}
             </div>
 
             {/* Visa Options Cards - Only show when destination is selected */}
@@ -1553,8 +1437,8 @@ const Seasons = () => {
                     <span className="ml-2 text-gray-600">Fetching best prices...</span>
                   </div>
                 ) : (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Best Option - Express eVisa */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                  {/* Explore Agents Option */}
                   <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-5 border-2 border-orange-400 relative shadow-lg hover:shadow-xl transition-all" data-testid="visa-option-best">
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                       <span className="bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full">
@@ -1562,27 +1446,27 @@ const Seasons = () => {
                       </span>
                     </div>
                     <div className="text-center mt-2">
-                      <h4 className="text-lg font-bold text-orange-600 mb-1">Express eVisa</h4>
+                      <h4 className="text-lg font-bold text-orange-600 mb-1">Explore Agents</h4>
                       <p className="text-2xl font-bold" style={{ color: '#0B3C5D' }}>
                         ₹{visaPricing?.express?.price?.toLocaleString() || '6,999'}
                       </p>
                       <div className="flex items-center justify-center gap-1 text-gray-600 text-sm mt-1">
                         <Clock className="w-4 h-4" />
-                        <span>Processing Time: <strong>{visaPricing?.express?.processing_days || '3-4'} days</strong></span>
+                        <span>Processing: <strong>{visaPricing?.express?.processing_days || '3-4'} days</strong></span>
                       </div>
                     </div>
                     <div className="mt-4 space-y-2">
                       <div className="flex items-center gap-2 text-sm text-gray-700">
                         <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span>Fast approval</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span>Minimal effort</span>
+                        <span>Verified visa agents</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-700">
                         <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
                         <span>High success rate</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <span>End-to-end support</span>
                       </div>
                     </div>
                     <div className="mt-4 pt-3 border-t border-orange-200">
@@ -1596,53 +1480,11 @@ const Seasons = () => {
                     </div>
                   </div>
 
-                  {/* Self Apply Option */}
-                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 border border-green-300 relative shadow hover:shadow-lg transition-all" data-testid="visa-option-budget">
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                      <span className="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                        Budget
-                      </span>
-                    </div>
-                    <div className="text-center mt-2">
-                      <h4 className="text-lg font-bold text-green-600 mb-1">Self Apply</h4>
-                      <p className="text-2xl font-bold" style={{ color: '#0B3C5D' }}>
-                        ₹{visaPricing?.self_apply?.price?.toLocaleString() || '5,800'}
-                      </p>
-                      <div className="flex items-center justify-center gap-1 text-gray-600 text-sm mt-1">
-                        <Clock className="w-4 h-4" />
-                        <span>Processing Time: <strong>{visaPricing?.self_apply?.processing_days || '5-10'} days</strong></span>
-                      </div>
-                    </div>
-                    <div className="mt-4 space-y-2">
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span>Cheapest method</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span>Full control</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span>Takes more time</span>
-                      </div>
-                    </div>
-                    <div className="mt-4 pt-3 border-t border-green-200">
-                      <button 
-                        onClick={() => setShowDIYWizard(true)}
-                        className="w-full py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg text-sm transition-all"
-                        data-testid="self-apply-btn"
-                      >
-                        Apply Now
-                      </button>
-                    </div>
-                  </div>
-
                   {/* Assisted Option */}
-                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-300 relative shadow hover:shadow-lg transition-all" data-testid="visa-option-balanced">
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border-2 border-blue-400 relative shadow-lg hover:shadow-xl transition-all" data-testid="visa-option-balanced">
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                       <span className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                        Balanced
+                        Recommended
                       </span>
                     </div>
                     <div className="text-center mt-2">
@@ -1652,7 +1494,7 @@ const Seasons = () => {
                       </p>
                       <div className="flex items-center justify-center gap-1 text-gray-600 text-sm mt-1">
                         <Clock className="w-4 h-4" />
-                        <span>Processing Time: <strong>{visaPricing?.assisted?.processing_days || '4-7'} days</strong></span>
+                        <span>Processing: <strong>{visaPricing?.assisted?.processing_days || '4-7'} days</strong></span>
                       </div>
                     </div>
                     <div className="mt-4 space-y-2">
@@ -1662,7 +1504,7 @@ const Seasons = () => {
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-700">
                         <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span>Medium processing time</span>
+                        <span>Document verification</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-700">
                         <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
@@ -1682,15 +1524,31 @@ const Seasons = () => {
                 </div>
                 )}
 
-                {/* View Country Details Button */}
-                <div className="mt-6 text-center">
+                {/* Action Buttons - Travel Guide, Eligibility, Checklist */}
+                <div className="mt-6 flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-3">
                   <button
                     onClick={() => setSelectedCountry(searchResult.country)}
-                    className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-xl text-sm transition-all shadow-lg hover:shadow-xl inline-flex items-center gap-2"
+                    className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-lg text-sm transition-all shadow-lg hover:shadow-xl inline-flex items-center justify-center gap-2"
                     data-testid="view-country-details-btn"
                   >
-                    <Compass className="w-5 h-5" />
-                    View Complete {searchResult.country.country_name} Travel Guide
+                    <Compass className="w-4 h-4" />
+                    {searchResult.country.country_name} Travel Guide
+                  </button>
+                  <button
+                    onClick={() => setShowEligibilityChecker(true)}
+                    className="px-5 py-2.5 rounded-lg font-semibold text-sm transition-all hover:opacity-90 inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white"
+                    data-testid="visa-eligibility-btn"
+                  >
+                    <CheckCircle className="w-4 h-4" />
+                    Check Eligibility
+                  </button>
+                  <button
+                    onClick={() => setShowDocumentChecklist(true)}
+                    className="px-5 py-2.5 rounded-lg font-semibold text-sm transition-all hover:opacity-90 inline-flex items-center justify-center gap-2 bg-violet-500 hover:bg-violet-600 text-white"
+                    data-testid="document-checklist-btn"
+                  >
+                    <ClipboardList className="w-4 h-4" />
+                    Document Checklist
                   </button>
                 </div>
               </div>
@@ -2059,14 +1917,6 @@ const Seasons = () => {
         isOpen={showDocumentChecklist}
         onClose={() => setShowDocumentChecklist(false)}
         preSelectedCountry={searchResult?.country?.country_name}
-      />
-
-      {/* DIY Visa Wizard Modal */}
-      <DIYVisaWizard
-        isOpen={showDIYWizard}
-        onClose={() => setShowDIYWizard(false)}
-        country={searchResult?.country}
-        visaType={selectedVisaType}
       />
 
       {/* Agent Finder Wizard Modal */}
