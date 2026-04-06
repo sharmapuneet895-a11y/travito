@@ -7,6 +7,7 @@ import CountryDetailModal from '../components/CountryDetailModal';
 import BackToTop from '../components/BackToTop';
 import VisaEligibilityChecker from '../components/VisaEligibilityChecker';
 import DocumentChecklistGenerator from '../components/DocumentChecklistGenerator';
+import DIYVisaWizard from '../components/DIYVisaWizard';
 import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun, FileText, Clock, IndianRupee, Plane, X, ChevronLeft, ChevronRight, ChevronDown, Dumbbell, CheckCircle, ClipboardList, Loader2 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
@@ -822,6 +823,7 @@ const Seasons = () => {
   // Visa tools state
   const [showEligibilityChecker, setShowEligibilityChecker] = useState(false);
   const [showDocumentChecklist, setShowDocumentChecklist] = useState(false);
+  const [showDIYWizard, setShowDIYWizard] = useState(false);
   
   // AI-powered visa pricing state
   const [visaPricing, setVisaPricing] = useState(null);
@@ -1619,10 +1621,11 @@ const Seasons = () => {
                     </div>
                     <div className="mt-4 pt-3 border-t border-green-200">
                       <button 
-                        onClick={() => setShowDocumentChecklist(true)}
+                        onClick={() => setShowDIYWizard(true)}
                         className="w-full py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg text-sm transition-all"
+                        data-testid="self-apply-btn"
                       >
-                        View Document Checklist
+                        Apply Now
                       </button>
                     </div>
                   </div>
@@ -2044,6 +2047,14 @@ const Seasons = () => {
         isOpen={showDocumentChecklist}
         onClose={() => setShowDocumentChecklist(false)}
         preSelectedCountry={searchResult?.country?.country_name}
+      />
+
+      {/* DIY Visa Wizard Modal */}
+      <DIYVisaWizard
+        isOpen={showDIYWizard}
+        onClose={() => setShowDIYWizard(false)}
+        country={searchResult?.country}
+        visaType={selectedVisaType}
       />
 
       <BackToTop />
