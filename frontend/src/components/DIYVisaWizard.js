@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, ChevronRight, ChevronLeft, Check, FileText, Calendar, MapPin, Clock, AlertCircle, CheckCircle, ExternalLink, Building, Phone, Mail, Plane, Hotel, Shield, Camera, CreditCard, User, Globe, HelpCircle, Loader2 } from 'lucide-react';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const DIYVisaWizard = ({ isOpen, onClose, country, visaType = 'tourist' }) => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -12,6 +14,9 @@ const DIYVisaWizard = ({ isOpen, onClose, country, visaType = 'tourist' }) => {
   const [checkedDocs, setCheckedDocs] = useState({});
   const [selectedCity, setSelectedCity] = useState('Mumbai');
   const [selectedDate, setSelectedDate] = useState('');
+  const [dynamicDocuments, setDynamicDocuments] = useState([]);
+  const [loadingDocs, setLoadingDocs] = useState(false);
+  const [docsError, setDocsError] = useState(null);
 
   const totalSteps = 5;
 
@@ -23,7 +28,8 @@ const DIYVisaWizard = ({ isOpen, onClose, country, visaType = 'tourist' }) => {
     { num: 5, title: 'Track Application', icon: Globe },
   ];
 
-  const documents = [
+  // Default fallback documents
+  const defaultDocuments = [
     { id: 'passport', name: 'Passport', desc: 'Valid for at least 6 months from travel date, with 2 blank pages', required: true },
     { id: 'photos', name: 'Photographs', desc: '2 recent photos, 35mm x 45mm, white background', required: true },
     { id: 'flight', name: 'Flight Bookings', desc: 'Confirmed round-trip flight reservation', required: true },
@@ -34,6 +40,87 @@ const DIYVisaWizard = ({ isOpen, onClose, country, visaType = 'tourist' }) => {
     { id: 'itinerary', name: 'Travel Itinerary', desc: 'Day-by-day plan of your trip', required: false },
     { id: 'cover', name: 'Cover Letter', desc: 'Explaining purpose of visit', required: false },
   ];
+
+  // Fetch dynamic documents when entering step 2
+  useEffect(() => {
+    if (currentStep === 2 && country?.country_name && dynamicDocuments.length === 0 && !loadingDocs) {
+      fetchDynamicDocuments();
+    }
+  }, [currentStep, country]);
+
+  const fetchDynamicDocuments = async () => {
+    if (!country?.country_name) return;
+    
+    setLoadingDocs(true);
+    setDocsError(null);
+    
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/visa/document-checklist`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          country: country.country_name,
+          visa_type: formData.purposeOfTravel,
+          purpose: formData.purposeOfTravel,
+          citizenship: formData.citizenship
+        })
+      });
+      
+      if (!response.ok) throw new Error('Failed to fetch documents');
+      
+      const data = await response.json();
+      
+      // Parse the AI response into document objects
+      if (data.checklist) {
+        const parsedDocs = parseChecklistToDocuments(data.checklist);
+        if (parsedDocs.length > 0) {
+          setDynamicDocuments(parsedDocs);
+        } else {
+          setDynamicDocuments(defaultDocuments);
+        }
+      } else {
+        setDynamicDocuments(defaultDocuments);
+      }
+    } catch (error) {
+      console.error('Error fetching documents:', error);
+      setDocsError('Could not load dynamic checklist. Using standard documents.');
+      setDynamicDocuments(defaultDocuments);
+    } finally {
+      setLoadingDocs(false);
+    }
+  };
+
+  const parseChecklistToDocuments = (checklist) => {
+    // Parse the AI-generated checklist text into document objects
+    const docs = [];
+    const lines = checklist.split('\n').filter(line => line.trim());
+    
+    let idCounter = 0;
+    lines.forEach(line => {
+      const trimmed = line.trim();
+      if (trimmed.startsWith('-') || trimmed.startsWith('•') || trimmed.match(/^\d+\./)) {
+        const cleanLine = trimmed.replace(/^[-•\d.]+\s*/, '').trim();
+        if (cleanLine.length > 5) {
+          const [name, ...descParts] = cleanLine.split(':');
+          const desc = descParts.join(':').trim() || cleanLine;
+          const isRequired = cleanLine.toLowerCase().includes('required') || 
+                           cleanLine.toLowerCase().includes('mandatory') ||
+                           !cleanLine.toLowerCase().includes('optional');
+          
+          docs.push({
+            id: `doc_${idCounter++}`,
+            name: name.trim().substring(0, 50),
+            desc: desc.substring(0, 150),
+            required: isRequired
+          });
+        }
+      }
+    });
+    
+    return docs.slice(0, 12); // Limit to 12 documents
+  };
+
+  const documents = dynamicDocuments.length > 0 ? dynamicDocuments : defaultDocuments;
 
   const cities = ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Kolkata', 'Hyderabad', 'Pune', 'Ahmedabad'];
   
@@ -143,24 +230,50 @@ const DIYVisaWizard = ({ isOpen, onClose, country, visaType = 'tourist' }) => {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-xl font-bold text-gray-800">Your Document Checklist</h3>
-          <p className="text-gray-600 text-sm">Based on your answers, here's what you need to prepare</p>
+          <p className="text-gray-600 text-sm">
+            {loadingDocs ? 'Loading personalized checklist...' : `Based on your answers, here's what you need for ${country?.country_name || 'your destination'}`}
+          </p>
         </div>
-        <div className="text-right">
-          <span className="text-2xl font-bold text-blue-600">{completedDocs}/{documents.length}</span>
-          <p className="text-xs text-gray-500">Completed</p>
-        </div>
+        {!loadingDocs && (
+          <div className="text-right">
+            <span className="text-2xl font-bold text-blue-600">{completedDocs}/{documents.length}</span>
+            <p className="text-xs text-gray-500">Completed</p>
+          </div>
+        )}
       </div>
+
+      {/* Loading State */}
+      {loadingDocs && (
+        <div className="flex flex-col items-center justify-center py-8">
+          <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-3" />
+          <p className="text-sm text-gray-600">Generating personalized checklist for {country?.country_name}...</p>
+          <p className="text-xs text-gray-400 mt-1">This may take a few seconds</p>
+        </div>
+      )}
+
+      {/* Error Message */}
+      {docsError && !loadingDocs && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+          <p className="text-sm text-yellow-700 flex items-center gap-2">
+            <AlertCircle className="w-4 h-4" />
+            {docsError}
+          </p>
+        </div>
+      )}
 
       {/* Progress Bar */}
-      <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
-        <div 
-          className="bg-green-500 h-2 rounded-full transition-all duration-300"
-          style={{ width: `${(completedDocs / documents.length) * 100}%` }}
-        />
-      </div>
+      {!loadingDocs && (
+        <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
+          <div 
+            className="bg-green-500 h-2 rounded-full transition-all duration-300"
+            style={{ width: `${(completedDocs / documents.length) * 100}%` }}
+          />
+        </div>
+      )}
 
       {/* Documents List */}
-      <div className="space-y-2 max-h-64 overflow-y-auto">
+      {!loadingDocs && (
+        <div className="space-y-2 max-h-64 overflow-y-auto">
         {documents.map((doc) => (
           <div 
             key={doc.id}
@@ -188,8 +301,10 @@ const DIYVisaWizard = ({ isOpen, onClose, country, visaType = 'tourist' }) => {
           </div>
         ))}
       </div>
+      )}
 
       {/* Tips Section */}
+      {!loadingDocs && (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
         <div className="bg-green-50 rounded-lg p-4 border border-green-200">
           <p className="font-semibold text-green-800 text-sm mb-2">Tips to Get Approved</p>
@@ -208,6 +323,7 @@ const DIYVisaWizard = ({ isOpen, onClose, country, visaType = 'tourist' }) => {
           </ul>
         </div>
       </div>
+      )}
     </div>
   );
 

@@ -8,6 +8,8 @@ import BackToTop from '../components/BackToTop';
 import VisaEligibilityChecker from '../components/VisaEligibilityChecker';
 import DocumentChecklistGenerator from '../components/DocumentChecklistGenerator';
 import DIYVisaWizard from '../components/DIYVisaWizard';
+import AgentFinderWizard from '../components/AgentFinderWizard';
+import AssistedServiceWizard from '../components/AssistedServiceWizard';
 import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun, FileText, Clock, IndianRupee, Plane, X, ChevronLeft, ChevronRight, ChevronDown, Dumbbell, CheckCircle, ClipboardList, Loader2 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
@@ -824,6 +826,8 @@ const Seasons = () => {
   const [showEligibilityChecker, setShowEligibilityChecker] = useState(false);
   const [showDocumentChecklist, setShowDocumentChecklist] = useState(false);
   const [showDIYWizard, setShowDIYWizard] = useState(false);
+  const [showAgentFinder, setShowAgentFinder] = useState(false);
+  const [showAssistedService, setShowAssistedService] = useState(false);
   
   // AI-powered visa pricing state
   const [visaPricing, setVisaPricing] = useState(null);
@@ -1582,8 +1586,12 @@ const Seasons = () => {
                       </div>
                     </div>
                     <div className="mt-4 pt-3 border-t border-orange-200">
-                      <button className="w-full py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg text-sm transition-all">
-                        Apply Now
+                      <button 
+                        onClick={() => setShowAgentFinder(true)}
+                        className="w-full py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg text-sm transition-all"
+                        data-testid="express-evisa-btn"
+                      >
+                        Find Agents
                       </button>
                     </div>
                   </div>
@@ -1662,7 +1670,11 @@ const Seasons = () => {
                       </div>
                     </div>
                     <div className="mt-4 pt-3 border-t border-blue-200">
-                      <button className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg text-sm transition-all">
+                      <button 
+                        onClick={() => setShowAssistedService(true)}
+                        className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg text-sm transition-all"
+                        data-testid="assisted-btn"
+                      >
                         Get Assistance
                       </button>
                     </div>
@@ -2055,6 +2067,24 @@ const Seasons = () => {
         onClose={() => setShowDIYWizard(false)}
         country={searchResult?.country}
         visaType={selectedVisaType}
+      />
+
+      {/* Agent Finder Wizard Modal */}
+      <AgentFinderWizard
+        isOpen={showAgentFinder}
+        onClose={() => setShowAgentFinder(false)}
+        country={searchResult?.country}
+        visaType={selectedVisaType}
+        pricing={visaPricing}
+      />
+
+      {/* Assisted Service Wizard Modal */}
+      <AssistedServiceWizard
+        isOpen={showAssistedService}
+        onClose={() => setShowAssistedService(false)}
+        country={searchResult?.country}
+        visaType={selectedVisaType}
+        pricing={visaPricing}
       />
 
       <BackToTop />
