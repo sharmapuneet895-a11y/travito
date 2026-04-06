@@ -1363,71 +1363,14 @@ const Seasons = () => {
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
           </div>
 
-          {/* Always Visible Visa Section */}
+          {/* Visa Section - Only show cards when destination is selected */}
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border mb-8" style={{ borderColor: '#E2E8F0' }} data-testid="visa-section-always">
-            <div className="text-center mb-5">
-              <p className="text-sm text-gray-600">
-                {searchResult 
-                  ? `Visa details for ${searchResult.country.country_name}` 
-                  : 'Enter destination and travel dates for details'}
-              </p>
-            </div>
-
-            {/* 4-Column Visa Info Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
-              {/* Visa Type */}
-              <div className="bg-white rounded-lg p-4 border text-center" style={{ borderColor: '#E2E8F0' }}>
-                <FileText className="w-6 h-6 mx-auto mb-2" style={{ color: '#FF7A00' }} />
-                <p className="text-xs text-gray-500 mb-1">Visa Type</p>
-                <p className="font-bold text-sm" style={{ color: '#0B3C5D' }}>
-                  {searchResult ? formatVisaType(searchResult.visa?.visa_type) : 'Visa on Arr / E-Visa / Visa Required'}
-                </p>
+            {!searchResult ? (
+              <div className="text-center py-8">
+                <p className="text-gray-600">Enter destination above to see visa options</p>
               </div>
-
-              {/* Documents Needed */}
-              <div className="bg-white rounded-lg p-4 border text-center" style={{ borderColor: '#E2E8F0' }}>
-                <FileText className="w-6 h-6 mx-auto mb-2" style={{ color: '#FF7A00' }} />
-                <p className="text-xs text-gray-500 mb-1">Documents Needed</p>
-                <p className="font-bold text-sm" style={{ color: '#0B3C5D' }}>
-                  {searchResult ? getDefaultVisaInfo(searchResult.visa?.visa_type).documents.slice(0, 2).join(', ') : 'xxx'}
-                </p>
-              </div>
-
-              {/* Processing Time */}
-              <div className="bg-white rounded-lg p-4 border text-center" style={{ borderColor: '#E2E8F0' }}>
-                <Clock className="w-6 h-6 mx-auto mb-2" style={{ color: '#FF7A00' }} />
-                <p className="text-xs text-gray-500 mb-1">Processing Time</p>
-                <p className="font-bold text-sm" style={{ color: '#0B3C5D' }}>
-                  {searchResult ? getDefaultVisaInfo(searchResult.visa?.visa_type).processing : 'xxx'}
-                </p>
-              </div>
-
-              {/* Cost Estimate */}
-              <div className="bg-white rounded-lg p-4 border text-center" style={{ borderColor: '#E2E8F0' }}>
-                <IndianRupee className="w-6 h-6 mx-auto mb-2" style={{ color: '#FF7A00' }} />
-                <p className="text-xs text-gray-500 mb-1">Cost Estimate</p>
-                <p className="font-bold text-sm" style={{ color: '#0B3C5D' }}>
-                  {searchResult ? getDefaultVisaInfo(searchResult.visa?.visa_type).cost : 'xxx'}
-                </p>
-              </div>
-            </div>
-
-            {/* CTA Buttons - Link to Visa Page */}
-            <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-3">
-              <Link
-                to="/visa#visa-options"
-                className="px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-semibold text-white text-sm sm:text-base transition-all hover:opacity-90 inline-flex items-center justify-center gap-2"
-                style={{ backgroundColor: '#0B3C5D' }}
-                data-testid="explore-visa-btn"
-              >
-                Explore Visa Options
-                <Plane className="w-4 h-4" />
-              </Link>
-            </div>
-
-            {/* Visa Options Cards - Only show when destination is selected */}
-            {searchResult && (
-              <div className="mt-8">
+            ) : (
+              <div>
                 <h3 className="text-lg font-bold text-center mb-5" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
                   Visa Options for {searchResult.country.country_name}
                 </h3>
