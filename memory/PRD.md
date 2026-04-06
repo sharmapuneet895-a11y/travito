@@ -21,10 +21,8 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - Visa, weather, safety, dishes, festivals, apps, plugs info
 
 ### 3. VISA INTELLIGENCE Section ✅
-- Displays after searching for a country
-- Shows: Visa Type, Documents Needed, Processing Time, Cost Estimate
-- "Explore Visa Options" link to /visa page
-- **2 Visa Option Cards** (with dynamic AI pricing):
+- Shows placeholder text "Enter destination above to see visa options" when no search
+- After searching: Displays **2 Visa Option Cards** (with dynamic AI pricing):
   - Explore Agents (Most Popular) → Opens **Agent Finder Wizard**
   - Assisted (Recommended) → Opens **Assisted Service Wizard**
 - **Action Buttons Row**: Travel Guide, Check Eligibility, Document Checklist
