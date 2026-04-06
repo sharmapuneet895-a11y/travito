@@ -27,21 +27,43 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - "Document Checklist" button (pre-filled with searched country)
 - "Explore Visa Options" button
 - **Visa Options Cards** (3 cards with dynamic AI pricing):
-  - Express eVisa (Most Popular) - Fast processing
-  - Self Apply (Budget) - Opens DIY Visa Wizard
-  - Assisted (Balanced) - Expert guidance
+  - Express eVisa (Most Popular) → Opens **Agent Finder Wizard**
+  - Self Apply (Budget) → Opens **DIY Visa Wizard**
+  - Assisted (Balanced) → Opens **Assisted Service Wizard**
 
-### 4. DIY Visa Wizard ✅ (NEW - Dec 2025)
+### 4. Agent Finder Wizard ✅ (NEW - Dec 2025)
+- 5-step workflow to find and compare visa agents:
+  1. **Compare Agents** - Filterable agent marketplace (city, fee, rating)
+  2. **Share Details** - Traveler information form
+  3. **Agent Connect** - Request confirmation & WhatsApp connect
+  4. **Application Help** - Services included & timeline
+  5. **Submission & Tracking** - Completion and tracking
+- Triggered from "Express eVisa" card's "Find Agents" button
+- Shows 5 verified agents with ratings, tags, and pricing
+
+### 5. DIY Visa Wizard ✅ (UPDATED - Dec 2025)
 - 5-step guided workflow for self-application:
   1. **Check Requirements** - Eligibility form (citizenship, purpose, entry date)
-  2. **Document Checklist** - Interactive checklist with progress tracking
+  2. **Document Checklist** - **Dynamic** checklist fetched from AI API
   3. **Form Guidance** - Tips for filling official application forms
   4. **Book Appointment** - VFS Global center selection with dates
   5. **Track Application** - Timeline and completion status
 - Triggered from "Self Apply" card's "Apply Now" button
 - Country and visa type pre-populated from search context
+- **Now fetches country-specific documents dynamically**
 
-### 5. Document Checklist Generator ✅
+### 6. Assisted Service Wizard ✅ (NEW - Dec 2025)
+- 5-step guided workflow with expert assistance:
+  1. **Share Details** - Form with pricing breakdown sidebar
+  2. **Document Review** - Upload & verification process
+  3. **Application Help** - Form filling support & WhatsApp
+  4. **Book Appointment** - VFS Global slot booking
+  5. **Submission & Tracking** - Process overview & completion
+- Triggered from "Assisted" card's "Get Assistance" button
+- Shows "What's Included" sidebar with 6 services
+- Displays pricing breakdown with optional add-ons
+
+### 7. Document Checklist Generator ✅
 - AI-powered using GPT-5.2
 - Generates mandatory + supporting documents
 - Interactive checkboxes with progress tracking
@@ -49,12 +71,12 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - Print functionality
 - Optimized prompt for ~25s response time
 
-### 6. User Profile & Checklists ✅
+### 8. User Profile & Checklists ✅
 - Save/update/delete document checklists
 - View progress on saved checklists
 - Authentication via email/password
 
-### 7. Visa Eligibility Checker ✅
+### 9. Visa Eligibility Checker ✅
 - Extended country list (50+ countries)
 - Pre-selected country from search
 
@@ -105,6 +127,9 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - [x] Added Visa Type dropdown to search bar
 - [x] Simplified search flow (button/Enter required, removed alternatives)
 - [x] **DIY Visa Wizard Integration** - 5-step guided self-application flow
+- [x] **Agent Finder Wizard** - 5-step agent marketplace for Express eVisa
+- [x] **Assisted Service Wizard** - 5-step guided assistance flow
+- [x] **Dynamic Document Fetching** - DIY Wizard now fetches country-specific documents
 - [x] Made Compare Visa Options table mobile-responsive
 - [x] Google Site Verification HTML added
 
@@ -131,8 +156,10 @@ Comprehensive travel information website for Indian travelers, providing visa in
 └── frontend/
     └── src/
         ├── components/
+        │   ├── AgentFinderWizard.js   # NEW - Agent marketplace wizard
+        │   ├── AssistedServiceWizard.js # NEW - Assisted service wizard
         │   ├── CountryDetailModal.js
-        │   ├── DIYVisaWizard.js      # NEW - 5-step visa application wizard
+        │   ├── DIYVisaWizard.js       # UPDATED - Dynamic document fetching
         │   ├── DocumentChecklistGenerator.js
         │   ├── Navigation.js
         │   └── VisaEligibilityChecker.js
