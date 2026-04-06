@@ -31,7 +31,7 @@ Comprehensive travel information website for Indian travelers, providing visa in
   - Self Apply (Budget) → Opens **DIY Visa Wizard**
   - Assisted (Balanced) → Opens **Assisted Service Wizard**
 
-### 4. Agent Finder Wizard ✅ (NEW - Dec 2025)
+### 4. Agent Finder Wizard ✅ (UPDATED - Dec 2025)
 - 5-step workflow to find and compare visa agents:
   1. **Compare Agents** - Filterable agent marketplace (city, fee, rating)
   2. **Share Details** - Traveler information form
@@ -40,19 +40,22 @@ Comprehensive travel information website for Indian travelers, providing visa in
   5. **Submission & Tracking** - Completion and tracking
 - Triggered from "Express eVisa" card's "Find Agents" button
 - Shows 5 verified agents with ratings, tags, and pricing
+- **Fullscreen toggle** for better viewing
+- **Cleaner, more compact UI**
 
 ### 5. DIY Visa Wizard ✅ (UPDATED - Dec 2025)
 - 5-step guided workflow for self-application:
-  1. **Check Requirements** - Eligibility form (citizenship, purpose, entry date)
-  2. **Document Checklist** - **Dynamic** checklist fetched from AI API
-  3. **Form Guidance** - Tips for filling official application forms
-  4. **Book Appointment** - VFS Global center selection with dates
-  5. **Track Application** - Timeline and completion status
+  1. **Check Requirements** - Eligibility form (citizenship, purpose, travel date, destination)
+  2. **Document Checklist** - **Dynamic** checklist fetched from AI API with progress tracking
+  3. **Form Guidance** - Tips + **Direct link to official visa portal** (country-specific URLs)
+  4. **Book Appointment** - City selection with **real VFS branch data**, dynamic dates, **direct VFS booking link**
+  5. **Track & Apply** - Application summary, notification signup, **final CTA to visa portal**
 - Triggered from "Self Apply" card's "Apply Now" button
-- Country and visa type pre-populated from search context
-- **Now fetches country-specific documents dynamically**
+- **Fullscreen toggle** for better viewing
+- VFS Centers data for 8 cities (Mumbai, Delhi, Bangalore, Chennai, Kolkata, Hyderabad, Pune, Ahmedabad)
+- Hyderabad shows 3 branches: Banjara Hills, Hitech City, Secunderabad
 
-### 6. Assisted Service Wizard ✅ (NEW - Dec 2025)
+### 6. Assisted Service Wizard ✅ (UPDATED - Dec 2025)
 - 5-step guided workflow with expert assistance:
   1. **Share Details** - Form with pricing breakdown sidebar
   2. **Document Review** - Upload & verification process
@@ -62,6 +65,8 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - Triggered from "Assisted" card's "Get Assistance" button
 - Shows "What's Included" sidebar with 6 services
 - Displays pricing breakdown with optional add-ons
+- **Fullscreen toggle** for better viewing
+- **Cleaner, more compact UI**
 
 ### 7. Document Checklist Generator ✅
 - AI-powered using GPT-5.2
@@ -130,6 +135,11 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - [x] **Agent Finder Wizard** - 5-step agent marketplace for Express eVisa
 - [x] **Assisted Service Wizard** - 5-step guided assistance flow
 - [x] **Dynamic Document Fetching** - DIY Wizard now fetches country-specific documents
+- [x] **Fullscreen Toggle** - All 3 wizards have expand/collapse functionality
+- [x] **VFS Center Data** - Real branch info for 8 cities (Hyderabad has 3 branches)
+- [x] **Official Visa Portal Links** - Direct links to country-specific visa websites
+- [x] **Dynamic Appointment Dates** - Shows 5-14 dates based on selection
+- [x] **Application Summary** - Step 5 shows destination, docs count, notification signup
 - [x] Made Compare Visa Options table mobile-responsive
 - [x] Google Site Verification HTML added
 
