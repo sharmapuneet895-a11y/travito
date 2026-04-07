@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { X, ChevronRight, ChevronLeft, Check, Star, Clock, Phone, MessageCircle, CheckCircle, Users, Shield, Maximize2, Minimize2, Building, Mail, MapPin, Upload, Camera, Plane, Hotel, FileText, Loader2 } from 'lucide-react';
+import axios from 'axios';
+import { X, ChevronRight, ChevronLeft, Check, Star, Clock, Phone, MessageCircle, CheckCircle, Users, Shield, Maximize2, Minimize2, Building, Mail, MapPin, Upload, Camera, Plane, Hotel, FileText, Loader2, AlertCircle } from 'lucide-react';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Country tourist images
 const COUNTRY_IMAGES = {
@@ -24,6 +27,7 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
   const [passportUploaded, setPassportUploaded] = useState(false);
   const [photoUploaded, setPhotoUploaded] = useState(false);
   const [extractingData, setExtractingData] = useState(false);
+  const [ocrError, setOcrError] = useState(null);
   
   const [formData, setFormData] = useState({
     // Personal Info (auto-filled from passport)
@@ -123,27 +127,73 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
 
   const countryImage = COUNTRY_IMAGES[country?.country_name] || COUNTRY_IMAGES['default'];
 
-  // Simulate passport data extraction
-  const handlePassportUpload = (e) => {
+  // Real passport data extraction using GPT-4o Vision OCR
+  const handlePassportUpload = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setExtractingData(true);
-      // Simulate OCR extraction delay
-      setTimeout(() => {
-        setFormData(prev => ({
-          ...prev,
-          firstName: 'Rahul',
-          lastName: 'Sharma',
-          dob: '1990-05-15',
-          gender: 'Male',
-          maritalStatus: 'Single',
-          passportNumber: 'P1234567',
-          passportValidThru: '2030-12-31',
-          placeOfIssue: 'New Delhi',
-        }));
-        setPassportUploaded(true);
+    if (!file) return;
+    
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      setOcrError('Please upload a JPEG, PNG, or WEBP image');
+      return;
+    }
+    
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      setOcrError('Image must be less than 10MB');
+      return;
+    }
+    
+    setExtractingData(true);
+    setOcrError(null);
+    
+    try {
+      // Convert file to base64
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64String = reader.result.split(',')[1]; // Remove data:image/...;base64, prefix
+        
+        try {
+          const response = await axios.post(`${BACKEND_URL}/api/visa/passport-ocr`, {
+            image_base64: base64String
+          });
+          
+          if (response.data.success && response.data.data) {
+            const extractedData = response.data.data;
+            setFormData(prev => ({
+              ...prev,
+              firstName: extractedData.firstName || '',
+              lastName: extractedData.lastName || '',
+              dob: extractedData.dob || '',
+              gender: extractedData.gender || '',
+              passportNumber: extractedData.passportNumber || '',
+              passportValidThru: extractedData.passportValidThru || '',
+              placeOfIssue: extractedData.placeOfIssue || '',
+            }));
+            setPassportUploaded(true);
+            setOcrError(null);
+          } else {
+            setOcrError(response.data.error || 'Could not extract passport data. Please try again or fill manually.');
+          }
+        } catch (apiError) {
+          console.error('Passport OCR API error:', apiError);
+          setOcrError('Failed to process passport. Please ensure the image is clear and try again.');
+        } finally {
+          setExtractingData(false);
+        }
+      };
+      
+      reader.onerror = () => {
+        setOcrError('Failed to read file. Please try again.');
         setExtractingData(false);
-      }, 2000);
+      };
+      
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Passport upload error:', error);
+      setOcrError('An error occurred. Please try again.');
+      setExtractingData(false);
     }
   };
 
@@ -261,12 +311,12 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Passport Upload */}
           <div className={`border-2 border-dashed rounded-xl p-4 text-center transition-all ${
-            passportUploaded ? 'border-green-400 bg-green-50' : 'border-gray-300 hover:border-blue-400'
+            passportUploaded ? 'border-green-400 bg-green-50' : ocrError ? 'border-red-400 bg-red-50' : 'border-gray-300 hover:border-blue-400'
           }`}>
             <input
               type="file"
               id="passport-upload"
-              accept="image/*,.pdf"
+              accept="image/jpeg,image/png,image/webp"
               onChange={handlePassportUpload}
               className="hidden"
             />
@@ -274,7 +324,8 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
               {extractingData ? (
                 <div className="py-4">
                   <Loader2 className="w-10 h-10 text-blue-500 animate-spin mx-auto mb-2" />
-                  <p className="text-sm text-blue-600 font-medium">Extracting passport data...</p>
+                  <p className="text-sm text-blue-600 font-medium">AI extracting passport data...</p>
+                  <p className="text-xs text-blue-500">Powered by GPT-4o Vision</p>
                 </div>
               ) : passportUploaded ? (
                 <div className="py-4">
@@ -282,11 +333,18 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
                   <p className="text-sm text-green-700 font-medium">Passport Uploaded</p>
                   <p className="text-xs text-green-600">Data auto-filled below</p>
                 </div>
+              ) : ocrError ? (
+                <div className="py-4">
+                  <AlertCircle className="w-10 h-10 text-red-500 mx-auto mb-2" />
+                  <p className="text-sm text-red-600 font-medium">Upload Failed</p>
+                  <p className="text-xs text-red-500">{ocrError}</p>
+                  <p className="text-xs text-gray-500 mt-1">Click to try again</p>
+                </div>
               ) : (
                 <div className="py-4">
                   <Upload className="w-10 h-10 text-gray-400 mx-auto mb-2" />
                   <p className="text-sm font-medium text-gray-700">Upload Passport</p>
-                  <p className="text-xs text-gray-500">As required by embassy</p>
+                  <p className="text-xs text-gray-500">JPEG, PNG, or WEBP • AI-powered OCR</p>
                 </div>
               )}
             </label>

@@ -1543,7 +1543,17 @@ const Seasons = () => {
                     transition={{ delay: idx * 0.1 }}
                     onClick={() => {
                       const country = processedData.find(c => c.country_code === dest.code);
-                      if (country) setSelectedCountry(country);
+                      if (country) {
+                        // First, scroll to the Visa Intelligence section smoothly
+                        const visaSection = document.getElementById('visa-intelligence-section');
+                        if (visaSection) {
+                          visaSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                        // After a small delay for scroll to complete, open the modal
+                        setTimeout(() => {
+                          setSelectedCountry(country);
+                        }, 500);
+                      }
                     }}
                     className="relative rounded-xl overflow-hidden cursor-pointer hover:shadow-xl transition-all group h-48 flex-shrink-0"
                     style={{

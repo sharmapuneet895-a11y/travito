@@ -10,7 +10,7 @@ from typing import List, Dict, Optional
 import uuid
 from datetime import datetime, timezone
 import httpx
-from emergentintegrations.llm.chat import LlmChat, UserMessage
+from emergentintegrations.llm.chat import LlmChat, UserMessage, ImageContent
 from production_data import SEASONS_DATA, VISA_DATA, SAFETY_DATA, APPS_DATA, FESTIVALS_DATA, DISHES_DATA, PLUGS_DATA, BLOGS_DATA
 
 ROOT_DIR = Path(__file__).parent
@@ -237,6 +237,14 @@ class DocumentChecklistResponse(BaseModel):
     mandatory_documents: List[Dict[str, str]]
     supporting_documents: List[Dict[str, str]]
     tips: List[str]
+
+class PassportOCRRequest(BaseModel):
+    image_base64: str  # Base64 encoded passport image
+
+class PassportOCRResponse(BaseModel):
+    success: bool
+    data: Optional[Dict] = None
+    error: Optional[str] = None
 
 class SaveDocumentChecklistRequest(BaseModel):
     country: str
@@ -970,6 +978,80 @@ Keep descriptions brief (max 15 words). Include 5-7 mandatory docs, 4-5 supporti
     except Exception as e:
         logging.error(f"Document checklist error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ===== PASSPORT OCR ENDPOINT =====
+
+@api_router.post("/visa/passport-ocr", response_model=PassportOCRResponse)
+async def extract_passport_data(request: PassportOCRRequest):
+    """Extract passport details from an uploaded passport image using GPT-4o Vision"""
+    try:
+        if not EMERGENT_LLM_KEY:
+            raise HTTPException(status_code=500, detail="AI service not configured")
+        
+        # Create image content from base64
+        image_content = ImageContent(image_base64=request.image_base64)
+        
+        # Initialize chat with GPT-4o for vision
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"passport_ocr_{uuid.uuid4().hex[:8]}",
+            system_message="""You are an expert passport data extraction system. Extract passport information accurately from the provided image.
+
+IMPORTANT: Return ONLY a valid JSON object with these exact fields. No markdown, no explanations, just pure JSON.
+{
+    "firstName": "extracted first/given name",
+    "lastName": "extracted surname/family name", 
+    "dob": "YYYY-MM-DD format",
+    "gender": "Male" or "Female",
+    "nationality": "nationality as shown",
+    "passportNumber": "passport number",
+    "passportValidThru": "YYYY-MM-DD format expiry date",
+    "placeOfIssue": "place/authority of issue",
+    "dateOfIssue": "YYYY-MM-DD format if visible"
+}
+
+If any field cannot be extracted clearly, use empty string "". Do not guess or make up data."""
+        ).with_model("openai", "gpt-4o")
+        
+        # Create user message with image
+        user_message = UserMessage(
+            text="Extract all passport details from this passport image. Return only the JSON object, no other text.",
+            file_contents=[image_content]
+        )
+        
+        response = await chat.send_message(user_message)
+        
+        # Parse the JSON response
+        import json
+        try:
+            # Clean the response - remove any markdown code blocks if present
+            clean_response = response.strip()
+            if clean_response.startswith("```"):
+                clean_response = clean_response.split("```")[1]
+                if clean_response.startswith("json"):
+                    clean_response = clean_response[4:]
+                clean_response = clean_response.strip()
+            
+            passport_data = json.loads(clean_response)
+            
+            return PassportOCRResponse(
+                success=True,
+                data=passport_data
+            )
+        except json.JSONDecodeError:
+            logging.error(f"Failed to parse passport OCR response: {response}")
+            return PassportOCRResponse(
+                success=False,
+                error="Could not extract passport data. Please ensure the image is clear and try again."
+            )
+            
+    except Exception as e:
+        logging.error(f"Passport OCR error: {e}")
+        return PassportOCRResponse(
+            success=False,
+            error=str(e)
+        )
 
 
 # ===== USER AUTHENTICATION ENDPOINTS =====
