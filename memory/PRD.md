@@ -10,7 +10,8 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - Search by country + month with blue outlined search bars
 - Auto-opening CountryDetailModal on search
 - VISA INTELLIGENCE section (blue heading)
-- TRENDING section with tourist attraction photo backgrounds
+- TRENDING section with horizontal scroll + unique country-specific tourist attraction images
+- Trending card click: smooth scroll to Visa Intelligence + opens CountryDetailModal
 - SEASONAL TRAVEL GUIDE section (blue heading)
 - TRAVEL INFORMATION section (blue heading)
 - Mobile-responsive design with hamburger menu
@@ -31,20 +32,20 @@ Comprehensive travel information website for Indian travelers, providing visa in
 
 ### 4. Agent Finder Wizard ✅ (Updated Dec 2025)
 - **Blue color scheme** with white text on blue backgrounds
-- **Header**: Country name centered with tourist attraction photo background (increased height)
+- **Header**: Country name centered with tourist attraction photo background (180px height)
 - **Services Included** badges in header: Document verification, Form filling, Appointment booking, Interview prep, Submission support, Status tracking
 - **Layout**: 20% steps panel (left) + 80% content (right)
 - **Steps panel**: 4 vertical steps that highlight as user progresses
 - **Step 1 - Agent cards** display: Logo, Agent name, Location, Experience, Google rating, Visa fee, Govt fee, Processing time, Total
 - **Step 2 - Travel Details**:
-  - Upload Passport (auto-fills personal info via simulated OCR)
+  - Upload Passport (REAL OCR using GPT-4o Vision - auto-fills personal info)
   - Upload Photo (embassy format)
   - Personal Info: First name, Last name, DOB, Gender, Marital status, Passport number, Valid thru, Place of issue, Email, Phone
   - Flight Details: Arrival date/flight number, Departure date/flight number
   - Hotel Reservation: Hotel name, Check-in, Check-out
 - 4-step workflow: Select Agent → Travel Details → Connect → Track
 - Fullscreen toggle for better viewing
-- **Note**: Passport OCR is MOCKED - uses simulated data
+- **Passport OCR**: Uses OpenAI GPT-4o Vision for real passport data extraction (not mocked)
 
 ### 5. Document Checklist Generator ✅
 - AI-powered using GPT-5.2
@@ -119,6 +120,8 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - [x] **TRENDING Section** - Horizontal scroll with country-specific images
 - [x] **Agent Wizard Services** - Moved to top panel header
 - [x] **Deleted orphaned files**: DIYVisaWizard.js, AssistedServiceWizard.js
+- [x] **Real Passport OCR** - Using GPT-4o Vision (no longer mocked)
+- [x] **Trending Card Scroll** - Smooth scroll to Visa Intelligence + open modal
 
 ## Pending Issues
 | Priority | Issue | Status |
