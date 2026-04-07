@@ -55,7 +55,7 @@ const Visa = () => {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F5F7FA' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom, #bae6fd 0%, #e0f7fa 10%, #f0f9ff 25%, #f8fafc 40%, #ffffff 60%)' }}>
       {/* Hero Section with Background Image */}
       <div 
         className="relative bg-cover bg-center"

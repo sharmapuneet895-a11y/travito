@@ -58,7 +58,7 @@ const CountryDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" data-testid="loading-country">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(to bottom, #bae6fd 0%, #e0f7fa 10%, #f0f9ff 25%, #f8fafc 40%, #ffffff 60%)' }} data-testid="loading-country">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading country information...</p>
@@ -69,7 +69,7 @@ const CountryDetail = () => {
 
   if (!countryData || (!countryData.season && !countryData.visa)) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-6">
+      <div className="min-h-screen flex items-center justify-center px-6" style={{ background: 'linear-gradient(to bottom, #bae6fd 0%, #e0f7fa 10%, #f0f9ff 25%, #f8fafc 40%, #ffffff 60%)' }}>
         <div className="text-center">
           <MapPin className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
           <h2 className="text-2xl font-semibold text-primary mb-2">Country Not Found</h2>
@@ -90,7 +90,7 @@ const CountryDetail = () => {
   const countryName = season?.country_name || visa?.country_name || 'Country';
 
   return (
-    <div className="min-h-screen py-12 px-6">
+    <div className="min-h-screen py-12 px-6" style={{ background: 'linear-gradient(to bottom, #bae6fd 0%, #e0f7fa 10%, #f0f9ff 25%, #f8fafc 40%, #ffffff 60%)' }}>
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div

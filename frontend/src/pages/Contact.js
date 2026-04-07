@@ -20,7 +20,7 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen py-12 px-6" style={{ backgroundColor: '#F5F7FA' }}>
+    <div className="min-h-screen py-12 px-6" style={{ background: 'linear-gradient(to bottom, #bae6fd 0%, #e0f7fa 10%, #f0f9ff 25%, #f8fafc 40%, #ffffff 60%)' }}>
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -88,7 +88,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom, #bae6fd 0%, #e0f7fa 10%, #f0f9ff 25%, #f8fafc 40%, #ffffff 60%)' }}>
       {/* Hero Section */}
       <div className="hero-section flex items-center justify-center px-6 py-24">
         <div className="max-w-6xl mx-auto text-center">
