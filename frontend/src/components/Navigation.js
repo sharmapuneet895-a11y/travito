@@ -21,9 +21,9 @@ const Navigation = () => {
         <div className="flex items-center justify-between">
           {/* Logo - Left Aligned */}
           <Link to="/" className="flex items-center gap-2" data-testid="logo-link">
-            <Plane className="w-8 h-8" style={{ color: '#FF7A00' }} />
+            <Plane className="w-8 h-8 text-blue-600" />
             <div className="flex flex-col">
-              <span className="text-xl md:text-2xl font-bold leading-tight" style={{ fontFamily: 'Poppins, sans-serif', color: '#0B3C5D' }}>
+              <span className="text-xl md:text-2xl font-bold leading-tight text-blue-600" style={{ fontFamily: 'Poppins, sans-serif' }}>
                 Travito
               </span>
               <span className="text-xs text-gray-500 hidden sm:block" style={{ fontFamily: 'Inter, sans-serif' }}>.co.in</span>
@@ -38,10 +38,10 @@ const Navigation = () => {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`font-medium transition-all hover:text-orange-500 ${
-                    isActive ? 'text-orange-500' : ''
+                  className={`font-medium transition-all hover:text-blue-600 ${
+                    isActive ? 'text-blue-600' : ''
                   }`}
-                  style={{ color: isActive ? '#FF7A00' : '#0B3C5D' }}
+                  style={{ color: isActive ? '#2563eb' : '#0B3C5D' }}
                   data-testid={`nav-${link.label.toLowerCase().replace(/ /g, '-')}`}
                 >
                   {link.label}

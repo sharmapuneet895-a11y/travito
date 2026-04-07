@@ -1191,10 +1191,10 @@ const Seasons = () => {
             transition={{ duration: 0.6 }}
             className="flex flex-col items-center"
           >
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-orange-500 mb-2 md:mb-3" style={{ fontFamily: 'Poppins, sans-serif' }} data-testid="seasons-page-title">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-blue-600 mb-2 md:mb-3" style={{ fontFamily: 'Poppins, sans-serif' }} data-testid="seasons-page-title">
               Compare the best Visa options
             </h1>
-            <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-4 md:mb-6 max-w-xl">
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-4 md:mb-6 max-w-xl italic font-semibold">
               Understand Visa requirements for your destination and apply the smartest way - All in one place
             </p>
 
@@ -1207,12 +1207,12 @@ const Seasons = () => {
                     Visa Type
                   </label>
                   <div className="relative">
-                    <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: '#94A3B8' }} />
+                    <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-blue-500" />
                     <select
                       value={selectedVisaType}
                       onChange={(e) => setSelectedVisaType(e.target.value)}
-                      className="w-full pl-9 pr-4 py-3 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400 appearance-none cursor-pointer"
-                      style={{ border: '1px solid #E2E8F0', color: '#0B3C5D', backgroundColor: 'white' }}
+                      className="w-full pl-9 pr-4 py-3 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none cursor-pointer border-2 border-blue-400"
+                      style={{ color: '#0B3C5D', backgroundColor: 'white' }}
                       data-testid="visa-type-select"
                     >
                       {visaTypes.map((type) => (
@@ -1221,21 +1221,17 @@ const Seasons = () => {
                         </option>
                       ))}
                     </select>
-                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 pointer-events-none" style={{ color: '#94A3B8' }} />
+                    <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 pointer-events-none text-blue-500" />
                   </div>
                 </div>
 
                 {/* Destination Input */}
                 <div className="flex-1 relative">
-                  <label className="block text-xs font-semibold mb-1.5 flex items-center gap-2" style={{ color: '#0B3C5D' }}>
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
-                    </span>
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: '#0B3C5D' }}>
                     Select Destination & Explore Visa Intelligence
                   </label>
-                  <div className="relative destination-heartbeat rounded-lg">
-                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-orange-500" />
+                  <div className="relative rounded-lg">
+                    <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-blue-500" />
                     <input
                       type="text"
                       value={searchQuery}
@@ -1247,7 +1243,7 @@ const Seasons = () => {
                       onFocus={() => setShowDropdown(true)}
                       onKeyPress={handleSearchKeyPress}
                       placeholder="Where do you want to go?"
-                      className="w-full pl-9 pr-4 py-3 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-400 bg-transparent"
+                      className="w-full pl-9 pr-4 py-3 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 bg-transparent border-2 border-blue-400"
                       style={{ color: '#0B3C5D' }}
                       data-testid="country-search"
                     />
@@ -1264,7 +1260,7 @@ const Seasons = () => {
                         <button
                           key={country.country_code}
                           onClick={() => handleCountrySelect(country)}
-                          className="w-full px-4 py-2.5 text-left hover:bg-orange-50 flex items-center justify-between transition-all border-b border-gray-100 last:border-b-0"
+                          className="w-full px-4 py-2.5 text-left hover:bg-blue-50 flex items-center justify-between transition-all border-b border-gray-100 last:border-b-0"
                         >
                           <div className="flex items-center gap-2">
                             <img
@@ -1297,8 +1293,8 @@ const Seasons = () => {
                   <select
                     value={selectedMonth}
                     onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-                    className="w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-                    style={{ borderColor: '#E2E8F0', color: '#0B3C5D' }}
+                    className="w-full px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 border-blue-400"
+                    style={{ color: '#0B3C5D' }}
                     data-testid="month-selector"
                   >
                     {MONTH_NAMES.map((month, idx) => (
@@ -1315,8 +1311,8 @@ const Seasons = () => {
                   <select
                     value={selectedYear}
                     onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                    className="w-full px-3 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-                    style={{ borderColor: '#E2E8F0', color: '#0B3C5D' }}
+                    className="w-full px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 border-2 border-blue-400"
+                    style={{ color: '#0B3C5D' }}
                     data-testid="year-selector"
                   >
                     {[2025, 2026, 2027, 2028].map(year => (
@@ -1328,8 +1324,7 @@ const Seasons = () => {
                 {/* Search Button */}
                 <button
                   onClick={handleSearchClick}
-                  className="w-full md:w-auto px-6 py-2.5 rounded-lg font-semibold text-white transition-all hover:opacity-90 flex items-center justify-center gap-2"
-                  style={{ backgroundColor: '#FF7A00' }}
+                  className="w-full md:w-auto px-6 py-2.5 rounded-lg font-semibold text-white transition-all hover:opacity-90 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700"
                   data-testid="search-btn"
                 >
                   <Search className="w-4 h-4" />
@@ -1353,7 +1348,7 @@ const Seasons = () => {
           {/* ========== SEPARATOR - VISA INTELLIGENCE ========== */}
           <div id="visa-intelligence-section" className="flex items-center gap-4 mb-8 scroll-mt-24">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-            <h2 className="text-lg font-bold tracking-widest text-orange-500" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            <h2 className="text-lg font-bold tracking-widest text-blue-600" style={{ fontFamily: 'Poppins, sans-serif' }}>
               VISA INTELLIGENCE
             </h2>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
@@ -1367,7 +1362,7 @@ const Seasons = () => {
               </div>
             ) : (
               <div>
-                <h3 className="text-xl font-bold text-center mb-5 text-orange-500" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                <h3 className="text-xl font-bold text-center mb-5 text-blue-600" style={{ fontFamily: 'Poppins, sans-serif' }}>
                   Visa Options for {searchResult.country.country_name}
                 </h3>
                 {pricingLoading ? (
@@ -1425,7 +1420,7 @@ const Seasons = () => {
                 <div className="mt-6 flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-3">
                   <button
                     onClick={() => setSelectedCountry(searchResult.country)}
-                    className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg text-sm transition-all shadow-md hover:shadow-lg inline-flex items-center justify-center gap-2"
+                    className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-sm transition-all shadow-md hover:shadow-lg inline-flex items-center justify-center gap-2"
                     data-testid="view-country-details-btn"
                   >
                     <Compass className="w-4 h-4" />
@@ -1436,7 +1431,7 @@ const Seasons = () => {
                     className="px-5 py-2.5 rounded-lg font-semibold text-sm transition-all inline-flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"
                     data-testid="visa-eligibility-btn"
                   >
-                    <CheckCircle className="w-4 h-4 text-orange-500" />
+                    <CheckCircle className="w-4 h-4 text-blue-500" />
                     Check Eligibility
                   </button>
                   <button
@@ -1444,7 +1439,7 @@ const Seasons = () => {
                     className="px-5 py-2.5 rounded-lg font-semibold text-sm transition-all inline-flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"
                     data-testid="document-checklist-btn"
                   >
-                    <ClipboardList className="w-4 h-4 text-orange-500" />
+                    <ClipboardList className="w-4 h-4 text-blue-500" />
                     Document Checklist
                   </button>
                 </div>
@@ -1452,26 +1447,49 @@ const Seasons = () => {
             )}
           </div>
 
-          {/* ========== SEPARATOR - TOP DESTINATIONS ========== */}
+          {/* ========== SEPARATOR - TRENDING ========== */}
           <div className="flex items-center gap-4 my-8">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-            <h2 className="text-lg font-bold tracking-widest text-orange-500" style={{ fontFamily: 'Poppins, sans-serif' }}>
-              TOP DESTINATIONS
+            <h2 className="text-lg font-bold tracking-widest text-blue-600" style={{ fontFamily: 'Poppins, sans-serif' }}>
+              TRENDING
             </h2>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
           </div>
 
-          {/* Top Destinations This Month */}
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-200 mb-8" data-testid="top-destinations-section">
+          {/* Trending Destinations This Month */}
+          <div className="bg-white rounded-xl p-6 border border-gray-200 mb-8" data-testid="top-destinations-section">
             <div className="flex items-center gap-2 mb-4">
-              <Sun className="w-6 h-6 text-amber-500" />
-              <h3 className="text-xl font-bold text-primary">Top Destinations for {selectedMonthName}</h3>
-              <span className="px-2 py-0.5 bg-amber-200 text-amber-800 text-xs font-bold rounded-full">RECOMMENDED</span>
+              <Sun className="w-6 h-6 text-blue-500" />
+              <h3 className="text-xl font-bold italic text-gray-900">Trending Destinations for {selectedMonthName}</h3>
+              <span className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs font-bold rounded-full">RECOMMENDED</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
               {topDestinationsData[selectedMonthAbbrev]?.map((dest, idx) => {
                 const categoryData = CATEGORIES.find(c => c.id === dest.category);
                 const inWishlist = isInWishlist(dest.code);
+                // Tourist attraction images for each country
+                const countryImages = {
+                  'JP': 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&q=80', // Mt. Fuji
+                  'TH': 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=400&q=80', // Thailand temples
+                  'VN': 'https://images.unsplash.com/photo-1557750255-c76072a7aad1?w=400&q=80', // Ha Long Bay
+                  'ID': 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400&q=80', // Bali
+                  'SG': 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400&q=80', // Marina Bay
+                  'MY': 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=400&q=80', // Petronas
+                  'AE': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=80', // Dubai
+                  'CH': 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=400&q=80', // Swiss Alps
+                  'IT': 'https://images.unsplash.com/photo-1515859005217-8a1f08870f59?w=400&q=80', // Rome
+                  'FR': 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=80', // Paris
+                  'ES': 'https://images.unsplash.com/photo-1543783207-ec64e4d95325?w=400&q=80', // Barcelona
+                  'GR': 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=400&q=80', // Santorini
+                  'TR': 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?w=400&q=80', // Cappadocia
+                  'AU': 'https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=400&q=80', // Sydney
+                  'NZ': 'https://images.unsplash.com/photo-1469521669194-babb45599def?w=400&q=80', // Milford Sound
+                  'MV': 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=400&q=80', // Maldives
+                  'LK': 'https://images.unsplash.com/photo-1586523969177-0c0a86bf13e1?w=400&q=80', // Sri Lanka
+                  'default': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&q=80'
+                };
+                const bgImage = countryImages[dest.code] || countryImages['default'];
+                
                 return (
                   <motion.div
                     key={dest.code}
@@ -1482,7 +1500,12 @@ const Seasons = () => {
                       const country = processedData.find(c => c.country_code === dest.code);
                       if (country) setSelectedCountry(country);
                     }}
-                    className="bg-white rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all border border-amber-100 group relative"
+                    className="relative rounded-xl overflow-hidden cursor-pointer hover:shadow-xl transition-all group h-48"
+                    style={{
+                      backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%), url('${bgImage}')`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center'
+                    }}
                     data-testid={`top-dest-${dest.code}`}
                   >
                     {/* Wishlist Button */}
@@ -1490,32 +1513,40 @@ const Seasons = () => {
                       onClick={(e) => handleWishlistToggle(e, dest.code, dest.name)}
                       className={`absolute top-2 right-2 p-1.5 rounded-full transition-all z-10 ${
                         inWishlist 
-                          ? 'bg-red-100 text-red-500' 
-                          : 'bg-gray-100 text-gray-400 hover:bg-red-50 hover:text-red-400'
+                          ? 'bg-red-500 text-white' 
+                          : 'bg-white/80 text-gray-600 hover:bg-red-100 hover:text-red-500'
                       }`}
                       data-testid={`wishlist-top-dest-${dest.code}`}
                     >
                       <Heart className={`w-4 h-4 ${inWishlist ? 'fill-current' : ''}`} />
                     </button>
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="text-2xl font-bold text-amber-500">#{idx + 1}</span>
-                      <img
-                        src={getFlag(dest.code)}
-                        alt={dest.name}
-                        className="w-8 h-6 object-cover rounded shadow-sm"
-                        onError={(e) => { e.target.style.display = 'none'; }}
-                      />
+                    
+                    {/* Rank Badge */}
+                    <div className="absolute top-2 left-2">
+                      <span className="text-lg font-bold text-white bg-blue-600 px-2 py-0.5 rounded">#{idx + 1}</span>
                     </div>
-                    <h4 className="font-bold text-primary group-hover:text-amber-600 transition-colors">{dest.name}</h4>
-                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{dest.highlight}</p>
-                    <div className="flex items-center justify-between mt-3">
-                      <div className="flex items-center gap-1">
-                        <span className="text-amber-500 text-sm">★</span>
-                        <span className="text-sm font-semibold text-amber-700">{dest.rating}</span>
+                    
+                    {/* Content at bottom */}
+                    <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
+                      <div className="flex items-center gap-2 mb-1">
+                        <img
+                          src={getFlag(dest.code)}
+                          alt={dest.name}
+                          className="w-6 h-4 object-cover rounded shadow-sm"
+                          onError={(e) => { e.target.style.display = 'none'; }}
+                        />
+                        <h4 className="font-bold text-lg group-hover:text-blue-300 transition-colors">{dest.name}</h4>
                       </div>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${categoryData?.bgColor || 'bg-gray-100'} ${categoryData?.textColor || 'text-gray-600'}`}>
-                        {dest.category}
-                      </span>
+                      <p className="text-xs text-white/80 line-clamp-1">{dest.highlight}</p>
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="flex items-center gap-1">
+                          <span className="text-yellow-400 text-sm">★</span>
+                          <span className="text-sm font-semibold">{dest.rating}</span>
+                        </div>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-sm">
+                          {dest.category}
+                        </span>
+                      </div>
                     </div>
                   </motion.div>
                 );
@@ -1526,18 +1557,18 @@ const Seasons = () => {
           {/* ========== SEPARATOR - SEASONAL TRAVEL GUIDE ========== */}
           <div className="flex items-center gap-4 my-8">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-            <h2 className="text-lg font-bold tracking-widest" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
+            <h2 className="text-lg font-bold tracking-widest text-blue-600" style={{ fontFamily: 'Poppins, sans-serif' }}>
               SEASONAL TRAVEL GUIDE
             </h2>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
           </div>
 
           {/* NEW Seasonal Travel Guide - Category-based horizontal scroll */}
-          <div className="bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl p-6 mb-6 border border-violet-200" data-testid="seasonal-guide-section">
+          <div className="bg-white rounded-xl p-6 mb-6 border border-gray-200" data-testid="seasonal-guide-section">
             <div className="flex items-center gap-2 mb-4">
-              <Sparkles className="w-6 h-6 text-violet-500" />
-              <h3 className="text-xl font-bold text-primary">Explore by Category</h3>
-              <span className="px-2 py-0.5 bg-violet-200 text-violet-800 text-xs font-bold rounded-full">CURATED</span>
+              <Sparkles className="w-6 h-6 text-blue-500" />
+              <h3 className="text-xl font-bold italic text-gray-900">Explore by Category</h3>
+              <span className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs font-bold rounded-full">CURATED</span>
             </div>
             
             {/* Category Cards - Horizontal Scroll with Images */}
@@ -1735,7 +1766,7 @@ const Seasons = () => {
           {/* ========== SEPARATOR - TRAVEL INFORMATION ========== */}
           <div className="flex items-center gap-4 my-8">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-            <h2 className="text-lg font-bold tracking-widest" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
+            <h2 className="text-lg font-bold tracking-widest text-blue-600" style={{ fontFamily: 'Poppins, sans-serif' }}>
               TRAVEL INFORMATION
             </h2>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
