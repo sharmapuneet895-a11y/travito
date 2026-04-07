@@ -1378,14 +1378,14 @@ const Seasons = () => {
                 ) : (
                 <div className="flex justify-center">
                   {/* Explore Agents Option - Single Card */}
-                  <div className="bg-white rounded-xl p-6 border-2 border-orange-400 relative shadow-lg hover:shadow-xl transition-all max-w-md w-full" data-testid="visa-option-best">
+                  <div className="bg-white rounded-xl p-6 border-2 border-blue-400 relative shadow-lg hover:shadow-xl transition-all max-w-md w-full" data-testid="visa-option-best">
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                      <span className="bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                      <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
                         Most Popular
                       </span>
                     </div>
                     <div className="text-center mt-2">
-                      <h4 className="text-xl font-bold text-orange-500 mb-1">Explore Agents</h4>
+                      <h4 className="text-xl font-bold text-blue-600 mb-1">Explore Agents</h4>
                       <p className="text-2xl font-bold text-gray-800">
                         ₹{visaPricing?.express?.price?.toLocaleString() || '6,999'}
                       </p>
@@ -1396,22 +1396,22 @@ const Seasons = () => {
                     </div>
                     <div className="mt-4 space-y-2">
                       <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-orange-500 flex-shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />
                         <span>Verified visa agents</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-orange-500 flex-shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />
                         <span>High success rate</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-orange-500 flex-shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />
                         <span>End-to-end support</span>
                       </div>
                     </div>
                     <div className="mt-4 pt-3 border-t border-gray-200">
                       <button 
                         onClick={() => setShowAgentFinder(true)}
-                        className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg text-sm transition-all"
+                        className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-sm transition-all"
                         data-testid="explore-agents-btn"
                       >
                         Explore
