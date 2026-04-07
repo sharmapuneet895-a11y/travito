@@ -122,6 +122,8 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - [x] **Deleted orphaned files**: DIYVisaWizard.js, AssistedServiceWizard.js
 - [x] **Real Passport OCR** - Using GPT-4o Vision (no longer mocked)
 - [x] **Trending Card Scroll** - Smooth scroll to Visa Intelligence + open modal
+- [x] **Light Blue Gradient** - All pages have dark blue top → lighter blue → white gradient
+- [x] **Header Demarcation** - Border + shadow separates header from body
 
 ## Pending Issues
 | Priority | Issue | Status |
