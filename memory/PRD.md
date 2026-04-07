@@ -6,12 +6,15 @@ Comprehensive travel information website for Indian travelers, providing visa in
 ## Core Features
 
 ### 1. Homepage (Seasons.js) - Main Hub ✅
-- Hero section with search functionality
-- Search by country + month
+- Hero section with search functionality (blue theme)
+- Search by country + month with blue outlined search bars
 - Auto-opening CountryDetailModal on search
-- VISA INTELLIGENCE section (above Top Destinations)
-- Explore by Category destinations
+- VISA INTELLIGENCE section (blue heading)
+- TRENDING section with tourist attraction photo backgrounds
+- SEASONAL TRAVEL GUIDE section (blue heading)
+- TRAVEL INFORMATION section (blue heading)
 - Mobile-responsive design with hamburger menu
+- **Design**: Blue headings, blue buttons with white text, Travito logo in blue
 
 ### 2. Country Detail Modal ✅
 - Auto-popup on search
