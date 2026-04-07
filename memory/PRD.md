@@ -22,32 +22,16 @@ Comprehensive travel information website for Indian travelers, providing visa in
 
 ### 3. VISA INTELLIGENCE Section ✅
 - Shows placeholder text "Enter destination above to see visa options" when no search
-- After searching: Displays **2 Visa Option Cards** (with dynamic AI pricing):
-  - Explore Agents (Most Popular) → Opens **Agent Finder Wizard**
-  - Assisted (Recommended) → Opens **Assisted Service Wizard**
-- **Action Buttons Row**: Travel Guide, Check Eligibility, Document Checklist
+- After searching: Displays **1 Visa Option Card** - Explore Agents
+  - "Explore" button → Opens **Agent Finder Wizard**
+- **Action Buttons**: Travel Guide (orange), Check Eligibility (grey), Document Checklist (grey)
 
-### 4. Agent Finder Wizard ✅ (Dec 2025)
-- 5-step workflow to find and compare visa agents:
-  1. **Compare Agents** - Filterable agent marketplace (city, fee, rating)
-  2. **Share Details** - Traveler information form
-  3. **Agent Connect** - Request confirmation & WhatsApp connect
-  4. **Application Help** - Services included & timeline
-  5. **Submission & Tracking** - Completion and tracking
-- Triggered from "Explore Agents" card's "Find Agents" button
-- **Fullscreen toggle** for better viewing
+### 4. Agent Finder Wizard ✅
+- 5-step workflow to find and compare visa agents
+- Triggered from "Explore" button on Agents card
+- Fullscreen toggle for better viewing
 
-### 5. Assisted Service Wizard ✅ (Dec 2025)
-- 5-step guided workflow with expert assistance:
-  1. **Share Details** - Form with pricing breakdown sidebar
-  2. **Document Review** - Upload & verification process
-  3. **Application Help** - Form filling support & WhatsApp
-  4. **Book Appointment** - VFS Global slot booking
-  5. **Submission & Tracking** - Process overview & completion
-- Triggered from "Assisted" card's "Get Assistance" button
-- **Fullscreen toggle** for better viewing
-
-### 6. Document Checklist Generator ✅
+### 5. Document Checklist Generator ✅
 - AI-powered using GPT-5.2
 - Generates mandatory + supporting documents
 - Interactive checkboxes with progress tracking
@@ -55,12 +39,12 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - Print functionality
 - Optimized prompt for ~25s response time
 
-### 7. User Profile & Checklists ✅
+### 6. User Profile & Checklists ✅
 - Save/update/delete document checklists
 - View progress on saved checklists
 - Authentication via email/password
 
-### 8. Visa Eligibility Checker ✅
+### 7. Visa Eligibility Checker ✅
 - Extended country list (50+ countries)
 - Pre-selected country from search
 
@@ -105,19 +89,16 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - [x] Verified visa map color coding working correctly
 
 ## Completed Work (December 2025)
-- [x] Added "How Travito Works" 3-step visual cards below hero (REMOVED - Dec 2025)
 - [x] Implemented dynamic AI Visa Pricing (`/api/visa/pricing`)
-- [x] Added 2 Visa Option cards: Explore Agents, Assisted (removed Self Apply)
+- [x] Single Visa Card: "Explore Agents" with "Explore" button
 - [x] Added Visa Type dropdown to search bar
-- [x] Simplified search flow (button/Enter required, removed alternatives)
+- [x] Simplified search flow (button/Enter required)
 - [x] **Agent Finder Wizard** - 5-step agent marketplace
-- [x] **Assisted Service Wizard** - 5-step guided assistance flow
-- [x] **Fullscreen Toggle** - Both wizards have expand/collapse functionality
-- [x] **VFS Center Data** - Real branch info for 8 cities
-- [x] **Official Visa Portal Links** - Direct links to country-specific visa websites
-- [x] **Relocated Action Buttons** - Travel Guide, Eligibility, Checklist together
-- [x] **Removed "Confused About Visa" heading** - Cleaner UI
-- [x] Made Compare Visa Options table mobile-responsive
+- [x] **Fullscreen Toggle** - Wizard has expand/collapse functionality
+- [x] **Clean Color Scheme** - White, grey, orange only
+- [x] **Orange Headings** - All main section headings are orange
+- [x] **Centered Search** - Search box centered in hero
+- [x] **Clean Hero** - Removed background image, simple gradient
 - [x] Google Site Verification HTML added
 
 ## Pending Issues

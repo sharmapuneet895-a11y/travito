@@ -8,7 +8,6 @@ import BackToTop from '../components/BackToTop';
 import VisaEligibilityChecker from '../components/VisaEligibilityChecker';
 import DocumentChecklistGenerator from '../components/DocumentChecklistGenerator';
 import AgentFinderWizard from '../components/AgentFinderWizard';
-import AssistedServiceWizard from '../components/AssistedServiceWizard';
 import { Calendar, Sun, CloudSun, Cloud, Search, MapPin, Heart, Palmtree, Mountain, Building2, Compass, Landmark, Trees, Snowflake, Sparkles, CloudRain, Wind, ThermometerSun, FileText, Clock, IndianRupee, Plane, X, ChevronLeft, ChevronRight, ChevronDown, Dumbbell, CheckCircle, ClipboardList, Loader2 } from 'lucide-react';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
@@ -825,7 +824,6 @@ const Seasons = () => {
   const [showEligibilityChecker, setShowEligibilityChecker] = useState(false);
   const [showDocumentChecklist, setShowDocumentChecklist] = useState(false);
   const [showAgentFinder, setShowAgentFinder] = useState(false);
-  const [showAssistedService, setShowAssistedService] = useState(false);
   
   // AI-powered visa pricing state
   const [visaPricing, setVisaPricing] = useState(null);
@@ -1179,32 +1177,30 @@ const Seasons = () => {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F5F7FA' }}>
-      {/* Hero Section with Background Image */}
+    <div className="min-h-screen bg-white">
+      {/* Hero Section - Clean White/Grey/Orange */}
       <div 
-        className="relative bg-cover bg-center"
-        style={{ 
-          backgroundImage: `linear-gradient(to right, rgba(11, 60, 93, 0.85), rgba(11, 60, 93, 0.6)), url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80')`,
-          minHeight: '280px'
-        }}
+        className="relative bg-gradient-to-br from-gray-50 to-gray-100"
+        style={{ minHeight: '280px' }}
       >
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-10">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-10 text-center">
           {/* Hero Content */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
+            className="flex flex-col items-center"
           >
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-2 md:mb-3" style={{ fontFamily: 'Poppins, sans-serif' }} data-testid="seasons-page-title">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-orange-500 mb-2 md:mb-3" style={{ fontFamily: 'Poppins, sans-serif' }} data-testid="seasons-page-title">
               Compare the best Visa options
             </h1>
-            <p className="text-sm sm:text-base md:text-lg text-white/90 mb-4 md:mb-6 max-w-xl">
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-4 md:mb-6 max-w-xl">
               Understand Visa requirements for your destination and apply the smartest way - All in one place
             </p>
 
-            {/* Search Box */}
-            <div className="bg-white rounded-xl p-3 sm:p-4 md:p-5 shadow-xl max-w-4xl">
-              <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-end">
+            {/* Search Box - Centered */}
+            <div className="bg-white rounded-xl p-3 sm:p-4 md:p-5 shadow-lg border border-gray-200 max-w-3xl w-full">
+              <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-end justify-center">
                 {/* Visa Type Dropdown */}
                 <div className="md:w-40">
                   <label className="block text-xs font-semibold mb-1.5" style={{ color: '#0B3C5D' }}>
@@ -1357,21 +1353,21 @@ const Seasons = () => {
           {/* ========== SEPARATOR - VISA INTELLIGENCE ========== */}
           <div id="visa-intelligence-section" className="flex items-center gap-4 mb-8 scroll-mt-24">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-            <h2 className="text-lg font-bold tracking-widest" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
+            <h2 className="text-lg font-bold tracking-widest text-orange-500" style={{ fontFamily: 'Poppins, sans-serif' }}>
               VISA INTELLIGENCE
             </h2>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
           </div>
 
           {/* Visa Section - Only show cards when destination is selected */}
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border mb-8" style={{ borderColor: '#E2E8F0' }} data-testid="visa-section-always">
+          <div className="bg-white rounded-xl p-6 border border-gray-200 mb-8" data-testid="visa-section-always">
             {!searchResult ? (
               <div className="text-center py-8">
-                <p className="text-gray-600">Enter destination above to see visa options</p>
+                <p className="text-gray-500">Enter destination above to see visa options</p>
               </div>
             ) : (
               <div>
-                <h3 className="text-lg font-bold text-center mb-5" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
+                <h3 className="text-xl font-bold text-center mb-5 text-orange-500" style={{ fontFamily: 'Poppins, sans-serif' }}>
                   Visa Options for {searchResult.country.country_name}
                 </h3>
                 {pricingLoading ? (
@@ -1380,17 +1376,17 @@ const Seasons = () => {
                     <span className="ml-2 text-gray-600">Fetching best prices...</span>
                   </div>
                 ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
-                  {/* Explore Agents Option */}
-                  <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-5 border-2 border-orange-400 relative shadow-lg hover:shadow-xl transition-all" data-testid="visa-option-best">
+                <div className="flex justify-center">
+                  {/* Explore Agents Option - Single Card */}
+                  <div className="bg-white rounded-xl p-6 border-2 border-orange-400 relative shadow-lg hover:shadow-xl transition-all max-w-md w-full" data-testid="visa-option-best">
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                       <span className="bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full">
                         Most Popular
                       </span>
                     </div>
                     <div className="text-center mt-2">
-                      <h4 className="text-lg font-bold text-orange-600 mb-1">Explore Agents</h4>
-                      <p className="text-2xl font-bold" style={{ color: '#0B3C5D' }}>
+                      <h4 className="text-xl font-bold text-orange-500 mb-1">Explore Agents</h4>
+                      <p className="text-2xl font-bold text-gray-800">
                         ₹{visaPricing?.express?.price?.toLocaleString() || '6,999'}
                       </p>
                       <div className="flex items-center justify-center gap-1 text-gray-600 text-sm mt-1">
@@ -1400,67 +1396,25 @@ const Seasons = () => {
                     </div>
                     <div className="mt-4 space-y-2">
                       <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-orange-500 flex-shrink-0" />
                         <span>Verified visa agents</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-orange-500 flex-shrink-0" />
                         <span>High success rate</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-orange-500 flex-shrink-0" />
                         <span>End-to-end support</span>
                       </div>
                     </div>
-                    <div className="mt-4 pt-3 border-t border-orange-200">
+                    <div className="mt-4 pt-3 border-t border-gray-200">
                       <button 
                         onClick={() => setShowAgentFinder(true)}
-                        className="w-full py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg text-sm transition-all"
-                        data-testid="express-evisa-btn"
+                        className="w-full py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg text-sm transition-all"
+                        data-testid="explore-agents-btn"
                       >
-                        Find Agents
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Assisted Option */}
-                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border-2 border-blue-400 relative shadow-lg hover:shadow-xl transition-all" data-testid="visa-option-balanced">
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                      <span className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                        Recommended
-                      </span>
-                    </div>
-                    <div className="text-center mt-2">
-                      <h4 className="text-lg font-bold text-blue-600 mb-1">Assisted</h4>
-                      <p className="text-2xl font-bold" style={{ color: '#0B3C5D' }}>
-                        ₹{visaPricing?.assisted?.price?.toLocaleString() || '6,500'}
-                      </p>
-                      <div className="flex items-center justify-center gap-1 text-gray-600 text-sm mt-1">
-                        <Clock className="w-4 h-4" />
-                        <span>Processing: <strong>{visaPricing?.assisted?.processing_days || '4-7'} days</strong></span>
-                      </div>
-                    </div>
-                    <div className="mt-4 space-y-2">
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span>Expert guidance</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span>Document verification</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                        <span>Lower rejection risk</span>
-                      </div>
-                    </div>
-                    <div className="mt-4 pt-3 border-t border-blue-200">
-                      <button 
-                        onClick={() => setShowAssistedService(true)}
-                        className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg text-sm transition-all"
-                        data-testid="assisted-btn"
-                      >
-                        Get Assistance
+                        Explore
                       </button>
                     </div>
                   </div>
@@ -1471,7 +1425,7 @@ const Seasons = () => {
                 <div className="mt-6 flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-3">
                   <button
                     onClick={() => setSelectedCountry(searchResult.country)}
-                    className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-lg text-sm transition-all shadow-lg hover:shadow-xl inline-flex items-center justify-center gap-2"
+                    className="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg text-sm transition-all shadow-md hover:shadow-lg inline-flex items-center justify-center gap-2"
                     data-testid="view-country-details-btn"
                   >
                     <Compass className="w-4 h-4" />
@@ -1479,18 +1433,18 @@ const Seasons = () => {
                   </button>
                   <button
                     onClick={() => setShowEligibilityChecker(true)}
-                    className="px-5 py-2.5 rounded-lg font-semibold text-sm transition-all hover:opacity-90 inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white"
+                    className="px-5 py-2.5 rounded-lg font-semibold text-sm transition-all inline-flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"
                     data-testid="visa-eligibility-btn"
                   >
-                    <CheckCircle className="w-4 h-4" />
+                    <CheckCircle className="w-4 h-4 text-orange-500" />
                     Check Eligibility
                   </button>
                   <button
                     onClick={() => setShowDocumentChecklist(true)}
-                    className="px-5 py-2.5 rounded-lg font-semibold text-sm transition-all hover:opacity-90 inline-flex items-center justify-center gap-2 bg-violet-500 hover:bg-violet-600 text-white"
+                    className="px-5 py-2.5 rounded-lg font-semibold text-sm transition-all inline-flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"
                     data-testid="document-checklist-btn"
                   >
-                    <ClipboardList className="w-4 h-4" />
+                    <ClipboardList className="w-4 h-4 text-orange-500" />
                     Document Checklist
                   </button>
                 </div>
@@ -1501,7 +1455,7 @@ const Seasons = () => {
           {/* ========== SEPARATOR - TOP DESTINATIONS ========== */}
           <div className="flex items-center gap-4 my-8">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-            <h2 className="text-lg font-bold tracking-widest" style={{ color: '#0B3C5D', fontFamily: 'Poppins, sans-serif' }}>
+            <h2 className="text-lg font-bold tracking-widest text-orange-500" style={{ fontFamily: 'Poppins, sans-serif' }}>
               TOP DESTINATIONS
             </h2>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
@@ -1866,15 +1820,6 @@ const Seasons = () => {
       <AgentFinderWizard
         isOpen={showAgentFinder}
         onClose={() => setShowAgentFinder(false)}
-        country={searchResult?.country}
-        visaType={selectedVisaType}
-        pricing={visaPricing}
-      />
-
-      {/* Assisted Service Wizard Modal */}
-      <AssistedServiceWizard
-        isOpen={showAssistedService}
-        onClose={() => setShowAssistedService(false)}
         country={searchResult?.country}
         visaType={selectedVisaType}
         pricing={visaPricing}
