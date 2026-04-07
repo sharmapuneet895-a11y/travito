@@ -31,14 +31,16 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - **Header**: Country name centered with tourist attraction photo background
 - **Layout**: 20% steps panel (left) + 80% content (right)
 - **Steps panel**: 5 vertical steps that highlight as user progresses
-- **Agent cards** display:
-  - Logo (position left)
-  - Agent name + location
-  - Years of experience
-  - Google rating (right side in green box)
-  - Visa fee, Govt fee, Processing time, Total
-- 5-step workflow: Select Agent → Your Details → Connect → Application → Track
+- **Step 1 - Agent cards** display: Logo, Agent name, Location, Experience, Google rating, Visa fee, Govt fee, Processing time, Total
+- **Step 2 - Travel Details** (NEW):
+  - Upload Passport (auto-fills personal info via simulated OCR)
+  - Upload Photo (embassy format)
+  - Personal Info: First name, Last name, DOB, Gender, Marital status, Passport number, Valid thru, Place of issue, Email, Phone
+  - Flight Details: Arrival date/flight number, Departure date/flight number
+  - Hotel Reservation: Hotel name, Check-in, Check-out
+- 5-step workflow: Select Agent → Travel Details → Connect → Application → Track
 - Fullscreen toggle for better viewing
+- **Note**: Passport OCR is MOCKED - uses simulated data
 
 ### 5. Document Checklist Generator ✅
 - AI-powered using GPT-5.2
