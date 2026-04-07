@@ -1177,7 +1177,7 @@ const Seasons = () => {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom, #e0f2fe 0%, #f0f9ff 15%, #ffffff 30%)' }}>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom, #bae6fd 0%, #e0f7fa 10%, #f0f9ff 25%, #f8fafc 40%, #ffffff 60%)' }}>
       {/* Hero Section - Light Blue Gradient flowing from header */}
       <div 
         className="relative"
