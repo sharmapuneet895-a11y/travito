@@ -16,7 +16,7 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className="sticky top-0 z-50" style={{ background: 'linear-gradient(to bottom, #7dd3fc, #bae6fd)', borderBottom: 'none' }} data-testid="main-navigation">
+    <nav className="sticky top-0 z-50" style={{ background: 'linear-gradient(to bottom, #7dd3fc, #93c5fd)', borderBottom: '2px solid rgba(59, 130, 246, 0.3)', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.15)' }} data-testid="main-navigation">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4">
         <div className="flex items-center justify-between">
           {/* Logo - Left Aligned */}
