@@ -26,9 +26,18 @@ Comprehensive travel information website for Indian travelers, providing visa in
   - "Explore" button → Opens **Agent Finder Wizard**
 - **Action Buttons**: Travel Guide (orange), Check Eligibility (grey), Document Checklist (grey)
 
-### 4. Agent Finder Wizard ✅
-- 5-step workflow to find and compare visa agents
-- Triggered from "Explore" button on Agents card
+### 4. Agent Finder Wizard ✅ (Redesigned Dec 2025)
+- **Blue color scheme** with white text on blue backgrounds
+- **Header**: Country name centered with tourist attraction photo background
+- **Layout**: 20% steps panel (left) + 80% content (right)
+- **Steps panel**: 5 vertical steps that highlight as user progresses
+- **Agent cards** display:
+  - Logo (position left)
+  - Agent name + location
+  - Years of experience
+  - Google rating (right side in green box)
+  - Visa fee, Govt fee, Processing time, Total
+- 5-step workflow: Select Agent → Your Details → Connect → Application → Track
 - Fullscreen toggle for better viewing
 
 ### 5. Document Checklist Generator ✅
