@@ -65,8 +65,7 @@ const Navigation = () => {
             ) : (
               <button
                 onClick={() => setShowAuthModal(true)}
-                className="px-3 py-1.5 md:px-4 md:py-2 rounded-full font-medium text-white text-sm md:text-base transition-all hover:opacity-90"
-                style={{ backgroundColor: '#FF7A00' }}
+                className="px-3 py-1.5 md:px-4 md:py-2 rounded-full font-medium text-white text-sm md:text-base transition-all hover:opacity-90 bg-blue-600 hover:bg-blue-700"
                 data-testid="login-btn"
               >
                 Sign In

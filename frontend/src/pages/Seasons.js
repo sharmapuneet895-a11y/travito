@@ -1463,32 +1463,77 @@ const Seasons = () => {
               <h3 className="text-xl font-bold italic text-gray-900">Trending Destinations for {selectedMonthName}</h3>
               <span className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs font-bold rounded-full">RECOMMENDED</span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            {/* Horizontal Scroll Container */}
+            <div className="relative">
+              {/* Left scroll arrow */}
+              <button
+                onClick={() => document.getElementById('trending-scroll')?.scrollBy({ left: -280, behavior: 'smooth' })}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all border border-gray-200"
+              >
+                <ChevronLeft className="w-5 h-5 text-gray-600" />
+              </button>
+              {/* Right scroll arrow */}
+              <button
+                onClick={() => document.getElementById('trending-scroll')?.scrollBy({ left: 280, behavior: 'smooth' })}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/90 rounded-full shadow-lg flex items-center justify-center hover:bg-white transition-all border border-gray-200"
+              >
+                <ChevronRight className="w-5 h-5 text-gray-600" />
+              </button>
+              
+              <div id="trending-scroll" className="flex gap-4 overflow-x-auto scrollbar-hide pb-2 px-6" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               {topDestinationsData[selectedMonthAbbrev]?.map((dest, idx) => {
                 const categoryData = CATEGORIES.find(c => c.id === dest.category);
                 const inWishlist = isInWishlist(dest.code);
-                // Tourist attraction images for each country
-                const countryImages = {
-                  'JP': 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&q=80', // Mt. Fuji
-                  'TH': 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=400&q=80', // Thailand temples
-                  'VN': 'https://images.unsplash.com/photo-1557750255-c76072a7aad1?w=400&q=80', // Ha Long Bay
-                  'ID': 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=400&q=80', // Bali
-                  'SG': 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400&q=80', // Marina Bay
-                  'MY': 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=400&q=80', // Petronas
-                  'AE': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=400&q=80', // Dubai
-                  'CH': 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=400&q=80', // Swiss Alps
-                  'IT': 'https://images.unsplash.com/photo-1515859005217-8a1f08870f59?w=400&q=80', // Rome
-                  'FR': 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=80', // Paris
-                  'ES': 'https://images.unsplash.com/photo-1543783207-ec64e4d95325?w=400&q=80', // Barcelona
-                  'GR': 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=400&q=80', // Santorini
-                  'TR': 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?w=400&q=80', // Cappadocia
-                  'AU': 'https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=400&q=80', // Sydney
-                  'NZ': 'https://images.unsplash.com/photo-1469521669194-babb45599def?w=400&q=80', // Milford Sound
-                  'MV': 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=400&q=80', // Maldives
-                  'LK': 'https://images.unsplash.com/photo-1586523969177-0c0a86bf13e1?w=400&q=80', // Sri Lanka
-                  'default': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&q=80'
+                // Country-specific images using ISO3 codes
+                const trendingCountryImages = {
+                  'THA': 'https://images.unsplash.com/photo-1540660235365-083e8894cec4?w=400&q=80', // Thailand temple
+                  'MDV': 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=400&q=80', // Maldives beach
+                  'LKA': 'https://images.unsplash.com/photo-1586523969177-0c0a86bf13e1?w=400&q=80', // Sri Lanka
+                  'UAE': 'https://images.pexels.com/photos/34218532/pexels-photo-34218532.jpeg?auto=compress&cs=tinysrgb&w=400', // Dubai skyline
+                  'AUS': 'https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=400&q=80', // Sydney Opera
+                  'VNM': 'https://images.unsplash.com/photo-1707292098561-a251b9aa4014?w=400&q=80', // Halong Bay
+                  'IDN': 'https://images.unsplash.com/photo-1673160029894-5cbb28d38a12?w=400&q=80', // Bali rice terraces
+                  'MYS': 'https://images.unsplash.com/photo-1582713662521-cbfcec5d6c42?w=400&q=80', // Petronas towers
+                  'PHL': 'https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=400&q=80', // Philippines beach
+                  'OMN': 'https://images.unsplash.com/photo-1559339838-75e61c2ef0b8?w=400&q=80', // Oman desert
+                  'BRA': 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=400&q=80', // Rio
+                  'ITA': 'https://images.unsplash.com/photo-1515859005217-8a1f08870f59?w=400&q=80', // Rome Colosseum
+                  'NZL': 'https://images.unsplash.com/photo-1469521669194-babb45599def?w=400&q=80', // Milford Sound
+                  'EGY': 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=400&q=80', // Egypt pyramids
+                  'ZAF': 'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=80', // South Africa
+                  'ARG': 'https://images.unsplash.com/photo-1612294037637-ec328d0e075e?w=400&q=80', // Argentina
+                  'SGP': 'https://images.unsplash.com/photo-1526797433728-1b6d12a06ccf?w=400&q=80', // Singapore Marina Bay
+                  'JPN': 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&q=80', // Japan Fuji
+                  'IND': 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=400&q=80', // India Taj Mahal
+                  'MAR': 'https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=400&q=80', // Morocco
+                  'PER': 'https://images.unsplash.com/photo-1526392060635-9d6019884377?w=400&q=80', // Peru Machu Picchu
+                  'USA': 'https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=400&q=80', // USA NYC
+                  'JOR': 'https://images.unsplash.com/photo-1548013146-72479768bada?w=400&q=80', // Jordan Petra
+                  'ESP': 'https://images.unsplash.com/photo-1543783207-ec64e4d95325?w=400&q=80', // Spain Barcelona
+                  'CRI': 'https://images.unsplash.com/photo-1558429510-275641d1ddec?w=400&q=80', // Costa Rica
+                  'NLD': 'https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=400&q=80', // Netherlands tulips
+                  'GRC': 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=400&q=80', // Greece Santorini
+                  'TUR': 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?w=400&q=80', // Turkey Cappadocia
+                  'CHN': 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=400&q=80', // China Great Wall
+                  'KOR': 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=400&q=80', // South Korea
+                  'NPL': 'https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=400&q=80', // Nepal mountains
+                  'FRA': 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=80', // France Eiffel
+                  'PRT': 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=400&q=80', // Portugal Lisbon
+                  'HRV': 'https://images.unsplash.com/photo-1534723452862-4c874018d66d?w=400&q=80', // Croatia Dubrovnik
+                  'CHE': 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?w=400&q=80', // Switzerland Alps
+                  'GBR': 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400&q=80', // UK London
+                  'ISL': 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&q=80', // Iceland aurora
+                  'NOR': 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=400&q=80', // Norway fjords
+                  'KEN': 'https://images.unsplash.com/photo-1489392191049-fc10c97e64b6?w=400&q=80', // Kenya safari
+                  'TZA': 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=400&q=80', // Tanzania Serengeti
+                  'SWE': 'https://images.unsplash.com/photo-1509356843151-3e7d96241e11?w=400&q=80', // Sweden
+                  'CAN': 'https://images.unsplash.com/photo-1517935706615-2717063c2225?w=400&q=80', // Canada
+                  'AUT': 'https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=400&q=80', // Austria
+                  'DEU': 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=400&q=80', // Germany
+                  'MEX': 'https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?w=400&q=80', // Mexico
+                  'FIN': 'https://images.unsplash.com/photo-1531002629071-36903e8e3b8f?w=400&q=80', // Finland
                 };
-                const bgImage = countryImages[dest.code] || countryImages['default'];
+                const bgImage = trendingCountryImages[dest.code] || COUNTRY_IMAGES[dest.code] || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&q=80';
                 
                 return (
                   <motion.div
@@ -1500,11 +1545,13 @@ const Seasons = () => {
                       const country = processedData.find(c => c.country_code === dest.code);
                       if (country) setSelectedCountry(country);
                     }}
-                    className="relative rounded-xl overflow-hidden cursor-pointer hover:shadow-xl transition-all group h-48"
+                    className="relative rounded-xl overflow-hidden cursor-pointer hover:shadow-xl transition-all group h-48 flex-shrink-0"
                     style={{
                       backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%), url('${bgImage}')`,
                       backgroundSize: 'cover',
-                      backgroundPosition: 'center'
+                      backgroundPosition: 'center',
+                      width: '220px',
+                      minWidth: '220px'
                     }}
                     data-testid={`top-dest-${dest.code}`}
                   >
@@ -1551,6 +1598,7 @@ const Seasons = () => {
                   </motion.div>
                 );
               })}
+              </div>
             </div>
           </div>
 

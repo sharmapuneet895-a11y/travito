@@ -48,14 +48,13 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
     hotelCheckOut: '',
   });
 
-  const totalSteps = 5;
+  const totalSteps = 4;
 
   const steps = [
     { num: 1, title: 'Select Agent', desc: 'Choose from verified agents' },
     { num: 2, title: 'Travel Details', desc: 'Upload documents & info' },
     { num: 3, title: 'Connect', desc: 'Agent will contact you' },
-    { num: 4, title: 'Application', desc: 'Get help with documents' },
-    { num: 5, title: 'Track', desc: 'Monitor your application' },
+    { num: 4, title: 'Track', desc: 'Monitor your application' },
   ];
 
   // Agent data with detailed info
@@ -601,29 +600,6 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
     </div>
   );
 
-  const renderStep4 = () => (
-    <div className="space-y-4">
-      <p className="text-gray-600">Your agent is helping with your application</p>
-      <div className="bg-white rounded-xl p-5 border border-gray-200">
-        <h4 className="font-semibold text-gray-800 mb-4">Services Included</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {['Document verification', 'Application form filling', 'Appointment booking', 'Interview preparation', 'Submission support', 'Status tracking'].map((service, idx) => (
-            <div key={idx} className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-blue-500" />
-              <span className="text-sm text-gray-700">{service}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="bg-yellow-50 rounded-xl p-4 border border-yellow-200">
-        <p className="text-sm text-yellow-800 flex items-center gap-2">
-          <Clock className="w-4 h-4" />
-          Estimated processing: {selectedAgent?.processingTime || '3-5 days'}
-        </p>
-      </div>
-    </div>
-  );
-
   const renderStep5 = () => (
     <div className="space-y-4">
       <div className="bg-blue-600 rounded-xl p-6 text-white text-center">
@@ -672,12 +648,12 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
         isFullscreen ? 'w-full h-full max-w-none max-h-none rounded-none' : 'max-w-4xl w-full max-h-[90vh]'
       }`}>
         
-        {/* Header with Country Name */}
+        {/* Header with Country Name - Increased Size */}
         <div 
           className="relative bg-cover bg-center"
           style={{ 
             backgroundImage: `linear-gradient(to bottom, rgba(30, 64, 175, 0.85), rgba(30, 64, 175, 0.95)), url('${countryImage}')`,
-            minHeight: '120px'
+            minHeight: '180px'
           }}
         >
           <div className="absolute top-3 right-3 flex items-center gap-2">
@@ -688,10 +664,19 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
               <X className="w-5 h-5" />
             </button>
           </div>
-          <div className="flex items-center justify-center h-full py-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-white text-center">
+          <div className="flex flex-col items-center justify-center h-full py-8 px-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">
               {country?.country_name || 'Visa Application'}
             </h1>
+            {/* Services Included - Moved to top panel */}
+            <div className="flex flex-wrap items-center justify-center gap-3 mt-2">
+              {['Document verification', 'Form filling', 'Appointment booking', 'Interview prep', 'Submission support', 'Status tracking'].map((service, idx) => (
+                <div key={idx} className="flex items-center gap-1.5 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                  <CheckCircle className="w-3.5 h-3.5 text-green-300" />
+                  <span className="text-xs text-white font-medium">{service}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -699,12 +684,11 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
         <div className="flex flex-1 overflow-hidden">
           {renderStepIndicator()}
           <div className="flex-1 flex flex-col">
-            <div className={`flex-1 p-5 overflow-y-auto bg-gray-50 ${isFullscreen ? 'max-h-[calc(100vh-220px)]' : 'max-h-[calc(90vh-220px)]'}`}>
+            <div className={`flex-1 p-5 overflow-y-auto bg-gray-50 ${isFullscreen ? 'max-h-[calc(100vh-280px)]' : 'max-h-[calc(90vh-280px)]'}`}>
               {currentStep === 1 && renderStep1()}
               {currentStep === 2 && renderStep2()}
               {currentStep === 3 && renderStep3()}
-              {currentStep === 4 && renderStep4()}
-              {currentStep === 5 && renderStep5()}
+              {currentStep === 4 && renderStep5()}
             </div>
 
             {/* Footer */}

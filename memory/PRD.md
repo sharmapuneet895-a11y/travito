@@ -29,19 +29,20 @@ Comprehensive travel information website for Indian travelers, providing visa in
   - "Explore" button → Opens **Agent Finder Wizard**
 - **Action Buttons**: Travel Guide (orange), Check Eligibility (grey), Document Checklist (grey)
 
-### 4. Agent Finder Wizard ✅ (Redesigned Dec 2025)
+### 4. Agent Finder Wizard ✅ (Updated Dec 2025)
 - **Blue color scheme** with white text on blue backgrounds
-- **Header**: Country name centered with tourist attraction photo background
+- **Header**: Country name centered with tourist attraction photo background (increased height)
+- **Services Included** badges in header: Document verification, Form filling, Appointment booking, Interview prep, Submission support, Status tracking
 - **Layout**: 20% steps panel (left) + 80% content (right)
-- **Steps panel**: 5 vertical steps that highlight as user progresses
+- **Steps panel**: 4 vertical steps that highlight as user progresses
 - **Step 1 - Agent cards** display: Logo, Agent name, Location, Experience, Google rating, Visa fee, Govt fee, Processing time, Total
-- **Step 2 - Travel Details** (NEW):
+- **Step 2 - Travel Details**:
   - Upload Passport (auto-fills personal info via simulated OCR)
   - Upload Photo (embassy format)
   - Personal Info: First name, Last name, DOB, Gender, Marital status, Passport number, Valid thru, Place of issue, Email, Phone
   - Flight Details: Arrival date/flight number, Departure date/flight number
   - Hotel Reservation: Hotel name, Check-in, Check-out
-- 5-step workflow: Select Agent → Travel Details → Connect → Application → Track
+- 4-step workflow: Select Agent → Travel Details → Connect → Track
 - Fullscreen toggle for better viewing
 - **Note**: Passport OCR is MOCKED - uses simulated data
 
@@ -107,13 +108,17 @@ Comprehensive travel information website for Indian travelers, providing visa in
 - [x] Single Visa Card: "Explore Agents" with "Explore" button
 - [x] Added Visa Type dropdown to search bar
 - [x] Simplified search flow (button/Enter required)
-- [x] **Agent Finder Wizard** - 5-step agent marketplace
+- [x] **Agent Finder Wizard** - 4-step agent marketplace
 - [x] **Fullscreen Toggle** - Wizard has expand/collapse functionality
-- [x] **Clean Color Scheme** - White, grey, orange only
-- [x] **Orange Headings** - All main section headings are orange
+- [x] **Clean Color Scheme** - Blue, white, grey (Blue theme throughout)
+- [x] **Blue Headings** - All main section headings are blue
 - [x] **Centered Search** - Search box centered in hero
 - [x] **Clean Hero** - Removed background image, simple gradient
 - [x] Google Site Verification HTML added
+- [x] **Sign In Button** - Blue fill with white text
+- [x] **TRENDING Section** - Horizontal scroll with country-specific images
+- [x] **Agent Wizard Services** - Moved to top panel header
+- [x] **Deleted orphaned files**: DIYVisaWizard.js, AssistedServiceWizard.js
 
 ## Pending Issues
 | Priority | Issue | Status |
@@ -138,15 +143,13 @@ Comprehensive travel information website for Indian travelers, providing visa in
 └── frontend/
     └── src/
         ├── components/
-        │   ├── AgentFinderWizard.js   # NEW - Agent marketplace wizard
-        │   ├── AssistedServiceWizard.js # NEW - Assisted service wizard
+        │   ├── AgentFinderWizard.js   # Agent marketplace wizard (4 steps)
         │   ├── CountryDetailModal.js
-        │   ├── DIYVisaWizard.js       # UPDATED - Dynamic document fetching
         │   ├── DocumentChecklistGenerator.js
         │   ├── Navigation.js
         │   └── VisaEligibilityChecker.js
         ├── pages/
-        │   ├── Seasons.js (Homepage + Visa Intelligence + Visa Options)
+        │   ├── Seasons.js (Homepage + Visa Intelligence + Trending horizontal scroll)
         │   ├── UserProfile.js
         │   └── Visa.js
         └── context/
