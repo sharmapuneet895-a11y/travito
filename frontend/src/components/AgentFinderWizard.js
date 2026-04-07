@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ChevronRight, ChevronLeft, Check, Star, Clock, Phone, MessageCircle, CheckCircle, Users, Shield, Maximize2, Minimize2, Building, Mail, MapPin } from 'lucide-react';
+import { X, ChevronRight, ChevronLeft, Check, Star, Clock, Phone, MessageCircle, CheckCircle, Users, Shield, Maximize2, Minimize2, Building, Mail, MapPin, Upload, Camera, Plane, Hotel, FileText, Loader2 } from 'lucide-react';
 
 // Country tourist images
 const COUNTRY_IMAGES = {
@@ -21,18 +21,38 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
   const [currentStep, setCurrentStep] = useState(1);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState(null);
+  const [passportUploaded, setPassportUploaded] = useState(false);
+  const [photoUploaded, setPhotoUploaded] = useState(false);
+  const [extractingData, setExtractingData] = useState(false);
+  
   const [formData, setFormData] = useState({
-    fullName: '',
+    // Personal Info (auto-filled from passport)
+    firstName: '',
+    lastName: '',
+    dob: '',
+    gender: '',
+    maritalStatus: '',
+    passportNumber: '',
+    passportValidThru: '',
+    placeOfIssue: '',
     email: '',
     phone: '',
-    travelDate: '',
+    // Flight Details
+    arrivalDate: '',
+    arrivalFlightNumber: '',
+    departureDate: '',
+    departureFlightNumber: '',
+    // Hotel Details
+    hotelName: '',
+    hotelCheckIn: '',
+    hotelCheckOut: '',
   });
 
   const totalSteps = 5;
 
   const steps = [
     { num: 1, title: 'Select Agent', desc: 'Choose from verified agents' },
-    { num: 2, title: 'Your Details', desc: 'Share travel information' },
+    { num: 2, title: 'Travel Details', desc: 'Upload documents & info' },
     { num: 3, title: 'Connect', desc: 'Agent will contact you' },
     { num: 4, title: 'Application', desc: 'Get help with documents' },
     { num: 5, title: 'Track', desc: 'Monitor your application' },
@@ -104,6 +124,37 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
 
   const countryImage = COUNTRY_IMAGES[country?.country_name] || COUNTRY_IMAGES['default'];
 
+  // Simulate passport data extraction
+  const handlePassportUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setExtractingData(true);
+      // Simulate OCR extraction delay
+      setTimeout(() => {
+        setFormData(prev => ({
+          ...prev,
+          firstName: 'Rahul',
+          lastName: 'Sharma',
+          dob: '1990-05-15',
+          gender: 'Male',
+          maritalStatus: 'Single',
+          passportNumber: 'P1234567',
+          passportValidThru: '2030-12-31',
+          placeOfIssue: 'New Delhi',
+        }));
+        setPassportUploaded(true);
+        setExtractingData(false);
+      }, 2000);
+    }
+  };
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhotoUploaded(true);
+    }
+  };
+
   if (!isOpen) return null;
 
   const renderStepIndicator = () => (
@@ -151,14 +202,7 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
       }`}
     >
       <div className="flex items-start gap-4">
-        {/* Logo */}
-        <img
-          src={agent.logo}
-          alt={agent.name}
-          className="w-14 h-14 rounded-xl object-cover"
-        />
-        
-        {/* Agent Info */}
+        <img src={agent.logo} alt={agent.name} className="w-14 h-14 rounded-xl object-cover" />
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between">
             <div>
@@ -167,18 +211,13 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
                 <MapPin className="w-3 h-3" /> {agent.location}
               </p>
             </div>
-            {/* Google Rating */}
             <div className="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-lg">
               <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
               <span className="font-bold text-sm text-gray-800">{agent.googleRating}</span>
               <span className="text-xs text-gray-500">({agent.reviews})</span>
             </div>
           </div>
-
-          {/* Experience */}
           <p className="text-sm text-blue-600 font-medium mt-1">{agent.experience} Experience</p>
-
-          {/* Fees Row */}
           <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100">
             <div>
               <p className="text-xs text-gray-500">Visa Fee</p>
@@ -212,53 +251,301 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
   );
 
   const renderStep2 = () => (
-    <div className="space-y-4">
-      <p className="text-gray-600">Share your details so {selectedAgent?.name || 'the agent'} can contact you</p>
-      
+    <div className="space-y-5">
+      {/* Document Upload Section */}
       <div className="bg-white rounded-xl p-5 border border-gray-200">
+        <h4 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <FileText className="w-5 h-5 text-blue-600" />
+          Required Documents
+        </h4>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Passport Upload */}
+          <div className={`border-2 border-dashed rounded-xl p-4 text-center transition-all ${
+            passportUploaded ? 'border-green-400 bg-green-50' : 'border-gray-300 hover:border-blue-400'
+          }`}>
+            <input
+              type="file"
+              id="passport-upload"
+              accept="image/*,.pdf"
+              onChange={handlePassportUpload}
+              className="hidden"
+            />
+            <label htmlFor="passport-upload" className="cursor-pointer block">
+              {extractingData ? (
+                <div className="py-4">
+                  <Loader2 className="w-10 h-10 text-blue-500 animate-spin mx-auto mb-2" />
+                  <p className="text-sm text-blue-600 font-medium">Extracting passport data...</p>
+                </div>
+              ) : passportUploaded ? (
+                <div className="py-4">
+                  <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-2" />
+                  <p className="text-sm text-green-700 font-medium">Passport Uploaded</p>
+                  <p className="text-xs text-green-600">Data auto-filled below</p>
+                </div>
+              ) : (
+                <div className="py-4">
+                  <Upload className="w-10 h-10 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-gray-700">Upload Passport</p>
+                  <p className="text-xs text-gray-500">As required by embassy</p>
+                </div>
+              )}
+            </label>
+          </div>
+
+          {/* Photo Upload */}
+          <div className={`border-2 border-dashed rounded-xl p-4 text-center transition-all ${
+            photoUploaded ? 'border-green-400 bg-green-50' : 'border-gray-300 hover:border-blue-400'
+          }`}>
+            <input
+              type="file"
+              id="photo-upload"
+              accept="image/*"
+              onChange={handlePhotoUpload}
+              className="hidden"
+            />
+            <label htmlFor="photo-upload" className="cursor-pointer block">
+              {photoUploaded ? (
+                <div className="py-4">
+                  <CheckCircle className="w-10 h-10 text-green-500 mx-auto mb-2" />
+                  <p className="text-sm text-green-700 font-medium">Photo Uploaded</p>
+                  <p className="text-xs text-green-600">Embassy format</p>
+                </div>
+              ) : (
+                <div className="py-4">
+                  <Camera className="w-10 h-10 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-gray-700">Upload Photo</p>
+                  <p className="text-xs text-gray-500">As required by embassy</p>
+                </div>
+              )}
+            </label>
+          </div>
+        </div>
+      </div>
+
+      {/* Personal Information (Auto-filled from Passport) */}
+      <div className="bg-white rounded-xl p-5 border border-gray-200">
+        <div className="flex items-center justify-between mb-4">
+          <h4 className="font-semibold text-gray-800 flex items-center gap-2">
+            <Users className="w-5 h-5 text-blue-600" />
+            Personal Information
+          </h4>
+          {passportUploaded && (
+            <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Auto-filled from passport</span>
+          )}
+        </div>
+        
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+            <label className="block text-xs font-medium text-gray-600 mb-1">First Name *</label>
             <input
               type="text"
-              value={formData.fullName}
-              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-              placeholder="As per passport"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              value={formData.firstName}
+              onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+              placeholder="First name"
+              className={`w-full p-2.5 border rounded-lg text-sm ${passportUploaded ? 'bg-green-50 border-green-300' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Last Name *</label>
+            <input
+              type="text"
+              value={formData.lastName}
+              onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+              placeholder="Last name"
+              className={`w-full p-2.5 border rounded-lg text-sm ${passportUploaded ? 'bg-green-50 border-green-300' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Date of Birth *</label>
+            <input
+              type="date"
+              value={formData.dob}
+              onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
+              className={`w-full p-2.5 border rounded-lg text-sm ${passportUploaded ? 'bg-green-50 border-green-300' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Gender *</label>
+            <select
+              value={formData.gender}
+              onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+              className={`w-full p-2.5 border rounded-lg text-sm ${passportUploaded ? 'bg-green-50 border-green-300' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
+            >
+              <option value="">Select</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Marital Status *</label>
+            <select
+              value={formData.maritalStatus}
+              onChange={(e) => setFormData({ ...formData, maritalStatus: e.target.value })}
+              className={`w-full p-2.5 border rounded-lg text-sm ${passportUploaded ? 'bg-green-50 border-green-300' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
+            >
+              <option value="">Select</option>
+              <option value="Single">Single</option>
+              <option value="Married">Married</option>
+              <option value="Divorced">Divorced</option>
+              <option value="Widowed">Widowed</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Passport Number *</label>
+            <input
+              type="text"
+              value={formData.passportNumber}
+              onChange={(e) => setFormData({ ...formData, passportNumber: e.target.value })}
+              placeholder="P1234567"
+              className={`w-full p-2.5 border rounded-lg text-sm ${passportUploaded ? 'bg-green-50 border-green-300' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Valid Thru *</label>
+            <input
+              type="date"
+              value={formData.passportValidThru}
+              onChange={(e) => setFormData({ ...formData, passportValidThru: e.target.value })}
+              className={`w-full p-2.5 border rounded-lg text-sm ${passportUploaded ? 'bg-green-50 border-green-300' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Place of Issue *</label>
+            <input
+              type="text"
+              value={formData.placeOfIssue}
+              onChange={(e) => setFormData({ ...formData, placeOfIssue: e.target.value })}
+              placeholder="City"
+              className={`w-full p-2.5 border rounded-lg text-sm ${passportUploaded ? 'bg-green-50 border-green-300' : 'border-gray-300'} focus:ring-2 focus:ring-blue-500`}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Email *</label>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               placeholder="your@email.com"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Phone *</label>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Phone *</label>
             <input
               type="tel"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               placeholder="+91 98765 43210"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Travel Date *</label>
-            <input
-              type="date"
-              value={formData.travelDate}
-              onChange={(e) => setFormData({ ...formData, travelDate: e.target.value })}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
       </div>
 
+      {/* Flight Details */}
+      <div className="bg-white rounded-xl p-5 border border-gray-200">
+        <h4 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <Plane className="w-5 h-5 text-blue-600" />
+          Flight Details
+        </h4>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Arrival */}
+          <div className="bg-gray-50 rounded-lg p-4">
+            <p className="text-sm font-semibold text-gray-700 mb-3">Arrival (Inbound)</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Arrival Date *</label>
+                <input
+                  type="date"
+                  value={formData.arrivalDate}
+                  onChange={(e) => setFormData({ ...formData, arrivalDate: e.target.value })}
+                  className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Flight Number *</label>
+                <input
+                  type="text"
+                  value={formData.arrivalFlightNumber}
+                  onChange={(e) => setFormData({ ...formData, arrivalFlightNumber: e.target.value })}
+                  placeholder="e.g., AI302"
+                  className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Departure */}
+          <div className="bg-gray-50 rounded-lg p-4">
+            <p className="text-sm font-semibold text-gray-700 mb-3">Departure (Outbound)</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Departure Date *</label>
+                <input
+                  type="date"
+                  value={formData.departureDate}
+                  onChange={(e) => setFormData({ ...formData, departureDate: e.target.value })}
+                  className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Flight Number *</label>
+                <input
+                  type="text"
+                  value={formData.departureFlightNumber}
+                  onChange={(e) => setFormData({ ...formData, departureFlightNumber: e.target.value })}
+                  placeholder="e.g., AI303"
+                  className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Hotel Reservation */}
+      <div className="bg-white rounded-xl p-5 border border-gray-200">
+        <h4 className="font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <Hotel className="w-5 h-5 text-blue-600" />
+          Hotel Reservation
+        </h4>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Hotel Name *</label>
+            <input
+              type="text"
+              value={formData.hotelName}
+              onChange={(e) => setFormData({ ...formData, hotelName: e.target.value })}
+              placeholder="e.g., Hilton Tokyo"
+              className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Check-in Date *</label>
+            <input
+              type="date"
+              value={formData.hotelCheckIn}
+              onChange={(e) => setFormData({ ...formData, hotelCheckIn: e.target.value })}
+              className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Check-out Date *</label>
+            <input
+              type="date"
+              value={formData.hotelCheckOut}
+              onChange={(e) => setFormData({ ...formData, hotelCheckOut: e.target.value })}
+              className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Selected Agent Summary */}
       {selectedAgent && (
         <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
           <p className="text-sm text-blue-800">
@@ -317,18 +604,10 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
   const renderStep4 = () => (
     <div className="space-y-4">
       <p className="text-gray-600">Your agent is helping with your application</p>
-
       <div className="bg-white rounded-xl p-5 border border-gray-200">
         <h4 className="font-semibold text-gray-800 mb-4">Services Included</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {[
-            'Document verification',
-            'Application form filling',
-            'Appointment booking',
-            'Interview preparation',
-            'Submission support',
-            'Status tracking'
-          ].map((service, idx) => (
+          {['Document verification', 'Application form filling', 'Appointment booking', 'Interview preparation', 'Submission support', 'Status tracking'].map((service, idx) => (
             <div key={idx} className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-blue-500" />
               <span className="text-sm text-gray-700">{service}</span>
@@ -336,7 +615,6 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
           ))}
         </div>
       </div>
-
       <div className="bg-yellow-50 rounded-xl p-4 border border-yellow-200">
         <p className="text-sm text-yellow-800 flex items-center gap-2">
           <Clock className="w-4 h-4" />
@@ -364,12 +642,16 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
             <span className="font-medium">{country?.country_name}</span>
           </div>
           <div className="flex justify-between py-2 border-b border-gray-100">
+            <span className="text-gray-500">Applicant</span>
+            <span className="font-medium">{formData.firstName} {formData.lastName}</span>
+          </div>
+          <div className="flex justify-between py-2 border-b border-gray-100">
             <span className="text-gray-500">Agent</span>
             <span className="font-medium">{selectedAgent?.name}</span>
           </div>
           <div className="flex justify-between py-2 border-b border-gray-100">
-            <span className="text-gray-500">Processing Time</span>
-            <span className="font-medium">{selectedAgent?.processingTime}</span>
+            <span className="text-gray-500">Travel Dates</span>
+            <span className="font-medium">{formData.arrivalDate} to {formData.departureDate}</span>
           </div>
           <div className="flex justify-between py-2">
             <span className="text-gray-500">Total Fee</span>
@@ -390,7 +672,7 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
         isFullscreen ? 'w-full h-full max-w-none max-h-none rounded-none' : 'max-w-4xl w-full max-h-[90vh]'
       }`}>
         
-        {/* Header with Country Name and Background */}
+        {/* Header with Country Name */}
         <div 
           className="relative bg-cover bg-center"
           style={{ 
@@ -399,17 +681,13 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
           }}
         >
           <div className="absolute top-3 right-3 flex items-center gap-2">
-            <button 
-              onClick={() => setIsFullscreen(!isFullscreen)} 
-              className="p-2 hover:bg-white/20 rounded-full transition-all text-white"
-            >
+            <button onClick={() => setIsFullscreen(!isFullscreen)} className="p-2 hover:bg-white/20 rounded-full transition-all text-white">
               {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
             </button>
             <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition-all text-white">
               <X className="w-5 h-5" />
             </button>
           </div>
-
           <div className="flex items-center justify-center h-full py-8">
             <h1 className="text-3xl md:text-4xl font-bold text-white text-center">
               {country?.country_name || 'Visa Application'}
@@ -417,12 +695,9 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
           </div>
         </div>
 
-        {/* Main Content - Steps (20%) + Content (80%) */}
+        {/* Main Content */}
         <div className="flex flex-1 overflow-hidden">
-          {/* Steps Panel - 20% */}
           {renderStepIndicator()}
-
-          {/* Content Panel - 80% */}
           <div className="flex-1 flex flex-col">
             <div className={`flex-1 p-5 overflow-y-auto bg-gray-50 ${isFullscreen ? 'max-h-[calc(100vh-220px)]' : 'max-h-[calc(90vh-220px)]'}`}>
               {currentStep === 1 && renderStep1()}
@@ -443,9 +718,7 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
               >
                 <ChevronLeft className="w-4 h-4" /> Back
               </button>
-
               <span className="text-sm text-gray-500">Step {currentStep} of {totalSteps}</span>
-
               {currentStep < totalSteps ? (
                 <button
                   onClick={() => {
@@ -460,10 +733,7 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
                   Continue <ChevronRight className="w-4 h-4" />
                 </button>
               ) : (
-                <button
-                  onClick={onClose}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all"
-                >
+                <button onClick={onClose} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all">
                   Done
                 </button>
               )}
