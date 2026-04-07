@@ -1178,10 +1178,13 @@ const Seasons = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section - Clean White/Grey/Orange */}
+      {/* Hero Section - Light Blue Gradient */}
       <div 
-        className="relative bg-gradient-to-br from-gray-50 to-gray-100"
-        style={{ minHeight: '280px' }}
+        className="relative"
+        style={{ 
+          minHeight: '280px',
+          background: 'linear-gradient(to bottom, #e0f2fe 0%, #bae6fd 30%, #e0f7fa 70%, #f0f9ff 100%)'
+        }}
       >
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-10 text-center">
           {/* Hero Content */}
