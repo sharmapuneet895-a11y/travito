@@ -1341,7 +1341,7 @@ const Seasons = () => {
 
 
       {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -1349,67 +1349,67 @@ const Seasons = () => {
         >
 
           {/* ========== SEPARATOR - VISA INTELLIGENCE ========== */}
-          <div id="visa-intelligence-section" className="flex items-center gap-4 mb-8 scroll-mt-24">
+          <div id="visa-intelligence-section" className="flex items-center gap-2 sm:gap-4 mb-6 sm:mb-8 scroll-mt-24">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-            <h2 className="text-lg font-bold tracking-widest text-blue-600" style={{ fontFamily: 'Poppins, sans-serif' }}>
+            <h2 className="text-sm sm:text-lg font-bold tracking-widest text-blue-600 whitespace-nowrap" style={{ fontFamily: 'Poppins, sans-serif' }}>
               VISA INTELLIGENCE
             </h2>
             <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
           </div>
 
           {/* Visa Section - Only show cards when destination is selected */}
-          <div className="bg-white rounded-xl p-6 border border-gray-200 mb-8" data-testid="visa-section-always">
+          <div className="bg-white rounded-xl p-4 sm:p-6 border border-gray-200 mb-6 sm:mb-8" data-testid="visa-section-always">
             {!searchResult ? (
-              <div className="text-center py-8">
-                <p className="text-gray-500">Enter destination above to see visa options</p>
+              <div className="text-center py-6 sm:py-8">
+                <p className="text-gray-500 text-sm sm:text-base">Enter destination above to see visa options</p>
               </div>
             ) : (
               <div>
-                <h3 className="text-xl font-bold text-center mb-5 text-blue-600" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                <h3 className="text-lg sm:text-xl font-bold text-center mb-4 sm:mb-5 text-blue-600" style={{ fontFamily: 'Poppins, sans-serif' }}>
                   Visa Options for {searchResult.country.country_name}
                 </h3>
                 {pricingLoading ? (
-                  <div className="flex justify-center items-center py-8">
-                    <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
-                    <span className="ml-2 text-gray-600">Fetching best prices...</span>
+                  <div className="flex justify-center items-center py-6 sm:py-8">
+                    <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin text-blue-500" />
+                    <span className="ml-2 text-gray-600 text-sm sm:text-base">Fetching best prices...</span>
                   </div>
                 ) : (
-                <div className="flex justify-center">
+                <div className="flex justify-center px-2 sm:px-0">
                   {/* Explore Agents Option - Single Card */}
-                  <div className="bg-white rounded-xl p-6 border-2 border-blue-400 relative shadow-lg hover:shadow-xl transition-all max-w-md w-full" data-testid="visa-option-best">
+                  <div className="bg-white rounded-xl p-4 sm:p-6 border-2 border-blue-400 relative shadow-lg hover:shadow-xl transition-all max-w-md w-full" data-testid="visa-option-best">
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                       <span className="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
                         Most Popular
                       </span>
                     </div>
                     <div className="text-center mt-2">
-                      <h4 className="text-xl font-bold text-blue-600 mb-1">Explore Agents</h4>
-                      <p className="text-2xl font-bold text-gray-800">
+                      <h4 className="text-lg sm:text-xl font-bold text-blue-600 mb-1">Explore Agents</h4>
+                      <p className="text-xl sm:text-2xl font-bold text-gray-800">
                         ₹{visaPricing?.express?.price?.toLocaleString() || '6,999'}
                       </p>
-                      <div className="flex items-center justify-center gap-1 text-gray-600 text-sm mt-1">
-                        <Clock className="w-4 h-4" />
+                      <div className="flex items-center justify-center gap-1 text-gray-600 text-xs sm:text-sm mt-1">
+                        <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                         <span>Processing: <strong>{visaPricing?.express?.processing_days || '3-4'} days</strong></span>
                       </div>
                     </div>
-                    <div className="mt-4 space-y-2">
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                    <div className="mt-3 sm:mt-4 space-y-1.5 sm:space-y-2">
+                      <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-700">
+                        <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500 flex-shrink-0" />
                         <span>Verified visa agents</span>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                      <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-700">
+                        <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500 flex-shrink-0" />
                         <span>High success rate</span>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
-                        <CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                      <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-700">
+                        <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-500 flex-shrink-0" />
                         <span>End-to-end support</span>
                       </div>
                     </div>
-                    <div className="mt-4 pt-3 border-t border-gray-200">
+                    <div className="mt-3 sm:mt-4 pt-3 border-t border-gray-200">
                       <button 
                         onClick={() => setShowAgentFinder(true)}
-                        className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-sm transition-all"
+                        className="w-full py-2 sm:py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-sm transition-all"
                         data-testid="explore-agents-btn"
                       >
                         Explore
@@ -1420,31 +1420,33 @@ const Seasons = () => {
                 )}
 
                 {/* Action Buttons - Travel Guide, Eligibility, Checklist */}
-                <div className="mt-6 flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-3">
+                <div className="mt-4 sm:mt-6 flex flex-col gap-2 sm:gap-3">
                   <button
                     onClick={() => setSelectedCountry(searchResult.country)}
-                    className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-sm transition-all shadow-md hover:shadow-lg inline-flex items-center justify-center gap-2"
+                    className="w-full px-4 sm:px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-xs sm:text-sm transition-all shadow-md hover:shadow-lg inline-flex items-center justify-center gap-2"
                     data-testid="view-country-details-btn"
                   >
                     <Compass className="w-4 h-4" />
-                    {searchResult.country.country_name} Travel Guide
+                    <span className="truncate">{searchResult.country.country_name} Travel Guide</span>
                   </button>
-                  <button
-                    onClick={() => setShowEligibilityChecker(true)}
-                    className="px-5 py-2.5 rounded-lg font-semibold text-sm transition-all inline-flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"
-                    data-testid="visa-eligibility-btn"
-                  >
-                    <CheckCircle className="w-4 h-4 text-blue-500" />
-                    Check Eligibility
-                  </button>
-                  <button
-                    onClick={() => setShowDocumentChecklist(true)}
-                    className="px-5 py-2.5 rounded-lg font-semibold text-sm transition-all inline-flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"
-                    data-testid="document-checklist-btn"
-                  >
-                    <ClipboardList className="w-4 h-4 text-blue-500" />
-                    Document Checklist
-                  </button>
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <button
+                      onClick={() => setShowEligibilityChecker(true)}
+                      className="flex-1 px-4 sm:px-5 py-2.5 rounded-lg font-semibold text-xs sm:text-sm transition-all inline-flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"
+                      data-testid="visa-eligibility-btn"
+                    >
+                      <CheckCircle className="w-4 h-4 text-blue-500" />
+                      Check Eligibility
+                    </button>
+                    <button
+                      onClick={() => setShowDocumentChecklist(true)}
+                      className="flex-1 px-4 sm:px-5 py-2.5 rounded-lg font-semibold text-xs sm:text-sm transition-all inline-flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300"
+                      data-testid="document-checklist-btn"
+                    >
+                      <ClipboardList className="w-4 h-4 text-blue-500" />
+                      Document Checklist
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
