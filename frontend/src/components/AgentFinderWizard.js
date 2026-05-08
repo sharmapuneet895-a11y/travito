@@ -207,7 +207,7 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
   if (!isOpen) return null;
 
   const renderStepIndicator = () => (
-    <div className="w-full md:w-1/5 bg-gray-50 p-4 border-r border-gray-200">
+    <div className="hidden md:block md:w-1/5 bg-gray-50 p-4 border-r border-gray-200">
       <h3 className="text-sm font-semibold text-gray-500 mb-4 uppercase tracking-wide">Steps</h3>
       <div className="space-y-1">
         {steps.map((step) => (
@@ -242,47 +242,106 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
     </div>
   );
 
+  // Mobile step indicator - horizontal dots
+  const renderMobileStepIndicator = () => (
+    <div className="md:hidden flex items-center justify-center gap-2 py-3 bg-gray-50 border-b border-gray-200">
+      {steps.map((step) => (
+        <div
+          key={step.num}
+          className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+            currentStep === step.num
+              ? 'bg-blue-600 text-white'
+              : currentStep > step.num
+              ? 'bg-blue-100 text-blue-700'
+              : 'bg-gray-200 text-gray-500'
+          }`}
+        >
+          {currentStep > step.num ? <Check className="w-3 h-3" /> : step.num}
+        </div>
+      ))}
+    </div>
+  );
+
   const renderAgentCard = (agent) => (
     <div
       key={agent.id}
       onClick={() => setSelectedAgent(agent)}
-      className={`bg-white rounded-xl p-4 border-2 cursor-pointer transition-all hover:shadow-lg ${
+      className={`bg-white rounded-xl p-3 sm:p-4 border-2 cursor-pointer transition-all hover:shadow-lg ${
         selectedAgent?.id === agent.id ? 'border-blue-500 shadow-lg' : 'border-gray-200'
       }`}
     >
-      <div className="flex items-start gap-4">
-        <img src={agent.logo} alt={agent.name} className="w-14 h-14 rounded-xl object-cover" />
-        <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between">
-            <div>
-              <h4 className="font-bold text-gray-800">{agent.name}</h4>
-              <p className="text-sm text-gray-500 flex items-center gap-1">
-                <MapPin className="w-3 h-3" /> {agent.location}
-              </p>
-            </div>
-            <div className="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-lg">
-              <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-              <span className="font-bold text-sm text-gray-800">{agent.googleRating}</span>
-              <span className="text-xs text-gray-500">({agent.reviews})</span>
-            </div>
+      {/* Mobile Layout */}
+      <div className="sm:hidden">
+        <div className="flex items-center gap-3 mb-3">
+          <img src={agent.logo} alt={agent.name} className="w-12 h-12 rounded-xl object-cover" />
+          <div className="flex-1 min-w-0">
+            <h4 className="font-bold text-gray-800 text-sm">{agent.name}</h4>
+            <p className="text-xs text-gray-500 flex items-center gap-1">
+              <MapPin className="w-3 h-3" /> {agent.location}
+            </p>
           </div>
-          <p className="text-sm text-blue-600 font-medium mt-1">{agent.experience} Experience</p>
-          <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100">
-            <div>
-              <p className="text-xs text-gray-500">Visa Fee</p>
-              <p className="font-bold text-gray-800">₹{agent.visaFee.toLocaleString()}</p>
+          <div className="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-lg">
+            <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+            <span className="font-bold text-xs text-gray-800">{agent.googleRating}</span>
+          </div>
+        </div>
+        <p className="text-xs text-blue-600 font-medium mb-2">{agent.experience} Experience</p>
+        <div className="grid grid-cols-4 gap-2 pt-2 border-t border-gray-100 text-center">
+          <div>
+            <p className="text-[10px] text-gray-500">Visa</p>
+            <p className="font-bold text-xs text-gray-800">₹{(agent.visaFee/1000).toFixed(1)}k</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-gray-500">Govt</p>
+            <p className="font-bold text-xs text-gray-800">₹{(agent.govtFee/1000).toFixed(1)}k</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-gray-500">Time</p>
+            <p className="font-bold text-xs text-gray-800">{agent.processingTime}</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-gray-500">Total</p>
+            <p className="font-bold text-xs text-blue-600">₹{((agent.visaFee + agent.govtFee)/1000).toFixed(1)}k</p>
+          </div>
+        </div>
+      </div>
+      
+      {/* Desktop Layout */}
+      <div className="hidden sm:block">
+        <div className="flex items-start gap-4">
+          <img src={agent.logo} alt={agent.name} className="w-14 h-14 rounded-xl object-cover" />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between">
+              <div>
+                <h4 className="font-bold text-gray-800">{agent.name}</h4>
+                <p className="text-sm text-gray-500 flex items-center gap-1">
+                  <MapPin className="w-3 h-3" /> {agent.location}
+                </p>
+              </div>
+              <div className="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-lg">
+                <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                <span className="font-bold text-sm text-gray-800">{agent.googleRating}</span>
+                <span className="text-xs text-gray-500">({agent.reviews})</span>
+              </div>
             </div>
-            <div>
-              <p className="text-xs text-gray-500">Govt Fee</p>
-              <p className="font-bold text-gray-800">₹{agent.govtFee.toLocaleString()}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500">Processing</p>
-              <p className="font-bold text-gray-800">{agent.processingTime}</p>
-            </div>
-            <div className="ml-auto">
-              <p className="text-xs text-gray-500">Total</p>
-              <p className="font-bold text-blue-600">₹{(agent.visaFee + agent.govtFee).toLocaleString()}</p>
+            <p className="text-sm text-blue-600 font-medium mt-1">{agent.experience} Experience</p>
+            <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100">
+              <div>
+                <p className="text-xs text-gray-500">Visa Fee</p>
+                <p className="font-bold text-gray-800">₹{agent.visaFee.toLocaleString()}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Govt Fee</p>
+                <p className="font-bold text-gray-800">₹{agent.govtFee.toLocaleString()}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Processing</p>
+                <p className="font-bold text-gray-800">{agent.processingTime}</p>
+              </div>
+              <div className="ml-auto">
+                <p className="text-xs text-gray-500">Total</p>
+                <p className="font-bold text-blue-600">₹{(agent.visaFee + agent.govtFee).toLocaleString()}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -291,9 +350,9 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
   );
 
   const renderStep1 = () => (
-    <div className="space-y-4">
-      <p className="text-gray-600">Select a verified agent to help with your {country?.country_name} visa application</p>
-      <div className="space-y-3">
+    <div className="space-y-3 sm:space-y-4">
+      <p className="text-sm text-gray-600">Select a verified agent to help with your {country?.country_name} visa application</p>
+      <div className="space-y-2 sm:space-y-3">
         {agents.map(renderAgentCard)}
       </div>
     </div>
@@ -701,48 +760,53 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
   );
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-2 md:p-4">
-      <div className={`bg-white rounded-xl overflow-hidden shadow-2xl transition-all duration-300 flex flex-col ${
-        isFullscreen ? 'w-full h-full max-w-none max-h-none rounded-none' : 'max-w-4xl w-full max-h-[90vh]'
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-0 sm:p-2 md:p-4">
+      <div className={`bg-white overflow-hidden shadow-2xl transition-all duration-300 flex flex-col ${
+        isFullscreen ? 'w-full h-full max-w-none max-h-none rounded-none' : 'w-full h-full sm:max-w-4xl sm:w-full sm:max-h-[90vh] sm:rounded-xl'
       }`}>
         
-        {/* Header with Country Name - Increased Size */}
+        {/* Header with Country Name - Responsive */}
         <div 
-          className="relative bg-cover bg-center"
+          className="relative bg-cover bg-center flex-shrink-0"
           style={{ 
             backgroundImage: `linear-gradient(to bottom, rgba(30, 64, 175, 0.85), rgba(30, 64, 175, 0.95)), url('${countryImage}')`,
-            minHeight: '180px'
+            minHeight: '140px'
           }}
         >
-          <div className="absolute top-3 right-3 flex items-center gap-2">
-            <button onClick={() => setIsFullscreen(!isFullscreen)} className="p-2 hover:bg-white/20 rounded-full transition-all text-white">
+          <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex items-center gap-1 sm:gap-2">
+            <button onClick={() => setIsFullscreen(!isFullscreen)} className="hidden sm:block p-2 hover:bg-white/20 rounded-full transition-all text-white">
               {isFullscreen ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
             </button>
             <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition-all text-white">
               <X className="w-5 h-5" />
             </button>
           </div>
-          <div className="flex flex-col items-center justify-center h-full py-8 px-4">
-            <h1 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">
+          <div className="flex flex-col items-center justify-center h-full py-4 sm:py-6 px-3 sm:px-4">
+            <h1 className="text-xl sm:text-2xl md:text-4xl font-bold text-white text-center mb-2 sm:mb-3">
               {country?.country_name || 'Visa Application'}
             </h1>
-            {/* Services Included - Moved to top panel */}
-            <div className="flex flex-wrap items-center justify-center gap-3 mt-2">
+            {/* Services Included - Hidden on small mobile, shown as badges on larger */}
+            <div className="hidden sm:flex flex-wrap items-center justify-center gap-2 mt-1">
               {['Document verification', 'Form filling', 'Appointment booking', 'Interview prep', 'Submission support', 'Status tracking'].map((service, idx) => (
-                <div key={idx} className="flex items-center gap-1.5 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                  <CheckCircle className="w-3.5 h-3.5 text-green-300" />
-                  <span className="text-xs text-white font-medium">{service}</span>
+                <div key={idx} className="flex items-center gap-1 bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full">
+                  <CheckCircle className="w-3 h-3 text-green-300" />
+                  <span className="text-[10px] sm:text-xs text-white font-medium">{service}</span>
                 </div>
               ))}
             </div>
+            {/* Mobile: Show condensed service info */}
+            <p className="sm:hidden text-xs text-white/80 text-center mt-1">Full visa assistance included</p>
           </div>
         </div>
 
+        {/* Mobile Step Indicator */}
+        {renderMobileStepIndicator()}
+
         {/* Main Content */}
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-1 overflow-hidden min-h-0">
           {renderStepIndicator()}
-          <div className="flex-1 flex flex-col">
-            <div className={`flex-1 p-5 overflow-y-auto bg-gray-50 ${isFullscreen ? 'max-h-[calc(100vh-280px)]' : 'max-h-[calc(90vh-280px)]'}`}>
+          <div className="flex-1 flex flex-col min-h-0">
+            <div className={`flex-1 p-3 sm:p-5 overflow-y-auto bg-gray-50`}>
               {currentStep === 1 && renderStep1()}
               {currentStep === 2 && renderStep2()}
               {currentStep === 3 && renderStep3()}
@@ -750,17 +814,17 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
             </div>
 
             {/* Footer */}
-            <div className="p-4 border-t bg-white flex items-center justify-between">
+            <div className="p-3 sm:p-4 border-t bg-white flex items-center justify-between flex-shrink-0">
               <button
                 onClick={() => setCurrentStep(prev => Math.max(1, prev - 1))}
                 disabled={currentStep === 1}
-                className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all ${
+                className={`px-3 sm:px-4 py-2 rounded-lg font-medium flex items-center gap-1 sm:gap-2 transition-all text-sm ${
                   currentStep === 1 ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                <ChevronLeft className="w-4 h-4" /> Back
+                <ChevronLeft className="w-4 h-4" /> <span className="hidden sm:inline">Back</span>
               </button>
-              <span className="text-sm text-gray-500">Step {currentStep} of {totalSteps}</span>
+              <span className="text-xs sm:text-sm text-gray-500">Step {currentStep} of {totalSteps}</span>
               {currentStep < totalSteps ? (
                 <button
                   onClick={() => {
@@ -770,12 +834,12 @@ const AgentFinderWizard = ({ isOpen, onClose, country, visaType = 'tourist', pri
                     }
                     setCurrentStep(prev => prev + 1);
                   }}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium flex items-center gap-2 transition-all"
+                  className="px-4 sm:px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium flex items-center gap-1 sm:gap-2 transition-all text-sm"
                 >
-                  Continue <ChevronRight className="w-4 h-4" />
+                  <span className="hidden sm:inline">Continue</span> <span className="sm:hidden">Next</span> <ChevronRight className="w-4 h-4" />
                 </button>
               ) : (
-                <button onClick={onClose} className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all">
+                <button onClick={onClose} className="px-4 sm:px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all text-sm">
                   Done
                 </button>
               )}
